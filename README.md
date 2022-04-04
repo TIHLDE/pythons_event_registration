@@ -1,7 +1,7 @@
 # Event registration for TIHLDE Pythons
 
 ## todo
-- [ ] Implement change registration functionality
+- [x] Implement change registration functionality
 - [ ] Implement create event form
 - [ ] Add players section
 - [x] See registrated players for event (modal)
