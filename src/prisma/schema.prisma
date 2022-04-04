@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id            Int             @id @default(autoincrement())
+  createdAt     DateTime        @default(now())
+  name          String          @db.VarChar(60)
+  registrations Registrations[]
+  position      Position        @relation(fields: [positionId], references: [id])
+  positionId    Int
+}
+
+model Event {
+  id            Int             @id @default(autoincrement())
+  createdAt     DateTime        @default(now())
+  title         String?
+  time          DateTime
+  location      String
+  type          EventType       @relation(fields: [eventTypeSlug], references: [slug])
+  registrations Registrations[]
+  eventTypeSlug String
+}
+
+model EventType {
+  slug  String  @id
+  name  String
+  event Event[]
+}
+
+model Registrations {
+  player     Player   @relation(fields: [playerId], references: [id])
+  playerId   Int
+  event      Event    @relation(fields: [eventId], references: [id])
+  eventId    Int
+  time       DateTime @default(now())
+  willArrive Boolean
+  reason     String?
+
+  @@id([playerId, eventId])
+}
+
+model Position {
+  id     Int      @id @default(autoincrement())
+  title  String   @unique
+  Player Player[]
+}
