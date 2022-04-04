@@ -17,6 +17,7 @@ model Player {
   registrations Registrations[]
   position      Position        @relation(fields: [positionId], references: [id])
   positionId    Int
+  active        Boolean         @default(true)
 }
 
 model Event {
