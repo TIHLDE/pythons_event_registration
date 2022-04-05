@@ -36,6 +36,11 @@ type EventProps = {
   eventDetails: IEvent;
 };
 
+type FormDataProps = {
+  reason?: string;
+  registration?: string | number | undefined;
+};
+
 const Event = ({ eventDetails }: EventProps) => {
   const classes = useStyles();
 
@@ -71,18 +76,18 @@ const Event = ({ eventDetails }: EventProps) => {
     register,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormDataProps>({
     defaultValues: {
       registration: -1,
       reason: userRegistration?.reason || "",
     },
   });
 
-  const watchRegistration: number | string = watch("registration");
+  const watchRegistration: number | string | undefined = watch("registration");
 
   const [openRegistration, setOpenRegistration] = useState(false);
 
-  const onSubmit = async (formData: { reason: any; registration: string }) => {
+  const onSubmit = async (formData: FormDataProps) => {
     const data = {
       playerId: user.id,
       eventId: eventDetails.id,

@@ -20,6 +20,7 @@
     "@mui/styles": "^5.5.3",
     "@prisma/client": "^3.11.1",
     "@types/lodash": "^4.14.181",
+    "@types/safe-json-stringify": "^1.1.2",
     "axios": "^0.26.1",
     "date-fns": "^2.28.0",
     "http-status-typed": "^1.0.1",

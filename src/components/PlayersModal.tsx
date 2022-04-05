@@ -1,3 +1,4 @@
+// eslint-disable-no-explicit-any
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Modal from "@mui/material/Modal";
@@ -50,7 +51,7 @@ const PlayersModal = ({
           <Image src="/pythons.png" width={25} height={37.625} alt="Logo" />
           <Typography variant="h6">{title}</Typography>
         </Stack>
-        {groupedPlayers?.map((pos) => (
+        {groupedPlayers?.map((pos: any) => (
           <Stack key={pos.id} spacing={1}>
             <Divider />
             <Typography sx={{ fontWeight: "bold" }} variant="body1">

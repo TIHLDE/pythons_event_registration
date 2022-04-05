@@ -16,12 +16,16 @@ export type PlayersListProps = {
   id: number;
 };
 
+type FormDataProps = {
+  name: string;
+};
+
 const PlayersList = ({ title, id, players }: PlayersListProps) => {
   const [openNewPlayerField, setOpenNewPlayerField] = useState(false);
-  const { handleSubmit, control } = useForm();
+  const { handleSubmit, control } = useForm<FormDataProps>();
   const router = useRouter();
 
-  const onSubmit = async (formData: { name: string }) => {
+  const onSubmit = async (formData: FormDataProps) => {
     const data = { name: formData.name, positionId: id };
     axios.post("/api/players", { data: data }).then((res) => {
       setOpenNewPlayerField(false);
