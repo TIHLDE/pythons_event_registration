@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       },
     },
     orderBy: {
-      time: "desc",
+      time: "asc",
     },
   });
 

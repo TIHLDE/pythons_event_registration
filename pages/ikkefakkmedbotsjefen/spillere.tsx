@@ -32,13 +32,12 @@ export const getServerSideProps: GetServerSideProps = async () => {
 const Players: NextPage = ({
   positions,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  console.log(positions);
   return (
     <Container maxWidth="xl" sx={{ padding: 4 }}>
       <NavBar />
       <Grid container sx={{ marginTop: 4 }}>
         {positions.map((position: IPosition) => (
-          <Grid item xs={12} sm={2}>
+          <Grid key={position.id} item xs={12} sm={2}>
             <PlayersList
               id={position.id}
               title={position.title}

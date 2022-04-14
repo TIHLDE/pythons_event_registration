@@ -22,13 +22,14 @@ type FormDataProps = {
 
 const PlayersList = ({ title, id, players }: PlayersListProps) => {
   const [openNewPlayerField, setOpenNewPlayerField] = useState(false);
-  const { handleSubmit, control } = useForm<FormDataProps>();
+  const { handleSubmit, control, reset } = useForm<FormDataProps>();
   const router = useRouter();
 
   const onSubmit = async (formData: FormDataProps) => {
     const data = { name: formData.name, positionId: id };
     axios.post("/api/players", { data: data }).then((res) => {
       setOpenNewPlayerField(false);
+      reset();
       router.replace(router.asPath);
     });
   };
@@ -39,8 +40,8 @@ const PlayersList = ({ title, id, players }: PlayersListProps) => {
         {title} ({players.length})
       </Typography>
       {players.map((player: IPlayer) => (
-        <Stack direction="row" spacing={1}>
-          <Avatar sx={{ width: 24, height: 24 }}>
+        <Stack key={player.id} direction="row" spacing={1}>
+          <Avatar sx={{ width: 24, height: 24, backgroundColor: "#fff" }}>
             {player.name.split(" ")[0][0]}
           </Avatar>
           <Typography variant="body1">{player.name}</Typography>
@@ -51,7 +52,7 @@ const PlayersList = ({ title, id, players }: PlayersListProps) => {
           <Controller
             name={"name"}
             control={control}
-            rules={{ required: "Spilleren må ha et navnt" }}
+            rules={{ required: "Spilleren må ha et navn" }}
             render={({ field: { onChange, value } }) => (
               <TextField
                 required

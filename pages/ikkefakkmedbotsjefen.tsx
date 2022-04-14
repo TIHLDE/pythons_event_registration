@@ -1,9 +1,7 @@
 import type { NextPage } from "next";
 import Container from "@mui/material/Container";
 import NavBar from "../src/components/NavBar";
-import Event from "../src/components/Event";
 import Grid from "@mui/material/Grid";
-import { IEvent } from "types";
 import AdminLink from "components/AdminLink";
 
 const Admin: NextPage = () => {
