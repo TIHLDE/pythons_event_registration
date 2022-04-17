@@ -22,7 +22,7 @@ import { Controller, useForm } from "react-hook-form";
 import axios from "axios";
 import { useRouter } from "next/router";
 import PlayersModal from "components/PlayersModal";
-
+import { nb } from "date-fns/locale";
 const useStyles = makeStyles((theme: Theme) => ({
   link: {
     cursor: "pointer",
@@ -153,17 +153,17 @@ const Event = ({ eventDetails }: EventProps) => {
       {!userRegistration?.willArrive && userRegistration?.reason && (
         <Typography variant="body2">😓 Du er avmeldt</Typography>
       )}
-      <Stack direction="row" justifyContent="space-between">
-        <Stack direction="row" spacing={1}>
-          <WatchLaterIcon />
-          <Typography variant="body1">
-            {format(new Date(eventDetails.time), "MM.dd' 'HH:mm")}{" "}
-          </Typography>
-        </Stack>
-        <Stack direction="row" spacing={1}>
-          <LocationOnIcon />
-          <Typography variant="body1">{eventDetails.location}</Typography>
-        </Stack>
+      <Stack direction="row" spacing={1}>
+        <WatchLaterIcon />
+        <Typography variant="body1">
+          {format(new Date(eventDetails.time), "EEEE - dd.MM' 'HH:mm", {
+            locale: nb,
+          })}{" "}
+        </Typography>
+      </Stack>
+      <Stack direction="row" spacing={1}>
+        <LocationOnIcon />
+        <Typography variant="body1">{eventDetails.location}</Typography>
       </Stack>
       <Stack direction="row" spacing={1}>
         <PeopleIcon />

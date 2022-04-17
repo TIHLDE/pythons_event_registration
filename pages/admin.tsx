@@ -11,21 +11,21 @@ const Admin: NextPage = () => {
       <Grid container spacing={4} sx={{ marginTop: 4 }}>
         <Grid item xs={12} sm={4}>
           <AdminLink
-            path="/ikkefakkmedbotsjefen/spillere"
+            path="/admin/spillere"
             title="👨‍👧 Spillere"
             description="Se aktive spillere, og gjøre nødvendige endringer i spillerstallen"
           />
         </Grid>
         <Grid item xs={12} sm={4}>
           <AdminLink
-            path="/ikkefakkmedbotsjefen/arrangementer"
+            path="/admin/arrangementer"
             title="🎉 Arrangementer"
             description="Gjør endringer på kommende arrangementer"
           />
         </Grid>
         <Grid item xs={12} sm={4}>
           <AdminLink
-            path="/ikkefakkmedbotsjefen/boter"
+            path="/admin/boter"
             title="🤫 Bøter"
             description="Se hvem av gutta som fortjener bøter basert på registrering"
           />

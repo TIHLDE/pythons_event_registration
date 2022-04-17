@@ -6,7 +6,7 @@ import type {
 import Container from "@mui/material/Container";
 import NavBar from "components/NavBar";
 import Grid from "@mui/material/Grid";
-import { IEvent, IPosition } from "types";
+import { IPosition } from "types";
 import { prisma } from "lib/prisma";
 import PlayersList from "components/PlayersList";
 export const getServerSideProps: GetServerSideProps = async () => {
