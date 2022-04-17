@@ -8,4 +8,5 @@
 - [x] See deregistrated players for event (modal)
 - [ ] Add statistics
 - [ ] Add page for getting fines to be registrated
-- [ ] Make players inactive
+- [ ] Make players inactive / remove players
+- [ ] Move NavBar and Container etc to own component and to be used for every page
