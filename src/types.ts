@@ -25,6 +25,7 @@ export type IRegistrations = {
   time: Date;
   willArrive: boolean;
   reason?: string;
+  updatedAt?: Date;
 };
 
 export type IPlayer = {

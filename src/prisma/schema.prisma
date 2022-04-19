@@ -38,11 +38,12 @@ model EventType {
 }
 
 model Registrations {
-  player     Player   @relation(fields: [playerId], references: [id])
+  player     Player    @relation(fields: [playerId], references: [id])
   playerId   Int
-  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event      Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId    Int
-  time       DateTime @default(now())
+  time       DateTime  @default(now())
+  updatedAt  DateTime?
   willArrive Boolean
   reason     String?
 

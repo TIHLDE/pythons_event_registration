@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     where: {
       time: {
         gte: twoWeeksBack,
-        lt: today,
+        lte: today,
       },
     },
     include: {
@@ -59,6 +59,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
             deadline = subHours(event.time, rules.deadlineBeforeMatch);
           }
           if (deadline) {
+            if (registration.updatedAt && registration.updatedAt > deadline) {
+              return {
+                player: player,
+                reason: `Oppdaterte registrering ${format(
+                  registration.time,
+                  "dd.MM HH:mm"
+                )}`,
+              };
+            }
             if (registration.time > deadline) {
               return {
                 player: player,

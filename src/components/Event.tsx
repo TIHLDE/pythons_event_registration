@@ -9,7 +9,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import Button from "@mui/material/Button";
 import useSWR from "swr";
 import { format } from "date-fns";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -94,6 +94,7 @@ const Event = ({ eventDetails }: EventProps) => {
       ...(formData.reason && {
         reason: formData.reason,
       }),
+      updatedAt: new Date(),
     };
     if (userHasRegistrated) {
       console.log(data);

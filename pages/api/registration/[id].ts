@@ -23,6 +23,7 @@ export default async function handler(
           playerId_eventId: { playerId, eventId },
         },
         data: {
+          updatedAt: data.updatedAt,
           willArrive: willArrive,
           ...(data.reason && !willArrive
             ? {
