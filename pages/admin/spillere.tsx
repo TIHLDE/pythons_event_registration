@@ -15,6 +15,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
       id: true,
       title: true,
       Player: {
+        where: {
+          active: true,
+        },
         select: {
           id: true,
           name: true,

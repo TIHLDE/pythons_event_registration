@@ -7,6 +7,8 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { Controller, useForm } from "react-hook-form";
 import TextField from "@mui/material/TextField";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 import { useRouter } from "next/router";
 
@@ -18,6 +20,72 @@ export type PlayersListProps = {
 
 type FormDataProps = {
   name: string;
+};
+
+const Player = ({ player }: { player: IPlayer }) => {
+  const router = useRouter();
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
+
+  const handleContextMenu = (event: {
+    preventDefault: () => void;
+    clientX: number;
+    clientY: number;
+  }) => {
+    event.preventDefault();
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6,
+          }
+        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+          // Other native context menus might behave different.
+          // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+          null
+    );
+  };
+
+  const handleClose = async () => {
+    const data = { active: false };
+    const res = await axios
+      .put(`/api/players/${player.id}}`, { data: data })
+      .then((res) => {
+        router.replace(router.asPath);
+        setContextMenu(null);
+      });
+  };
+
+  return (
+    <>
+      <Stack
+        key={player.id}
+        direction="row"
+        spacing={1}
+        onContextMenu={handleContextMenu}
+        style={{ cursor: "context-menu" }}
+      >
+        <Avatar sx={{ width: 24, height: 24, backgroundColor: "#fff" }}>
+          {player.name.split(" ")[0][0]}
+        </Avatar>
+        <Typography variant="body1">{player.name}</Typography>
+      </Stack>
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleClose}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={handleClose}>Fjern {player.name}</MenuItem>
+      </Menu>
+    </>
+  );
 };
 
 const PlayersList = ({ title, id, players }: PlayersListProps) => {
@@ -40,12 +108,7 @@ const PlayersList = ({ title, id, players }: PlayersListProps) => {
         {title} ({players.length})
       </Typography>
       {players.map((player: IPlayer) => (
-        <Stack key={player.id} direction="row" spacing={1}>
-          <Avatar sx={{ width: 24, height: 24, backgroundColor: "#fff" }}>
-            {player.name.split(" ")[0][0]}
-          </Avatar>
-          <Typography variant="body1">{player.name}</Typography>
-        </Stack>
+        <Player key={player.id} player={player} />
       ))}
       {openNewPlayerField ? (
         <form onSubmit={handleSubmit(onSubmit)}>
