@@ -30,6 +30,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-hook-form": "^7.29.0",
+    "react-hotkeys-hook": "^3.4.6",
     "safe-json-stringify": "^1.2.0",
     "swr": "^1.2.2",
     "ts-node": "^10.7.0"

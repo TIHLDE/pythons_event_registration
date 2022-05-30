@@ -1404,6 +1404,11 @@ hoist-non-react-statics@^3.3.1, hoist-non-react-statics@^3.3.2:
   dependencies:
     react-is "^16.7.0"
 
+hotkeys-js@3.9.3:
+  version "3.9.3"
+  resolved "https://registry.yarnpkg.com/hotkeys-js/-/hotkeys-js-3.9.3.tgz#4b755cc695b388d7f93a83aff4b0c2a45719996c"
+  integrity sha512-s+f0xyvDmf6+DyrFQ2SY+eA7lbvMbjqkqi0I0SpMgnN5tZx7DeH8nsWhkJR4KEq3pxDPHJppDUhdt1rZFW5LeQ==
+
 html-tokenize@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/html-tokenize/-/html-tokenize-2.0.1.tgz#c3b2ea6e2837d4f8c06693393e9d2a12c960be5f"
@@ -2056,6 +2061,13 @@ react-hook-form@^7.29.0:
   version "7.29.0"
   resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.29.0.tgz#5e7e41a483b70731720966ed8be52163ea1fecf1"
   integrity sha512-NcJqWRF6el5HMW30fqZRt27s+lorvlCCDbTpAyHoodQeYWXgQCvZJJQLC1kRMKdrJknVH0NIg3At6TUzlZJFOQ==
+
+react-hotkeys-hook@^3.4.6:
+  version "3.4.6"
+  resolved "https://registry.yarnpkg.com/react-hotkeys-hook/-/react-hotkeys-hook-3.4.6.tgz#21eda8e97121583a14056479e3eea9e51d2e2a69"
+  integrity sha512-SiGKHnauaAQglRA7qeiW5LTa0KoT2ssv8YGYKZQoM3P9v5JFEHJdXOSFml1N6K86oKQ8dLCLlxqBqGlSJWGmxQ==
+  dependencies:
+    hotkeys-js "3.9.3"
 
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"

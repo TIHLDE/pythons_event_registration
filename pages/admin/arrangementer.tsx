@@ -3,16 +3,17 @@ import type {
   InferGetServerSidePropsType,
   NextPage,
 } from "next";
-import Container from "@mui/material/Container";
-import NavBar from "components/NavBar";
 import Grid from "@mui/material/Grid";
 import { IEvent, IPosition } from "types";
+import AddIcon from "@mui/icons-material/Add";
 import { prisma } from "lib/prisma";
 import safeJsonStringify from "safe-json-stringify";
 import AdminEvent from "components/AdminEvent";
-import { Button } from "@mui/material";
+import { Button, ButtonBase, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import EventModal from "components/EventModal";
+import IconButton from "@mui/material/IconButton";
+import { useRouter } from "next/router";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
@@ -37,15 +38,12 @@ const Players: NextPage = ({
   const [newEventModal, setNewEventModal] = useState(false);
   const handleOpenNewEventModal = () => setNewEventModal(true);
   const handleCloseNewEventModal = () => setNewEventModal(false);
+  const router = useRouter();
 
   return (
-    <Container maxWidth="lg" sx={{ padding: 4 }}>
-      <NavBar />
-      <Button
-        onClick={handleOpenNewEventModal}
-        sx={{ marginTop: 2, marginBottom: 4 }}
-      >
-        Nytt arrangement
+    <>
+      <Button onClick={() => router.push("/admin")}>
+        Tilbake til admin-side
       </Button>
       {newEventModal && (
         <EventModal
@@ -60,8 +58,16 @@ const Players: NextPage = ({
             <AdminEvent event={event} />
           </Grid>
         ))}
+        <Grid item xs={12} sm={4} md={3}>
+          <ButtonBase onClick={handleOpenNewEventModal}>
+            <Stack direction={"column"}>
+              <AddIcon color="secondary" fontSize="large" />
+              <Typography>Nytt arrangement</Typography>
+            </Stack>
+          </ButtonBase>
+        </Grid>
       </Grid>
-    </Container>
+    </>
   );
 };
 

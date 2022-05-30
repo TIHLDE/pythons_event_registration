@@ -3,12 +3,12 @@ import type {
   InferGetServerSidePropsType,
   NextPage,
 } from "next";
-import Container from "@mui/material/Container";
-import NavBar from "components/NavBar";
 import Grid from "@mui/material/Grid";
 import { IPosition } from "types";
 import { prisma } from "lib/prisma";
 import PlayersList from "components/PlayersList";
+import { Button } from "@mui/material";
+import { useRouter } from "next/router";
 export const getServerSideProps: GetServerSideProps = async () => {
   const positions = await prisma.position.findMany({
     select: {
@@ -35,9 +35,12 @@ export const getServerSideProps: GetServerSideProps = async () => {
 const Players: NextPage = ({
   positions,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const router = useRouter();
   return (
-    <Container maxWidth="xl" sx={{ padding: 4 }}>
-      <NavBar />
+    <>
+      <Button onClick={() => router.push("/admin")}>
+        Tilbake til admin-side
+      </Button>
       <Grid container sx={{ marginTop: 4 }}>
         {positions.map((position: IPosition) => (
           <Grid key={position.id} item xs={12} sm={2}>
@@ -50,7 +53,7 @@ const Players: NextPage = ({
           </Grid>
         ))}
       </Grid>
-    </Container>
+    </>
   );
 };
 

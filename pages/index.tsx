@@ -1,6 +1,4 @@
 import type { NextPage } from "next";
-import Container from "@mui/material/Container";
-import NavBar from "../src/components/NavBar";
 import Event from "../src/components/Event";
 import Grid from "@mui/material/Grid";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
@@ -55,16 +53,13 @@ const Home: NextPage = ({
   events,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
-    <Container maxWidth="lg" sx={{ padding: 4 }}>
-      <NavBar />
-      <Grid container spacing={4} sx={{ marginTop: 4 }}>
-        {events.map((event: IEvent) => (
-          <Grid key={event.id} item xs={12} sm={6} md={4} lg={3}>
-            <Event eventDetails={event} />
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
+    <Grid container spacing={4} sx={{ marginTop: 4 }}>
+      {events.map((event: IEvent) => (
+        <Grid key={event.id} item xs={12} sm={6} md={4} lg={3}>
+          <Event eventDetails={event} />
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 

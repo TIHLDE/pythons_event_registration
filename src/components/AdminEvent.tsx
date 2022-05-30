@@ -9,6 +9,7 @@ import EventModal from "components/EventModal";
 import ConfirmModal from "components/ConfirmModal";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { nb } from "date-fns/locale";
 
 export type AdminEventProps = {
   event: IEvent;
@@ -61,7 +62,9 @@ const AdminEvent = ({ event }: AdminEventProps) => {
           Dato
         </Typography>
         <Typography variant="body1">
-          {format(new Date(event.time), "dd.MM")}
+          {format(new Date(event.time), "EEEE - dd.MM", {
+            locale: nb,
+          })}
         </Typography>
       </Stack>
       <Stack padding={1} direction="row" justifyContent={"space-between"}>

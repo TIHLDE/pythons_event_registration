@@ -3,8 +3,6 @@ import type {
   InferGetServerSidePropsType,
   NextPage,
 } from "next";
-import Container from "@mui/material/Container";
-import NavBar from "components/NavBar";
 import Grid from "@mui/material/Grid";
 import { prisma } from "lib/prisma";
 import safeJsonStringify from "safe-json-stringify";
@@ -16,6 +14,8 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
+import Button from "@mui/material/Button";
+import { useRouter } from "next/router";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
@@ -63,7 +63,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
               return {
                 player: player,
                 reason: `Oppdaterte registrering ${format(
-                  registration.time,
+                  registration.updatedAt,
                   "dd.MM HH:mm"
                 )}`,
               };
@@ -96,16 +96,18 @@ const Fines: NextPage = ({
   events,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [expanded, setExpanded] = useState("");
-
+  const router = useRouter();
   const handleChange = (panel: any) => (_: any, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
   };
   return (
-    <Container maxWidth="lg" sx={{ padding: 4 }}>
-      <NavBar />
+    <>
       <Typography textAlign={"center"} variant="h3">
         Bøter 😈 👹
       </Typography>
+      <Button onClick={() => router.push("/admin")}>
+        Tilbake til admin-side
+      </Button>
       {events.map((event: any, idx: any) => (
         <Accordion
           expanded={expanded === `panel${idx}`}
@@ -141,7 +143,7 @@ const Fines: NextPage = ({
           </AccordionDetails>
         </Accordion>
       ))}
-    </Container>
+    </>
   );
 };
 

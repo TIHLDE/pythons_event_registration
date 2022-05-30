@@ -48,13 +48,17 @@ const Player = ({ player }: { player: IPlayer }) => {
     );
   };
 
-  const handleClose = async () => {
+  const handleClose = () => {
+    setContextMenu(null);
+  };
+
+  const removePlayer = async () => {
     const data = { active: false };
-    const res = await axios
+    await axios
       .put(`/api/players/${player.id}}`, { data: data })
       .then((res) => {
         router.replace(router.asPath);
-        setContextMenu(null);
+        handleClose();
       });
   };
 
@@ -82,7 +86,7 @@ const Player = ({ player }: { player: IPlayer }) => {
             : undefined
         }
       >
-        <MenuItem onClick={handleClose}>Fjern {player.name}</MenuItem>
+        <MenuItem onClick={removePlayer}>Fjern {player.name}</MenuItem>
       </Menu>
     </>
   );

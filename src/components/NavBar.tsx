@@ -23,6 +23,10 @@ const NavBar = () => {
       router.reload();
     }
   };
+
+  const toFrontPage = () => {
+    router.push("/");
+  };
   return (
     <Stack>
       {user ? (
@@ -47,7 +51,14 @@ const NavBar = () => {
         />
       )}
       <Stack direction="row" justifyContent={"center"} alignItems="center">
-        <Image src="/pythons.png" width={50} height={75.25} alt="Logo" />
+        <Image
+          src="/pythons.png"
+          width={50}
+          height={75.25}
+          alt="Logo"
+          onClick={toFrontPage}
+          style={{ cursor: "pointer" }}
+        />
       </Stack>
     </Stack>
   );

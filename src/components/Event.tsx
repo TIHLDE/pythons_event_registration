@@ -173,7 +173,7 @@ const Event = ({ eventDetails }: EventProps) => {
             onClick={handleOpenRegistratedPlayersModal}
             variant="body1"
           >
-            {eventDetails.willArrive?.length} påmeldte
+            {eventDetails.willArrive?.length} påmeldt
           </Typography>
         </a>
       </Stack>
@@ -184,7 +184,7 @@ const Event = ({ eventDetails }: EventProps) => {
             variant="body1"
             onClick={handleOpenDeregistratedPlayersModal}
           >
-            {eventDetails.willNotArrive?.length} avmeldte
+            {eventDetails.willNotArrive?.length} avmeldt
           </Typography>
         </a>
       </Stack>
@@ -194,7 +194,7 @@ const Event = ({ eventDetails }: EventProps) => {
           handleClose={handleCloseDeregistratedPlayersModal}
           open={openDeregistratedPlayersModal}
           registrations={eventDetails?.willNotArrive || []}
-          title="Avmeldte"
+          title="Avmeldt"
         />
       )}
       {openRegistratedPlayersModal && (
@@ -202,7 +202,7 @@ const Event = ({ eventDetails }: EventProps) => {
           handleClose={handleCloseRegistratedPlayersModal}
           open={openRegistratedPlayersModal}
           registrations={eventDetails?.willArrive || []}
-          title="Påmeldte"
+          title="Påmeldt"
         />
       )}
       {!openRegistration ? (
