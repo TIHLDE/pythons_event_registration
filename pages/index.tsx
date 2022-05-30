@@ -6,6 +6,7 @@ import { prisma } from "lib/prisma";
 import safeJsonStringify from "safe-json-stringify";
 import { IEvent } from "types";
 import { Typography } from "@mui/material";
+import Head from "next/head";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
@@ -54,14 +55,21 @@ const Home: NextPage = ({
   events,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
-    <Grid container spacing={4} sx={{ marginTop: 4 }}>
-      {!events.length && <Typography>Ingen kommende arrangementer</Typography>}
-      {events.map((event: IEvent) => (
-        <Grid key={event.id} item xs={12} sm={6} md={4} lg={3}>
-          <Event eventDetails={event} />
-        </Grid>
-      ))}
-    </Grid>
+    <>
+      <Head>
+        <title>Registrering - Pythons</title>
+      </Head>
+      <Grid container spacing={4} sx={{ marginTop: 4 }}>
+        {!events.length && (
+          <Typography>Ingen kommende arrangementer</Typography>
+        )}
+        {events.map((event: IEvent) => (
+          <Grid key={event.id} item xs={12} sm={6} md={4} lg={3}>
+            <Event eventDetails={event} />
+          </Grid>
+        ))}
+      </Grid>
+    </>
   );
 };
 

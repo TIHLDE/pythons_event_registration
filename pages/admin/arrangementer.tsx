@@ -14,6 +14,7 @@ import { useState } from "react";
 import EventModal from "components/EventModal";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
@@ -42,6 +43,9 @@ const Players: NextPage = ({
 
   return (
     <>
+      <Head>
+        <title>Arrangementer - Pythons</title>
+      </Head>
       <Button onClick={() => router.push("/admin")}>
         Tilbake til admin-side
       </Button>

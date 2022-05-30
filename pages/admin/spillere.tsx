@@ -9,6 +9,7 @@ import { prisma } from "lib/prisma";
 import PlayersList from "components/PlayersList";
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";
+import Head from "next/head";
 export const getServerSideProps: GetServerSideProps = async () => {
   const positions = await prisma.position.findMany({
     select: {
@@ -38,6 +39,9 @@ const Players: NextPage = ({
   const router = useRouter();
   return (
     <>
+      <Head>
+        <title>Spillere - Pythons</title>
+      </Head>
       <Button onClick={() => router.push("/admin")}>
         Tilbake til admin-side
       </Button>

@@ -16,6 +16,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
 import Button from "@mui/material/Button";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
@@ -102,6 +103,9 @@ const Fines: NextPage = ({
   };
   return (
     <>
+      <Head>
+        <title>Bøter - Pythons</title>
+      </Head>
       <Typography textAlign={"center"} variant="h3">
         Bøter 😈 👹
       </Typography>
