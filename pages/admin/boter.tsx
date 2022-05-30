@@ -105,6 +105,9 @@ const Fines: NextPage = ({
       <Typography textAlign={"center"} variant="h3">
         Bøter 😈 👹
       </Typography>
+      <Typography>
+        Viser bøter for arrangementer 2 uker tilbake i tid
+      </Typography>
       <Button onClick={() => router.push("/admin")}>
         Tilbake til admin-side
       </Button>
