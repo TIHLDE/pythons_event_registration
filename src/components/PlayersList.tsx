@@ -29,6 +29,8 @@ const Player = ({ player }: { player: IPlayer }) => {
     mouseY: number;
   } | null>(null);
 
+  const [editPlayer, setEditPlayer] = useState(false);
+
   const handleContextMenu = (event: {
     preventDefault: () => void;
     clientX: number;
@@ -62,6 +64,24 @@ const Player = ({ player }: { player: IPlayer }) => {
       });
   };
 
+  const change = () => {
+    setEditPlayer(true);
+    handleClose();
+  };
+
+  const { handleSubmit, control, reset } = useForm<FormDataProps>({
+    defaultValues: { name: player.name },
+  });
+
+  const onSubmit = async (formData: FormDataProps) => {
+    const data = { name: formData.name };
+    axios.put(`/api/players/${player.id}`, { data: data }).then((res) => {
+      setEditPlayer(false);
+      reset();
+      router.replace(router.asPath);
+    });
+  };
+
   return (
     <>
       <Stack
@@ -71,10 +91,38 @@ const Player = ({ player }: { player: IPlayer }) => {
         onContextMenu={handleContextMenu}
         style={{ cursor: "context-menu" }}
       >
-        <Avatar sx={{ width: 24, height: 24, backgroundColor: "#fff" }}>
-          {player.name.split(" ")[0][0]}
-        </Avatar>
-        <Typography variant="body1">{player.name}</Typography>
+        {editPlayer ? (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Controller
+              name={"name"}
+              control={control}
+              rules={{ required: "Spilleren må ha et navn" }}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  required
+                  onChange={onChange}
+                  value={value}
+                  label={"Navn"}
+                  size="small"
+                />
+              )}
+            />
+            <Button
+              size="small"
+              sx={{ textAlign: "left", justifyContent: "flex-start" }}
+              type="submit"
+            >
+              Oppdater
+            </Button>
+          </form>
+        ) : (
+          <>
+            <Avatar sx={{ width: 24, height: 24, backgroundColor: "#fff" }}>
+              {player.name.split(" ")[0][0]}
+            </Avatar>
+            <Typography variant="body1">{player.name}</Typography>
+          </>
+        )}
       </Stack>
       <Menu
         open={contextMenu !== null}
@@ -87,6 +135,7 @@ const Player = ({ player }: { player: IPlayer }) => {
         }
       >
         <MenuItem onClick={removePlayer}>Fjern {player.name}</MenuItem>
+        <MenuItem onClick={change}>Rediger</MenuItem>
       </Menu>
     </>
   );
