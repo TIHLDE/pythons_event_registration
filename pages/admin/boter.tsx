@@ -17,6 +17,7 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { Divider } from "@mui/material";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
@@ -63,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
             if (registration.updatedAt && registration.updatedAt > deadline) {
               return {
                 player: player,
-                reason: `Oppdaterte registrering ${format(
+                reason: `Oppdaterte registrering for sent ${format(
                   registration.updatedAt,
                   "dd.MM HH:mm"
                 )}`,
@@ -72,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
             if (registration.time > deadline) {
               return {
                 player: player,
-                reason: `Registrerte seg ${format(
+                reason: `Registrerte seg for sent - ${format(
                   registration.time,
                   "dd.MM HH:mm"
                 )}`,
@@ -140,9 +141,11 @@ const Fines: NextPage = ({
                 <>
                   <Grid item xs={4}>
                     <Typography variant="body1">{fine.player.name}</Typography>
+                    <Divider color="rgba(255, 255, 0,1.0)" />
                   </Grid>
                   <Grid item xs={8}>
                     <Typography variant="body1">{fine.reason}</Typography>
+                    <Divider color="rgba(255, 255, 0,1.0)" />
                   </Grid>
                 </>
               ))}
