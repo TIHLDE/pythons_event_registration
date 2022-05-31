@@ -22,6 +22,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         select: {
           id: true,
           name: true,
+          positionId: true,
         },
         orderBy: {
           name: "asc",

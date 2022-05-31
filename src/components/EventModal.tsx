@@ -48,7 +48,6 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
   const router = useRouter();
 
   const onSubmit = async (formData: FormDataProps) => {
-    console.log(formData);
     const data = {
       ...formData,
       time: new Date(formData.time),

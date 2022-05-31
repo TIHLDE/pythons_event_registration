@@ -1,5 +1,4 @@
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import { IEvent, IRegistrations } from "types";
 import Stack from "@mui/material/Stack";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
@@ -108,7 +107,6 @@ const Event = ({ eventDetails }: EventProps) => {
           willArrive: formData.registration === "1",
         })
         .then((res) => {
-          console.log(res);
           setOpenRegistration(false);
           router.replace(router.asPath);
         });

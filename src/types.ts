@@ -34,6 +34,7 @@ export type IPlayer = {
   name: string;
   createdAt: Date;
   registrations: IRegistrations[];
+  positionId: number;
 };
 
 export type IPosition = {

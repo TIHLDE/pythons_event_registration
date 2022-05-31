@@ -11,6 +11,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useModal } from "hooks/useModal";
+import ChangePositionModal from "./ChangePositionModal";
 
 export type PlayersListProps = {
   title: string;
@@ -30,6 +32,8 @@ const Player = ({ player }: { player: IPlayer }) => {
   } | null>(null);
 
   const [editPlayer, setEditPlayer] = useState(false);
+
+  const { modalOpen, handleOpenModal, handleCloseModal } = useModal(false);
 
   const handleContextMenu = (event: {
     preventDefault: () => void;
@@ -66,6 +70,11 @@ const Player = ({ player }: { player: IPlayer }) => {
 
   const change = () => {
     setEditPlayer(true);
+    handleClose();
+  };
+
+  const changePosition = () => {
+    handleOpenModal();
     handleClose();
   };
 
@@ -124,6 +133,16 @@ const Player = ({ player }: { player: IPlayer }) => {
           </>
         )}
       </Stack>
+      {modalOpen && (
+        <ChangePositionModal
+          player={player}
+          defaultValue={player.positionId}
+          handleClose={handleCloseModal}
+          title="Bytt posisjon"
+          open={modalOpen}
+          onConfirm={() => null}
+        />
+      )}
       <Menu
         open={contextMenu !== null}
         onClose={handleClose}
@@ -135,7 +154,8 @@ const Player = ({ player }: { player: IPlayer }) => {
         }
       >
         <MenuItem onClick={removePlayer}>Fjern {player.name}</MenuItem>
-        <MenuItem onClick={change}>Rediger</MenuItem>
+        <MenuItem onClick={change}>Endre navn</MenuItem>
+        <MenuItem onClick={changePosition}>Bytt posisjon</MenuItem>
       </Menu>
     </>
   );

@@ -13,3 +13,4 @@
 - [x] Move NavBar and Container etc to own component and to be used for every page
 - [x] See players that have not answered
 - [x] Move modal logic to hook
+- [x] Change position
