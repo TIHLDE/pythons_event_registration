@@ -9,6 +9,7 @@ export type IEvent = {
   eventTypeSlug: string;
   willArrive?: IRegistrations[];
   willNotArrive?: IRegistrations[];
+  hasNotResponded?: IRegistrations[];
 };
 
 export type IEventType = {

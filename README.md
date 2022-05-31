@@ -11,4 +11,5 @@
 - [x] Add page for getting fines to be registrated
 - [x] Make players inactive / remove players
 - [x] Move NavBar and Container etc to own component and to be used for every page
-- [ ] See players that have not answered
+- [x] See players that have not answered
+- [x] Move modal logic to hook

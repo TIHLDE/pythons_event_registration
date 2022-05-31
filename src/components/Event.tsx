@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PeopleIcon from "@mui/icons-material/People";
+import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Button from "@mui/material/Button";
 import useSWR from "swr";
@@ -23,6 +24,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import PlayersModal from "components/PlayersModal";
 import { nb } from "date-fns/locale";
+import { useModal } from "hooks/useModal";
 const useStyles = makeStyles((theme: Theme) => ({
   link: {
     cursor: "pointer",
@@ -44,19 +46,23 @@ type FormDataProps = {
 const Event = ({ eventDetails }: EventProps) => {
   const classes = useStyles();
 
-  const [openRegistratedPlayersModal, setOpenRegistratedPlayersModal] =
-    useState(false);
-  const handleOpenRegistratedPlayersModal = () =>
-    setOpenRegistratedPlayersModal(true);
-  const handleCloseRegistratedPlayersModal = () =>
-    setOpenRegistratedPlayersModal(false);
+  const {
+    modalOpen: openRegistratedPlayersModal,
+    handleOpenModal: handleOpenRegistratedPlayersModal,
+    handleCloseModal: handleCloseRegistratedPlayersModal,
+  } = useModal(false);
 
-  const [openDeregistratedPlayersModal, setOpenDeregistratedPlayersModal] =
-    useState(false);
-  const handleOpenDeregistratedPlayersModal = () =>
-    setOpenDeregistratedPlayersModal(true);
-  const handleCloseDeregistratedPlayersModal = () =>
-    setOpenDeregistratedPlayersModal(false);
+  const {
+    modalOpen: openDeregistratedPlayersModal,
+    handleOpenModal: handleOpenDeregistratedPlayersModal,
+    handleCloseModal: handleCloseDeregistratedPlayersModal,
+  } = useModal(false);
+  const {
+    modalOpen: openHasNotAnsweredModal,
+    handleOpenModal: handleOpenHasNotAnsweredModal,
+    handleCloseModal: handleCloseHasNotAnsweredModal,
+  } = useModal(false);
+
   const router = useRouter();
 
   const { data: user } = useSWR("user", (key) => {
@@ -86,7 +92,6 @@ const Event = ({ eventDetails }: EventProps) => {
   const watchRegistration: number | string | undefined = watch("registration");
 
   const [openRegistration, setOpenRegistration] = useState(false);
-
   const onSubmit = async (formData: FormDataProps) => {
     const data = {
       playerId: user.id,
@@ -97,7 +102,6 @@ const Event = ({ eventDetails }: EventProps) => {
       updatedAt: new Date(),
     };
     if (userHasRegistrated) {
-      console.log(data);
       axios
         .put(`/api/registration/${data.playerId}_${data.eventId}`, {
           data,
@@ -188,6 +192,14 @@ const Event = ({ eventDetails }: EventProps) => {
           </Typography>
         </a>
       </Stack>
+      <Stack direction="row" spacing={1}>
+        <QuestionMarkIcon />
+        <a className={classes.link}>
+          <Typography variant="body1" onClick={handleOpenHasNotAnsweredModal}>
+            {eventDetails.hasNotResponded?.length} har ikke svart
+          </Typography>
+        </a>
+      </Stack>
 
       {openDeregistratedPlayersModal && (
         <PlayersModal
@@ -202,6 +214,14 @@ const Event = ({ eventDetails }: EventProps) => {
           handleClose={handleCloseRegistratedPlayersModal}
           open={openRegistratedPlayersModal}
           registrations={eventDetails?.willArrive || []}
+          title="Påmeldt"
+        />
+      )}
+      {openHasNotAnsweredModal && (
+        <PlayersModal
+          handleClose={handleCloseHasNotAnsweredModal}
+          open={openHasNotAnsweredModal}
+          registrations={eventDetails?.hasNotResponded || []}
           title="Påmeldt"
         />
       )}

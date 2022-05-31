@@ -33,6 +33,12 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
   });
 
+  const players = await prisma.player.findMany({
+    where: {
+      active: true,
+    },
+  });
+
   const eventsWithArrivingList = res.map((event) => {
     const willArrive = event.registrations.filter(
       (registration) => registration.willArrive
@@ -40,7 +46,26 @@ export const getServerSideProps: GetServerSideProps = async () => {
     const willNotArrive = event.registrations.filter(
       (registration) => !registration.willArrive
     );
-    return { ...event, willArrive: willArrive, willNotArrive: willNotArrive };
+
+    const hasNotResponded = players
+      .map((player) => {
+        const willArriveIds = willArrive.map((p) => p.playerId);
+        const willNotArriveIds = willNotArrive.map((p) => p.playerId);
+        const playerHasResponded =
+          willArriveIds.includes(player.id) ||
+          willNotArriveIds.includes(player.id);
+
+        if (!playerHasResponded) {
+          return { player: player, playerId: player.id, willArrive: true };
+        }
+      })
+      .filter(Boolean);
+    return {
+      ...event,
+      willArrive: willArrive,
+      willNotArrive: willNotArrive,
+      hasNotResponded: hasNotResponded,
+    };
   });
 
   const events = JSON.parse(safeJsonStringify(eventsWithArrivingList));
