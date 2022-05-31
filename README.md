@@ -8,6 +8,7 @@
 - [x] See registrated players for event (modal)
 - [x] See deregistrated players for event (modal)
 - [ ] Add statistics
-- [ ] Add page for getting fines to be registrated
+- [x] Add page for getting fines to be registrated
 - [x] Make players inactive / remove players
-- [ ] Move NavBar and Container etc to own component and to be used for every page
+- [x] Move NavBar and Container etc to own component and to be used for every page
+- [ ] See players that have not answered

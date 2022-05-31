@@ -14,6 +14,7 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
+import { setMinutes } from "date-fns";
 
 export type EventModalProps = {
   event?: IEvent;
@@ -38,7 +39,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
       time:
         event && event.time
           ? format(new Date(event.time), dateTimeFormat)
-          : format(new Date(), dateTimeFormat),
+          : format(setMinutes(new Date(), 0), dateTimeFormat),
       location: event?.location || "",
     },
   });
