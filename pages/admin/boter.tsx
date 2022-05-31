@@ -116,6 +116,7 @@ const Fines: NextPage = ({
       <Button onClick={() => router.push("/admin")}>
         Tilbake til admin-side
       </Button>
+      {!events.length && <Typography>Ingen bøter å vise</Typography>}
       {events.map((event: any, idx: any) => (
         <Accordion
           expanded={expanded === `panel${idx}`}
