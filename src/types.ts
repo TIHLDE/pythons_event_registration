@@ -42,3 +42,11 @@ export type IPosition = {
   title: string;
   Player: IPlayer[];
 };
+
+export type INotification = {
+  id: number;
+  message: string;
+  expiringDate: Date;
+  author: IPlayer;
+  authorId: number;
+};

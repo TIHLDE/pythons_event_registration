@@ -18,6 +18,7 @@ model Player {
   position      Position        @relation(fields: [positionId], references: [id])
   positionId    Int
   active        Boolean         @default(true)
+  Notification  Notification[]
 }
 
 model Event {
@@ -54,4 +55,12 @@ model Position {
   id     Int      @id @default(autoincrement())
   title  String   @unique
   Player Player[]
+}
+
+model Notification {
+  id           Int      @id @default(autoincrement())
+  message      String
+  expiringDate DateTime
+  author       Player   @relation(fields: [authorId], references: [id])
+  authorId     Int
 }

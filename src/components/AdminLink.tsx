@@ -19,6 +19,7 @@ const AdminLink = ({ path, title, description }: AdminLinkProps) => {
           backgroundColor: "#532E7B",
           cursor: "pointer",
           borderRadius: "20px",
+          height: "100%",
         }}
       >
         <Typography variant="h5">{title}</Typography>

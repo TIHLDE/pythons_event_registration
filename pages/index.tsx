@@ -4,9 +4,10 @@ import Grid from "@mui/material/Grid";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { prisma } from "lib/prisma";
 import safeJsonStringify from "safe-json-stringify";
-import { IEvent } from "types";
+import { IEvent, INotification } from "types";
 import { Typography } from "@mui/material";
 import Head from "next/head";
+import AlertMessage from "components/AlertMessage";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
@@ -68,16 +69,31 @@ export const getServerSideProps: GetServerSideProps = async () => {
     };
   });
 
+  const notificationsQuery = await prisma.notification.findMany({
+    where: {
+      expiringDate: {
+        gt: new Date(),
+      },
+    },
+    include: {
+      author: true,
+    },
+  });
+
   const events = JSON.parse(safeJsonStringify(eventsWithArrivingList));
+  const notifications = JSON.parse(safeJsonStringify(notificationsQuery));
+
   return {
     props: {
       events,
+      notifications,
     },
   };
 };
 
 const Home: NextPage = ({
   events,
+  notifications,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <>
@@ -85,6 +101,12 @@ const Home: NextPage = ({
         <title>Registrering - Pythons</title>
       </Head>
       <Grid container spacing={4} sx={{ marginTop: 4 }}>
+        {notifications.map((notification: INotification) => (
+          <Grid key={notification.id} item xs={12}>
+            <AlertMessage notification={notification} />
+          </Grid>
+        ))}
+
         {!events.length && (
           <Typography>Ingen kommende arrangementer</Typography>
         )}
