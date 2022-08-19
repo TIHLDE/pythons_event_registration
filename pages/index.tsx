@@ -5,9 +5,10 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { prisma } from "lib/prisma";
 import safeJsonStringify from "safe-json-stringify";
 import { IEvent, INotification } from "types";
-import { Typography } from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 import Head from "next/head";
 import AlertMessage from "components/AlertMessage";
+import useSWR from "swr";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
@@ -98,6 +99,10 @@ const Home: NextPage = ({
   events,
   notifications,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const { data: user } = useSWR("user", (key) => {
+    const value = localStorage.getItem(key);
+    return !!value ? JSON.parse(value) : undefined;
+  });
   return (
     <>
       <Head>
@@ -109,7 +114,16 @@ const Home: NextPage = ({
             <AlertMessage notification={notification} />
           </Grid>
         ))}
-
+        {!user && (
+          <>
+            <Typography>
+              For å logge inn må du velge navnet ditt fra listen oppe til
+              venstre. Dersom du ikke er på listen må du kontakte Filip, Jakob
+              eller Kristian
+            </Typography>
+            <Divider sx={{ width: "100%", backgroundColor: "white" }} />
+          </>
+        )}
         {!events.length && (
           <Typography>Ingen kommende arrangementer</Typography>
         )}

@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "push": "npx prisma db push",
-    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
+    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
+    "fixtures": "npx fixtures ./src/fixtures",
+    "createdb": "docker run --name event_registration -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres",
+    "fresh": "docker rm -f -v event_registration && yarn createdb && sleep 1 && yarn push && npx prisma generate && yarn fixtures"
   },
   "dependencies": {
     "@emotion/cache": "latest",
@@ -18,7 +21,7 @@
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
     "@mui/styles": "^5.5.3",
-    "@prisma/client": "^3.11.1",
+    "@prisma/client": "^4.2.1",
     "@types/lodash": "^4.14.181",
     "@types/safe-json-stringify": "^1.1.2",
     "axios": "^0.26.1",
@@ -26,7 +29,7 @@
     "http-status-typed": "^1.0.1",
     "lodash": "^4.17.21",
     "next": "latest",
-    "prisma": "^3.11.1",
+    "prisma": "^4.2.1",
     "react": "latest",
     "react-dom": "latest",
     "react-hook-form": "^7.29.0",
@@ -36,6 +39,7 @@
     "ts-node": "^10.7.0"
   },
   "devDependencies": {
+    "@getbigger-io/prisma-fixtures-cli": "^2.0.1",
     "@types/node": "^17.0.23",
     "@types/react": "latest",
     "eslint": "latest",

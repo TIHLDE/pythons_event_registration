@@ -1,0 +1,14 @@
+entity: position
+items:
+  keeper:
+    title: Keeper
+  back:
+    title: Back
+  midtstopper:
+    title: Midstopper
+  midtbane:
+    title: Midtbane
+  ving:
+    title: Ving
+  spiss:
+    title: Spiss
