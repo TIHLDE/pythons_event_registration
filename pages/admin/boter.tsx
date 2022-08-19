@@ -107,15 +107,16 @@ const Fines: NextPage = ({
       <Head>
         <title>Bøter - Pythons</title>
       </Head>
-      <Typography textAlign={"center"} variant="h3">
+      <Typography textAlign={"center"} variant="h4" sx={{ marginTop: "2rem" }}>
         Bøter 😈 👹
-      </Typography>
-      <Typography>
-        Viser bøter for arrangementer 2 uker tilbake i tid
       </Typography>
       <Button onClick={() => router.push("/admin")}>
         Tilbake til admin-side
       </Button>
+      <Typography>
+        Viser bøter for arrangementer 2 uker tilbake i tid
+      </Typography>
+      <Divider sx={{ width: "100%", backgroundColor: "white" }} />
       {!events.length && <Typography>Ingen bøter å vise</Typography>}
       {events.map((event: any, idx: any) => (
         <Accordion
