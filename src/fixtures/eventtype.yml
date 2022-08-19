@@ -1,0 +1,11 @@
+entity: EventType
+items:
+  trening:
+    slug: trening
+    name: Trening
+  match:
+    slug: match
+    name: Match
+  sosialt:
+    slug: sosialt
+    name: Sosialt

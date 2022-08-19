@@ -6,7 +6,8 @@ import { IRegistrations, IPosition, IPlayer } from "types";
 import filter from "lodash/filter";
 import useSWR from "swr";
 import { fetcher } from "utils";
-import { Divider, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
+
 import Image from "next/image";
 
 export type PlayersModalProps = {
@@ -39,6 +40,8 @@ const PlayersModal = ({
           position: "absolute",
           top: "50%",
           left: "50%",
+          maxWidth: "90%",
+          maxHeight: "90%",
           transform: "translate(-50%, -50%)",
           width: 400,
           bgcolor: "background.paper",
@@ -53,11 +56,10 @@ const PlayersModal = ({
         </Stack>
         {groupedPlayers?.map((pos: any) => (
           <Stack key={pos.id} spacing={1}>
-            <Divider />
             <Typography sx={{ fontWeight: "bold" }} variant="body1">
               {pos.title} ({pos.players.length})
             </Typography>
-            <Grid container>
+            <Grid container justifyContent="space-between" rowSpacing={2}>
               {pos.players.map((registration: IRegistrations) => (
                 <Grid item xs={6}>
                   <Typography variant="body2">
