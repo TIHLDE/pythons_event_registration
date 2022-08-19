@@ -75,6 +75,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
         gt: new Date(),
       },
     },
+    orderBy: {
+      expiringDate: "asc",
+    },
     include: {
       author: true,
     },
