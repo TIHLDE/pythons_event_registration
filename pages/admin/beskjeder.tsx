@@ -1,9 +1,8 @@
-import { Grid } from '@mui/material';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
+import { Button, Stack, Typography } from '@mui/material';
 import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
+import Link from 'next/link';
 import { useState } from 'react';
 import safeJsonStringify from 'safe-json-stringify';
 
@@ -39,29 +38,21 @@ const Messages: NextPage = ({ messages }: InferGetServerSidePropsType<typeof get
     setNewMessage(false);
   };
   return (
-    <Stack direction='column' spacing={2} sx={{ marginTop: 2 }}>
-      <Button disabled={newMessage} onClick={() => setNewMessage(true)}>
+    <Stack direction='column' gap={1}>
+      <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
+        <Typography variant='h2'>Beskjeder</Typography>
+        <Link href='/admin' passHref>
+          <Button component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+            Til admin
+          </Button>
+        </Link>
+      </Stack>
+      <Button disabled={newMessage} onClick={() => setNewMessage(true)} variant='contained'>
         Opprett ny beskjed
       </Button>
       {newMessage && <NewMessage handleClose={handleClose} />}
       {messages.length ? (
-        <Grid container>
-          <Grid item xs={3}>
-            <Typography fontWeight={'bold'}>Beskjeder:</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography fontWeight={'bold'}>Forfatter:</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography fontWeight={'bold'}>Utgår:</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography fontWeight={'bold'}>Handlinger:</Typography>
-          </Grid>
-          {messages.map((notification: INotification) => (
-            <AdminMessage key={notification.id} notification={notification} />
-          ))}
-        </Grid>
+        messages.map((notification: INotification) => <AdminMessage key={notification.id} notification={notification} />)
       ) : (
         <Typography>Ingen å vise</Typography>
       )}

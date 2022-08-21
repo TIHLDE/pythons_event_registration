@@ -1,10 +1,11 @@
-import AddIcon from '@mui/icons-material/Add';
-import { Button, ButtonBase, Stack, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/AddRounded';
+import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
+import { Button, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { prisma } from 'lib/prisma';
 import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { useState } from 'react';
 import safeJsonStringify from 'safe-json-stringify';
 
@@ -34,14 +35,20 @@ const Players: NextPage = ({ events }: InferGetServerSidePropsType<typeof getSer
   const [newEventModal, setNewEventModal] = useState(false);
   const handleOpenNewEventModal = () => setNewEventModal(true);
   const handleCloseNewEventModal = () => setNewEventModal(false);
-  const router = useRouter();
 
   return (
     <>
       <Head>
         <title>Arrangementer - Pythons</title>
       </Head>
-      <Button onClick={() => router.push('/admin')}>Tilbake til admin-side</Button>
+      <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
+        <Typography variant='h2'>Arrangementer</Typography>
+        <Link href='/admin' passHref>
+          <Button component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+            Til admin
+          </Button>
+        </Link>
+      </Stack>
       {newEventModal && <EventModal handleClose={handleCloseNewEventModal} open={newEventModal} title={'Nytt arrangement'} />}
       <Grid container spacing={4}>
         {events.map((event: IEvent) => (
@@ -50,12 +57,9 @@ const Players: NextPage = ({ events }: InferGetServerSidePropsType<typeof getSer
           </Grid>
         ))}
         <Grid item md={3} sm={4} xs={12}>
-          <ButtonBase onClick={handleOpenNewEventModal}>
-            <Stack direction={'column'}>
-              <AddIcon color='secondary' fontSize='large' />
-              <Typography>Nytt arrangement</Typography>
-            </Stack>
-          </ButtonBase>
+          <Button color='secondary' onClick={handleOpenNewEventModal} startIcon={<AddIcon />} variant='outlined'>
+            Nytt arrangement
+          </Button>
         </Grid>
       </Grid>
     </>

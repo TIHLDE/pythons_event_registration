@@ -1,9 +1,9 @@
-import { Button } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { prisma } from 'lib/prisma';
 import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 import { IPosition } from 'types';
 
@@ -34,20 +34,24 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 const Players: NextPage = ({ positions }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const router = useRouter();
   return (
     <>
       <Head>
         <title>Spillere - Pythons</title>
       </Head>
-      <Button onClick={() => router.push('/admin')}>Tilbake til admin-side</Button>
-      <Grid container sx={{ marginTop: 4 }}>
+      <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
+        <Typography variant='h2'>Spillere</Typography>
+        <Link href='/admin' passHref>
+          <Button component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+            Til admin
+          </Button>
+        </Link>
+      </Stack>
+      <Box gap={1} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' } }}>
         {positions.map((position: IPosition) => (
-          <Grid item key={position.id} sm={2} xs={12}>
-            <PlayersList id={position.id} key={position.id} players={position.Player} title={position.title} />
-          </Grid>
+          <PlayersList id={position.id} key={position.id} players={position.Player} title={position.title} />
         ))}
-      </Grid>
+      </Box>
     </>
   );
 };

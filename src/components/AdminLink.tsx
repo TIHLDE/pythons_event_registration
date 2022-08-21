@@ -14,14 +14,13 @@ const AdminLink = ({ path, title, description }: AdminLinkProps) => {
       <Stack
         spacing={1}
         sx={{
-          padding: 2,
-          width: '80%',
+          p: 2,
           backgroundColor: '#532E7B',
           cursor: 'pointer',
-          borderRadius: '20px',
+          borderRadius: 1,
           height: '100%',
         }}>
-        <Typography variant='h5'>{title}</Typography>
+        <Typography variant='h2'>{title}</Typography>
         <Typography variant='body1'>{description}</Typography>
       </Stack>
     </Link>

@@ -41,7 +41,7 @@ export default function MyApp(props: MyAppProps) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Container maxWidth='lg' sx={{ padding: 4 }}>
+        <Container maxWidth='lg' sx={{ padding: 2 }}>
           <NavBar />
           {isValidating ? null : user ? <Component {...pageProps} /> : <SignIn />}
         </Container>

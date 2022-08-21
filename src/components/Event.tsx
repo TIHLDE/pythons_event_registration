@@ -64,7 +64,7 @@ const Event = ({ eventDetails }: EventProps) => {
   const userHasRegistrated = Boolean(userRegistration);
   const { handleSubmit, control, watch } = useForm<FormDataProps>({
     defaultValues: {
-      registration: -1,
+      registration: userRegistration ? (userRegistration.willArrive ? '1' : '0') : '1',
       reason: userRegistration?.reason || '',
     },
   });
@@ -106,6 +106,7 @@ const Event = ({ eventDetails }: EventProps) => {
 
   const backgroundColor = eventDetails.type.slug === 'trening' ? '#3A2056' : eventDetails.type.slug === 'kamp' ? '#552056' : '#563A20';
 
+  console.log(userRegistration);
   return (
     <Stack
       gap={1}
@@ -127,7 +128,7 @@ const Event = ({ eventDetails }: EventProps) => {
       )}
       {!userRegistration?.willArrive && userRegistration?.reason && (
         <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
-          😓 Du er avmeldt
+          😓 Du er avmeldt: {userRegistration.reason}
         </Typography>
       )}
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>

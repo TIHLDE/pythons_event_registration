@@ -22,18 +22,18 @@ const ConfirmModal = ({ open, handleClose, title, onConfirm }: EventModalProps) 
           transform: 'translate(-50%, -50%)',
           width: 400,
           bgcolor: 'background.paper',
-          border: '2px solid #000',
-          boxShadow: 24,
-          p: 4,
+          border: '1px solid white',
+          p: 2,
+          borderRadius: 1,
         }}>
-        <Stack spacing={2}>
-          <Typography variant='h5'>{title}</Typography>
+        <Stack gap={2}>
+          <Typography variant='h2'>{title}</Typography>
           <Typography variant='body1'>Er du sikker på at du vil slette arrangementet?</Typography>
           <Stack direction='row' justifyContent='space-between' spacing={1}>
             <Button color='error' onClick={handleClose}>
               Nei
             </Button>
-            <Button color='success' onClick={onConfirm}>
+            <Button color='success' onClick={onConfirm} variant='contained'>
               Ja
             </Button>
           </Stack>

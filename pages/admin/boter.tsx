@@ -1,5 +1,6 @@
+import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Divider } from '@mui/material';
+import { Divider, Stack } from '@mui/material';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -10,7 +11,7 @@ import { format, subDays, subHours } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { Fragment, useState } from 'react';
 import rules from 'rules';
 import safeJsonStringify from 'safe-json-stringify';
@@ -80,7 +81,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
 const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [expanded, setExpanded] = useState('');
-  const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (panel: any) => (_: any, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
@@ -90,43 +90,51 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
       <Head>
         <title>Bøter - Pythons</title>
       </Head>
-      <Typography sx={{ marginTop: '2rem' }} textAlign={'center'} variant='h4'>
-        Bøter 😈 👹
-      </Typography>
-      <Button onClick={() => router.push('/admin')}>Tilbake til admin-side</Button>
-      <Typography>Viser bøter for arrangementer 2 uker tilbake i tid</Typography>
-      <Divider sx={{ width: '100%', backgroundColor: 'white' }} />
-      {!events.length && <Typography>Ingen bøter å vise</Typography>}
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      {events.map((event: any, idx: number) => (
-        <Accordion expanded={expanded === `panel${idx}`} key={idx} onChange={handleChange(`panel${idx}`)}>
-          <AccordionSummary aria-controls='panel1bh-content' expandIcon={<ExpandMoreIcon />} id='panel1bh-header'>
-            <Typography sx={{ width: '33%', flexShrink: 0 }}>
-              {event.title || 'Trening'}
-              {'  '}
-              {format(new Date(event.time), 'dd.MM HH:mm')}
-            </Typography>
-            <Typography sx={{ color: 'text.secondary' }}>{event.fines.length} bøter</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Grid container>
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {event.fines.map((fine: any) => (
-                <Fragment key={fine.player.id}>
-                  <Grid item xs={4}>
-                    <Typography variant='body1'>{fine.player.name}</Typography>
-                    <Divider color='rgba(255, 255, 0,1.0)' />
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Typography variant='body1'>{fine.reason}</Typography>
-                    <Divider color='rgba(255, 255, 0,1.0)' />
-                  </Grid>
-                </Fragment>
-              ))}
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-      ))}
+      <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
+        <Typography variant='h2'>Bøter 😈 👹</Typography>
+        <Link href='/admin' passHref>
+          <Button component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+            Til admin
+          </Button>
+        </Link>
+      </Stack>
+      <Typography sx={{ mb: 1 }}>Viser bøter for arrangementer 2 uker tilbake i tid</Typography>
+      <div>
+        {!events.length && <Typography>Ingen bøter å vise</Typography>}
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        {events.map((event: any, idx: number) => (
+          <Accordion expanded={expanded === `panel${idx}`} key={idx} onChange={handleChange(`panel${idx}`)}>
+            <AccordionSummary aria-controls='panel1bh-content' expandIcon={<ExpandMoreIcon />} id='panel1bh-header'>
+              <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                {event.title || 'Trening'}
+                {'  '}
+                {format(new Date(event.time), 'dd.MM HH:mm')}
+              </Typography>
+              <Typography sx={{ color: 'text.secondary', ml: 1 }}>{event.fines.length} bøter</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container>
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {event.fines.map((fine: any, index: number) => (
+                  <Fragment key={fine.player.id}>
+                    <Grid item xs={5}>
+                      <Typography variant='body1'>{fine.player.name}</Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography variant='body1'>{fine.reason}</Typography>
+                    </Grid>
+                    {index + 1 !== event.fines.length && (
+                      <Grid item xs={12}>
+                        <Divider />
+                      </Grid>
+                    )}
+                  </Fragment>
+                ))}
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </div>
     </>
   );
 };

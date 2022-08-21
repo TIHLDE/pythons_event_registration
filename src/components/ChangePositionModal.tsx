@@ -51,13 +51,13 @@ const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositio
           transform: 'translate(-50%, -50%)',
           width: 400,
           bgcolor: 'background.paper',
-          border: '2px solid #000',
-          boxShadow: 24,
-          p: 4,
+          border: '1px solid white',
+          p: 2,
+          borderRadius: 1,
         }}>
-        <Stack spacing={2}>
+        <Stack gap={2}>
           <Typography variant='h5'>{title}</Typography>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
             <FormControl fullWidth>
               <InputLabel id='demo-simple-select-label'>Posisjon</InputLabel>
               <Controller
@@ -74,15 +74,15 @@ const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositio
                 )}
               />
             </FormControl>
-            <Stack direction='row' justifyContent='space-between' spacing={1}>
+            <Stack direction='row' gap={1} justifyContent='space-between'>
               <Button color='error' onClick={handleClose}>
                 Avbryt
               </Button>
-              <Button color='success' type='submit'>
+              <Button color='success' type='submit' variant='contained'>
                 Bytt posisjon
               </Button>
             </Stack>
-          </form>
+          </Stack>
         </Stack>
       </Stack>
     </Modal>

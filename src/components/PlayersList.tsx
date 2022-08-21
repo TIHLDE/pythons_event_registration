@@ -1,5 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
-import Avatar from '@mui/material/Avatar';
+import MoreVertIcon from '@mui/icons-material/MoreVertRounded';
+import { Divider, IconButton } from '@mui/material';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -91,23 +92,23 @@ const Player = ({ player }: { player: IPlayer }) => {
   return (
     <>
       <Stack direction='row' key={player.id} onContextMenu={handleContextMenu} spacing={1} style={{ cursor: 'context-menu' }}>
+        <IconButton id='long-button' onClick={handleContextMenu} size='small' sx={{ width: 24, height: 24 }}>
+          <MoreVertIcon />
+        </IconButton>
         {editPlayer ? (
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack component='form' gap={0.5} onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
             <Controller
               control={control}
               name={'name'}
               render={({ field: { onChange, value } }) => <TextField label={'Navn'} onChange={onChange} required size='small' value={value} />}
               rules={{ required: 'Spilleren må ha et navn' }}
             />
-            <Button size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }} type='submit'>
+            <Button size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }} type='submit' variant='contained'>
               Oppdater
             </Button>
-          </form>
+          </Stack>
         ) : (
-          <>
-            <Avatar sx={{ width: 24, height: 24, backgroundColor: '#fff' }}>{player.name.split(' ')[0][0]}</Avatar>
-            <Typography variant='body1'>{player.name}</Typography>
-          </>
+          <Typography variant='body1'>{player.name}</Typography>
         )}
       </Stack>
       {modalOpen && (
@@ -148,30 +149,35 @@ const PlayersList = ({ title, id, players }: PlayersListProps) => {
   };
 
   return (
-    <Stack spacing={1}>
-      <Typography variant='h5'>
-        {title} ({players.length})
-      </Typography>
-      {players.map((player: IPlayer) => (
-        <Player key={player.id} player={player} />
-      ))}
-      {openNewPlayerField ? (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Controller
-            control={control}
-            name={'name'}
-            render={({ field: { onChange, value } }) => <TextField label={'Navn'} onChange={onChange} required size='small' value={value} />}
-            rules={{ required: 'Spilleren må ha et navn' }}
-          />
-          <Button size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }} type='submit'>
-            Legg til
+    <Stack gap={1} justifyContent='space-between' sx={{ flex: 1, borderRadius: 1, border: '1px solid white', p: 1 }}>
+      <Stack gap={1}>
+        <Typography variant='h3'>
+          {title} ({players.length})
+        </Typography>
+        {players.map((player: IPlayer) => (
+          <Player key={player.id} player={player} />
+        ))}
+      </Stack>
+      <Stack gap={1}>
+        <Divider sx={{ mt: 1 }} />
+        {openNewPlayerField ? (
+          <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
+            <Controller
+              control={control}
+              name={'name'}
+              render={({ field: { onChange, value } }) => <TextField label={'Navn'} onChange={onChange} required size='small' value={value} />}
+              rules={{ required: 'Spilleren må ha et navn' }}
+            />
+            <Button size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }} type='submit' variant='contained'>
+              Legg til
+            </Button>
+          </Stack>
+        ) : (
+          <Button onClick={() => setOpenNewPlayerField(true)} size='small' startIcon={<AddIcon />} sx={{ textAlign: 'left', justifyContent: 'flex-start' }}>
+            Ny spiller
           </Button>
-        </form>
-      ) : (
-        <Button onClick={() => setOpenNewPlayerField(true)} size='small' startIcon={<AddIcon />} sx={{ textAlign: 'left', justifyContent: 'flex-start' }}>
-          Ny spiller
-        </Button>
-      )}
+        )}
+      </Stack>
     </Stack>
   );
 };

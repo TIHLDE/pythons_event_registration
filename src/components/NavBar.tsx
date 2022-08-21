@@ -14,7 +14,7 @@ const NavBar = () => {
   });
 
   return (
-    <Stack gap={2}>
+    <Stack gap={2} sx={{ mb: 2 }}>
       <Stack direction='row' gap={2} justifyContent='space-between'>
         <Typography sx={{ fontSize: '1rem', display: 'flex', alignItems: 'center' }} variant='h3'>
           {user ? `🏋️‍♂️ ${user.name}` : `Du er ikke innlogget`}

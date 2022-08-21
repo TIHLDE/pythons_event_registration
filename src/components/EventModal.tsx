@@ -1,3 +1,4 @@
+import { FormControl } from '@mui/material';
 import Button from '@mui/material/Button';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -73,53 +74,37 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
           transform: 'translate(-50%, -50%)',
           width: 400,
           bgcolor: 'background.paper',
-          border: '2px solid #000',
-          boxShadow: 24,
-          p: 4,
+          border: '1px solid white',
+          p: 2,
+          borderRadius: 1,
         }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={2}>
-            <Typography variant='h5'>{title}</Typography>
+            <Typography variant='h2'>{title}</Typography>
             <Controller
               control={control}
               name='eventTypeSlug'
               render={({ field }) => (
-                <>
-                  <InputLabel id='selectType'>Type</InputLabel>
-                  <Select id='selectType' placeholder='Type arrangement' required {...field} label='Type'>
+                <FormControl fullWidth>
+                  <InputLabel id='selectType-label'>Type</InputLabel>
+                  <Select id='selectType' labelId='selectType-label' required {...field} label='Type'>
                     {eventTypes?.map((eventType: IEventType) => (
                       <MenuItem key={eventType.slug} value={eventType.slug}>
                         {eventType.name}
                       </MenuItem>
                     ))}
                   </Select>
-                </>
+                </FormControl>
               )}
             />
             {watchEventType && watchEventType !== 'trening' && (
               <Controller control={control} name='title' render={({ field }) => <TextField label={'Tittel'} placeholder='Tittel' required {...field} />} />
             )}
-            <Controller
-              control={control}
-              name='time'
-              render={({ field: { onChange, value } }) => (
-                <>
-                  <InputLabel id='time'>Tid</InputLabel>
-                  <input
-                    id='time'
-                    onChange={onChange}
-                    style={{
-                      backgroundColor: 'transparent',
-                      color: 'white',
-                      height: '30px',
-                    }}
-                    type='datetime-local'
-                    value={value}></input>
-                </>
-              )}
-            />
+            <Controller control={control} name='time' render={({ field }) => <TextField label={'Tidspunkt'} required type='datetime-local' {...field} />} />
             <Controller control={control} name='location' render={({ field }) => <TextField label={'Sted'} placeholder='Sted' required {...field} />} />
-            <Button type='submit'>{event ? 'Oppdater' : 'Opprett'}</Button>
+            <Button type='submit' variant='contained'>
+              {event ? 'Oppdater' : 'Opprett'}
+            </Button>
           </Stack>
         </form>
       </Stack>

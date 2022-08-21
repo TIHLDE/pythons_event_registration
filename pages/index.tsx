@@ -96,7 +96,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
       <Head>
         <title>Registrering - Pythons</title>
       </Head>
-      <Grid container spacing={2} sx={{ marginTop: 2 }}>
+      <Grid container spacing={2}>
         {notifications.map((notification: INotification) => (
           <Grid item key={notification.id} xs={12}>
             <AlertMessage notification={notification} />
