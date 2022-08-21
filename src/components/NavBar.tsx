@@ -1,31 +1,32 @@
-import Stack from "@mui/material/Stack";
-import Image from "next/image";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import { IPlayer } from "types";
-import useSWR from "swr";
-import Typography from "@mui/material/Typography";
-import { useRouter } from "next/router";
-import { fetcher } from "utils";
+import Autocomplete from '@mui/material/Autocomplete';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import useSWR from 'swr';
+import { fetcher } from 'utils';
+
+import { IPlayer } from 'types';
 
 const NavBar = () => {
   const router = useRouter();
-  const { data: players } = useSWR("/api/players", fetcher);
+  const { data: players } = useSWR('/api/players', fetcher);
 
-  const { data: user } = useSWR("user", (key) => {
+  const { data: user } = useSWR('user', (key) => {
     const value = localStorage.getItem(key);
     return !!value ? JSON.parse(value) : undefined;
   });
 
   const onPlayerSelect = (player: IPlayer | null) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("user", JSON.stringify(player));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(player));
       router.reload();
     }
   };
 
   const toFrontPage = () => {
-    router.push("/");
+    router.push('/');
   };
   return (
     <Stack>
@@ -34,31 +35,18 @@ const NavBar = () => {
       ) : (
         <Autocomplete
           disablePortal
-          id="combo-box-demo"
-          options={players || []}
           getOptionLabel={(option: IPlayer) => option.name}
-          sx={{ width: 300, color: "text.primary" }}
-          noOptionsText="Ingen spillere"
-          size="small"
+          id='combo-box-demo'
+          noOptionsText='Ingen spillere'
           onChange={(e, value) => onPlayerSelect(value)}
-          renderInput={(params) => (
-            <TextField
-              sx={{ background: "transparent", color: "white" }}
-              {...params}
-              label="Spiller"
-            />
-          )}
+          options={players || []}
+          renderInput={(params) => <TextField sx={{ background: 'transparent', color: 'white' }} {...params} label='Spiller' />}
+          size='small'
+          sx={{ width: 300, color: 'text.primary' }}
         />
       )}
-      <Stack direction="row" justifyContent={"center"} alignItems="center">
-        <Image
-          src="/pythons.png"
-          width={50}
-          height={75.25}
-          alt="Logo"
-          onClick={toFrontPage}
-          style={{ cursor: "pointer" }}
-        />
+      <Stack alignItems='center' direction='row' justifyContent={'center'}>
+        <Image alt='Logo' height={75.25} onClick={toFrontPage} src='/pythons.png' style={{ cursor: 'pointer' }} width={50} />
       </Stack>
     </Stack>
   );

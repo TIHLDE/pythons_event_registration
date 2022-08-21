@@ -1,18 +1,21 @@
-import Stack from "@mui/material/Stack";
-import Avatar from "@mui/material/Avatar";
-import Typography from "@mui/material/Typography";
-import { IPlayer } from "types";
-import { useState } from "react";
-import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
-import { Controller, useForm } from "react-hook-form";
-import TextField from "@mui/material/TextField";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { useModal } from "hooks/useModal";
-import ChangePositionModal from "./ChangePositionModal";
+import AddIcon from '@mui/icons-material/Add';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+
+import { IPlayer } from 'types';
+
+import { useModal } from 'hooks/useModal';
+
+import ChangePositionModal from 'components/ChangePositionModal';
 
 export type PlayersListProps = {
   title: string;
@@ -35,11 +38,7 @@ const Player = ({ player }: { player: IPlayer }) => {
 
   const { modalOpen, handleOpenModal, handleCloseModal } = useModal(false);
 
-  const handleContextMenu = (event: {
-    preventDefault: () => void;
-    clientX: number;
-    clientY: number;
-  }) => {
+  const handleContextMenu = (event: { preventDefault: () => void; clientX: number; clientY: number }) => {
     event.preventDefault();
     setContextMenu(
       contextMenu === null
@@ -50,7 +49,7 @@ const Player = ({ player }: { player: IPlayer }) => {
         : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
           // Other native context menus might behave different.
           // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-          null
+          null,
     );
   };
 
@@ -60,12 +59,10 @@ const Player = ({ player }: { player: IPlayer }) => {
 
   const removePlayer = async () => {
     const data = { active: false };
-    await axios
-      .put(`/api/players/${player.id}}`, { data: data })
-      .then((res) => {
-        router.replace(router.asPath);
-        handleClose();
-      });
+    await axios.put(`/api/players/${player.id}}`, { data: data }).then(() => {
+      router.replace(router.asPath);
+      handleClose();
+    });
   };
 
   const change = () => {
@@ -84,7 +81,7 @@ const Player = ({ player }: { player: IPlayer }) => {
 
   const onSubmit = async (formData: FormDataProps) => {
     const data = { name: formData.name };
-    axios.put(`/api/players/${player.id}`, { data: data }).then((res) => {
+    axios.put(`/api/players/${player.id}`, { data: data }).then(() => {
       setEditPlayer(false);
       reset();
       router.replace(router.asPath);
@@ -93,66 +90,41 @@ const Player = ({ player }: { player: IPlayer }) => {
 
   return (
     <>
-      <Stack
-        key={player.id}
-        direction="row"
-        spacing={1}
-        onContextMenu={handleContextMenu}
-        style={{ cursor: "context-menu" }}
-      >
+      <Stack direction='row' key={player.id} onContextMenu={handleContextMenu} spacing={1} style={{ cursor: 'context-menu' }}>
         {editPlayer ? (
           <form onSubmit={handleSubmit(onSubmit)}>
             <Controller
-              name={"name"}
               control={control}
-              rules={{ required: "Spilleren må ha et navn" }}
-              render={({ field: { onChange, value } }) => (
-                <TextField
-                  required
-                  onChange={onChange}
-                  value={value}
-                  label={"Navn"}
-                  size="small"
-                />
-              )}
+              name={'name'}
+              render={({ field: { onChange, value } }) => <TextField label={'Navn'} onChange={onChange} required size='small' value={value} />}
+              rules={{ required: 'Spilleren må ha et navn' }}
             />
-            <Button
-              size="small"
-              sx={{ textAlign: "left", justifyContent: "flex-start" }}
-              type="submit"
-            >
+            <Button size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }} type='submit'>
               Oppdater
             </Button>
           </form>
         ) : (
           <>
-            <Avatar sx={{ width: 24, height: 24, backgroundColor: "#fff" }}>
-              {player.name.split(" ")[0][0]}
-            </Avatar>
-            <Typography variant="body1">{player.name}</Typography>
+            <Avatar sx={{ width: 24, height: 24, backgroundColor: '#fff' }}>{player.name.split(' ')[0][0]}</Avatar>
+            <Typography variant='body1'>{player.name}</Typography>
           </>
         )}
       </Stack>
       {modalOpen && (
         <ChangePositionModal
-          player={player}
           defaultValue={player.positionId}
           handleClose={handleCloseModal}
-          title="Bytt posisjon"
-          open={modalOpen}
           onConfirm={() => null}
+          open={modalOpen}
+          player={player}
+          title='Bytt posisjon'
         />
       )}
       <Menu
-        open={contextMenu !== null}
+        anchorPosition={contextMenu !== null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
+        anchorReference='anchorPosition'
         onClose={handleClose}
-        anchorReference="anchorPosition"
-        anchorPosition={
-          contextMenu !== null
-            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-            : undefined
-        }
-      >
+        open={contextMenu !== null}>
         <MenuItem onClick={removePlayer}>Fjern {player.name}</MenuItem>
         <MenuItem onClick={change}>Endre navn</MenuItem>
         <MenuItem onClick={changePosition}>Bytt posisjon</MenuItem>
@@ -168,7 +140,7 @@ const PlayersList = ({ title, id, players }: PlayersListProps) => {
 
   const onSubmit = async (formData: FormDataProps) => {
     const data = { name: formData.name, positionId: id };
-    axios.post("/api/players", { data: data }).then((res) => {
+    axios.post('/api/players', { data: data }).then(() => {
       setOpenNewPlayerField(false);
       reset();
       router.replace(router.asPath);
@@ -177,7 +149,7 @@ const PlayersList = ({ title, id, players }: PlayersListProps) => {
 
   return (
     <Stack spacing={1}>
-      <Typography variant="h5">
+      <Typography variant='h5'>
         {title} ({players.length})
       </Typography>
       {players.map((player: IPlayer) => (
@@ -186,34 +158,17 @@ const PlayersList = ({ title, id, players }: PlayersListProps) => {
       {openNewPlayerField ? (
         <form onSubmit={handleSubmit(onSubmit)}>
           <Controller
-            name={"name"}
             control={control}
-            rules={{ required: "Spilleren må ha et navn" }}
-            render={({ field: { onChange, value } }) => (
-              <TextField
-                required
-                onChange={onChange}
-                value={value}
-                label={"Navn"}
-                size="small"
-              />
-            )}
+            name={'name'}
+            render={({ field: { onChange, value } }) => <TextField label={'Navn'} onChange={onChange} required size='small' value={value} />}
+            rules={{ required: 'Spilleren må ha et navn' }}
           />
-          <Button
-            size="small"
-            sx={{ textAlign: "left", justifyContent: "flex-start" }}
-            type="submit"
-          >
+          <Button size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }} type='submit'>
             Legg til
           </Button>
         </form>
       ) : (
-        <Button
-          onClick={() => setOpenNewPlayerField(true)}
-          size="small"
-          sx={{ textAlign: "left", justifyContent: "flex-start" }}
-          startIcon={<AddIcon />}
-        >
+        <Button onClick={() => setOpenNewPlayerField(true)} size='small' startIcon={<AddIcon />} sx={{ textAlign: 'left', justifyContent: 'flex-start' }}>
           Ny spiller
         </Button>
       )}

@@ -1,18 +1,19 @@
 // eslint-disable-no-explicit-any
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import Modal from "@mui/material/Modal";
-import Button from "@mui/material/Button";
-import useSWR from "swr";
-import { fetcher } from "utils";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import { IPlayer, IPosition } from "types";
-import { useForm, Controller } from "react-hook-form";
-import { useRouter } from "next/router";
-import axios from "axios";
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Modal from '@mui/material/Modal';
+import Select from '@mui/material/Select';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { Controller, useForm } from 'react-hook-form';
+import useSWR from 'swr';
+import { fetcher } from 'utils';
+
+import { IPlayer, IPosition } from 'types';
 
 export type ChangePositionModalProps = {
   player: IPlayer;
@@ -27,13 +28,7 @@ export type FormDataProps = {
   position: number;
 };
 
-const ChangePositionModal = ({
-  open,
-  handleClose,
-  title,
-  onConfirm,
-  player,
-}: ChangePositionModalProps) => {
+const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositionModalProps) => {
   const router = useRouter();
   const { control, handleSubmit } = useForm({
     defaultValues: { position: player.positionId },
@@ -45,32 +40,31 @@ const ChangePositionModal = ({
       router.replace(router.asPath);
     });
   };
-  const { data: positions } = useSWR("/api/positions", fetcher);
+  const { data: positions } = useSWR('/api/positions', fetcher);
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal onClose={handleClose} open={open}>
       <Stack
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           width: 400,
-          bgcolor: "background.paper",
-          border: "2px solid #000",
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
           boxShadow: 24,
           p: 4,
-        }}
-      >
+        }}>
         <Stack spacing={2}>
-          <Typography variant="h5">{title}</Typography>
+          <Typography variant='h5'>{title}</Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Posisjon</InputLabel>
+              <InputLabel id='demo-simple-select-label'>Posisjon</InputLabel>
               <Controller
-                name="position"
                 control={control}
+                name='position'
                 render={({ field: { onChange, value } }) => (
-                  <Select value={value} label="Posisjon" onChange={onChange}>
+                  <Select label='Posisjon' onChange={onChange} value={value}>
                     {positions?.map((position: IPosition) => (
                       <MenuItem key={position.id} value={position.id}>
                         {position.title}
@@ -80,11 +74,11 @@ const ChangePositionModal = ({
                 )}
               />
             </FormControl>
-            <Stack direction="row" spacing={1} justifyContent="space-between">
-              <Button onClick={handleClose} color="error">
+            <Stack direction='row' justifyContent='space-between' spacing={1}>
+              <Button color='error' onClick={handleClose}>
                 Avbryt
               </Button>
-              <Button type="submit" color="success">
+              <Button color='success' type='submit'>
                 Bytt posisjon
               </Button>
             </Stack>

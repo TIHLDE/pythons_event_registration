@@ -1,6 +1,6 @@
 const rules = {
-    deadlineBeforeTraining: 6,
-    deadlineBeforeMatch: 24
-}
+  deadlineBeforeTraining: 6,
+  deadlineBeforeMatch: 24,
+};
 
-export default rules
+export default rules;

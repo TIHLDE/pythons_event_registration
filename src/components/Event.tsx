@@ -1,35 +1,27 @@
-import Typography from "@mui/material/Typography";
-import { IEvent, IRegistrations } from "types";
-import Stack from "@mui/material/Stack";
-import WatchLaterIcon from "@mui/icons-material/WatchLater";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import PeopleIcon from "@mui/icons-material/People";
-import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
-import CancelIcon from "@mui/icons-material/Cancel";
-import Button from "@mui/material/Button";
-import useSWR from "swr";
-import { format } from "date-fns";
-import { useState } from "react";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import TextField from "@mui/material/TextField";
-import { makeStyles } from "@mui/styles";
-import { Theme } from "@mui/material/styles";
-import { Controller, useForm } from "react-hook-form";
-import axios from "axios";
-import { useRouter } from "next/router";
-import PlayersModal from "components/PlayersModal";
-import { nb } from "date-fns/locale";
-import { useModal } from "hooks/useModal";
-const useStyles = makeStyles((theme: Theme) => ({
-  link: {
-    cursor: "pointer",
-    "&:hover": {
-      textDecoration: "underline",
-    },
+import CancelIcon from '@mui/icons-material/Cancel';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import PeopleIcon from '@mui/icons-material/People';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
+import { Button, FormControl, FormControlLabel, Radio, RadioGroup, Stack, styled, TextField, Typography } from '@mui/material';
+import axios from 'axios';
+import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import useSWR from 'swr';
+
+import { IEvent, IRegistrations } from 'types';
+
+import { useModal } from 'hooks/useModal';
+
+import PlayersModal from 'components/PlayersModal';
+
+const Link = styled('a')(() => ({
+  cursor: 'pointer',
+  '&:hover': {
+    textDecoration: 'underline',
   },
 }));
 
@@ -43,8 +35,6 @@ type FormDataProps = {
 };
 
 const Event = ({ eventDetails }: EventProps) => {
-  const classes = useStyles();
-
   const {
     modalOpen: openRegistratedPlayersModal,
     handleOpenModal: handleOpenRegistratedPlayersModal,
@@ -64,31 +54,22 @@ const Event = ({ eventDetails }: EventProps) => {
 
   const router = useRouter();
 
-  const { data: user } = useSWR("user", (key) => {
+  const { data: user } = useSWR('user', (key) => {
     const value = localStorage.getItem(key);
     return !!value ? JSON.parse(value) : undefined;
   });
 
-  const userRegistration = eventDetails.registrations.find(
-    (registration: IRegistrations) => registration.playerId === user?.id
-  );
+  const userRegistration = eventDetails.registrations.find((registration: IRegistrations) => registration.playerId === user?.id);
 
   const userHasRegistrated = Boolean(userRegistration);
-  const {
-    handleSubmit,
-    control,
-    getValues,
-    register,
-    watch,
-    formState: { errors },
-  } = useForm<FormDataProps>({
+  const { handleSubmit, control, watch } = useForm<FormDataProps>({
     defaultValues: {
       registration: -1,
-      reason: userRegistration?.reason || "",
+      reason: userRegistration?.reason || '',
     },
   });
 
-  const watchRegistration: number | string | undefined = watch("registration");
+  const watchRegistration: number | string | undefined = watch('registration');
 
   const [openRegistration, setOpenRegistration] = useState(false);
   const onSubmit = async (formData: FormDataProps) => {
@@ -104,99 +85,77 @@ const Event = ({ eventDetails }: EventProps) => {
       axios
         .put(`/api/registration/${data.playerId}_${data.eventId}`, {
           data,
-          willArrive: formData.registration === "1",
+          willArrive: formData.registration === '1',
         })
-        .then((res) => {
+        .then(() => {
           setOpenRegistration(false);
           router.replace(router.asPath);
         });
     } else {
       axios
-        .post("/api/registration", {
+        .post('/api/registration', {
           data: data,
-          willArrive: formData.registration === "1",
+          willArrive: formData.registration === '1',
         })
-        .then((res) => {
+        .then(() => {
           setOpenRegistration(false);
           router.replace(router.asPath);
         });
     }
   };
 
-  const backgroundColor =
-    eventDetails.type.slug === "trening"
-      ? "#3A2056"
-      : eventDetails.type.slug === "kamp"
-      ? "#552056"
-      : "#563A20";
+  const backgroundColor = eventDetails.type.slug === 'trening' ? '#3A2056' : eventDetails.type.slug === 'kamp' ? '#552056' : '#563A20';
 
   return (
     <Stack
+      spacing={1}
       sx={{
         backgroundColor: backgroundColor,
-        border: "1px solid white",
-        width: "280px",
-        height: "auto",
-        padding: "12px",
-      }}
-      spacing={1}
-    >
-      {eventDetails.type.slug === "trening" && (
-        <Typography variant="h6">💪 Trening</Typography>
-      )}
-      {eventDetails.type.slug === "kamp" && eventDetails.title && (
-        <Typography variant="h6">⚽️ {eventDetails.title}</Typography>
-      )}
-      {eventDetails.type.slug === "sosialt" && eventDetails.title && (
-        <Typography variant="h6">🎉 {eventDetails.title}</Typography>
-      )}
-      {userRegistration?.willArrive && (
-        <Typography variant="body2">🤝 Du er påmeldt</Typography>
-      )}
-      {!userRegistration?.willArrive && userRegistration?.reason && (
-        <Typography variant="body2">😓 Du er avmeldt</Typography>
-      )}
-      <Stack direction="row" spacing={1}>
+        border: '1px solid white',
+        width: '280px',
+        height: 'auto',
+        padding: '12px',
+      }}>
+      {eventDetails.type.slug === 'trening' && <Typography variant='h6'>💪 Trening</Typography>}
+      {eventDetails.type.slug === 'kamp' && eventDetails.title && <Typography variant='h6'>⚽️ {eventDetails.title}</Typography>}
+      {eventDetails.type.slug === 'sosialt' && eventDetails.title && <Typography variant='h6'>🎉 {eventDetails.title}</Typography>}
+      {userRegistration?.willArrive && <Typography variant='body2'>🤝 Du er påmeldt</Typography>}
+      {!userRegistration?.willArrive && userRegistration?.reason && <Typography variant='body2'>😓 Du er avmeldt</Typography>}
+      <Stack direction='row' spacing={1}>
         <WatchLaterIcon />
-        <Typography variant="body1">
+        <Typography variant='body1'>
           {format(new Date(eventDetails.time), "EEEE - dd.MM' 'HH:mm", {
             locale: nb,
-          })}{" "}
+          })}{' '}
         </Typography>
       </Stack>
-      <Stack direction="row" spacing={1}>
+      <Stack direction='row' spacing={1}>
         <LocationOnIcon />
-        <Typography variant="body1">{eventDetails.location}</Typography>
+        <Typography variant='body1'>{eventDetails.location}</Typography>
       </Stack>
-      <Stack direction="row" spacing={1}>
+      <Stack direction='row' spacing={1}>
         <PeopleIcon />
-        <a className={classes.link}>
-          <Typography
-            onClick={handleOpenRegistratedPlayersModal}
-            variant="body1"
-          >
+        <Link>
+          <Typography onClick={handleOpenRegistratedPlayersModal} variant='body1'>
             {eventDetails.willArrive?.length} påmeldt
           </Typography>
-        </a>
+        </Link>
       </Stack>
-      <Stack direction="row" spacing={1}>
+      <Stack direction='row' spacing={1}>
         <CancelIcon />
-        <a className={classes.link}>
-          <Typography
-            variant="body1"
-            onClick={handleOpenDeregistratedPlayersModal}
-          >
+        <Link>
+          <Typography onClick={handleOpenDeregistratedPlayersModal} variant='body1'>
             {eventDetails.willNotArrive?.length} avmeldt
           </Typography>
-        </a>
+        </Link>
       </Stack>
-      <Stack direction="row" spacing={1}>
+      <Stack direction='row' spacing={1}>
         <QuestionMarkIcon />
-        <a className={classes.link}>
-          <Typography variant="body1" onClick={handleOpenHasNotAnsweredModal}>
+        <Link>
+          <Typography onClick={handleOpenHasNotAnsweredModal} variant='body1'>
             {eventDetails.hasNotResponded?.length} har ikke svart
           </Typography>
-        </a>
+        </Link>
       </Stack>
 
       {openDeregistratedPlayersModal && (
@@ -204,7 +163,7 @@ const Event = ({ eventDetails }: EventProps) => {
           handleClose={handleCloseDeregistratedPlayersModal}
           open={openDeregistratedPlayersModal}
           registrations={eventDetails?.willNotArrive || []}
-          title="Avmeldt"
+          title='Avmeldt'
         />
       )}
       {openRegistratedPlayersModal && (
@@ -212,7 +171,7 @@ const Event = ({ eventDetails }: EventProps) => {
           handleClose={handleCloseRegistratedPlayersModal}
           open={openRegistratedPlayersModal}
           registrations={eventDetails?.willArrive || []}
-          title="Påmeldt"
+          title='Påmeldt'
         />
       )}
       {openHasNotAnsweredModal && (
@@ -220,51 +179,36 @@ const Event = ({ eventDetails }: EventProps) => {
           handleClose={handleCloseHasNotAnsweredModal}
           open={openHasNotAnsweredModal}
           registrations={eventDetails?.hasNotResponded || []}
-          title="Påmeldt"
+          title='Påmeldt'
         />
       )}
       {!openRegistration ? (
-        <Button onClick={() => setOpenRegistration(true)} disabled={!user}>
-          {userHasRegistrated ? "Endre" : "Registrer"} oppmøte
+        <Button disabled={!user} onClick={() => setOpenRegistration(true)}>
+          {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
         </Button>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl>
             <Controller
               control={control}
-              name="registration"
+              name='registration'
               render={({ field: { value, onChange } }) => (
-                <RadioGroup row value={value} onChange={onChange}>
-                  <FormControlLabel
-                    value={1}
-                    control={<Radio />}
-                    label="Kommer"
-                  />
-                  <FormControlLabel
-                    value={0}
-                    control={<Radio />}
-                    label="Kommer ikke"
-                  />
+                <RadioGroup onChange={onChange} row value={value}>
+                  <FormControlLabel control={<Radio />} label='Kommer' value={1} />
+                  <FormControlLabel control={<Radio />} label='Kommer ikke' value={0} />
                 </RadioGroup>
               )}
             />
           </FormControl>
-          {watchRegistration === "0" && (
+          {watchRegistration === '0' && (
             <Controller
-              name={"reason"}
               control={control}
-              rules={{ required: "Du må oppgi en grunn" }}
-              render={({ field: { onChange, value } }) => (
-                <TextField
-                  required
-                  onChange={onChange}
-                  value={value}
-                  label={"Grunn"}
-                />
-              )}
+              name={'reason'}
+              render={({ field: { onChange, value } }) => <TextField label={'Grunn'} onChange={onChange} required value={value} />}
+              rules={{ required: 'Du må oppgi en grunn' }}
             />
           )}
-          <Button type="submit">Bekreft</Button>
+          <Button type='submit'>Bekreft</Button>
         </form>
       )}
     </Stack>

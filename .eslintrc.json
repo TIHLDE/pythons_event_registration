@@ -1,0 +1,44 @@
+{
+  "plugins": ["@typescript-eslint", "prettier", "eslint-plugin-import-helpers"],
+  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"],
+  "rules": {
+    "import-helpers/order-imports": [
+      "warn",
+      {
+        "groups": [
+          ["absolute", "module"],
+          "/^types/",
+          "/^api/",
+          "/^services/",
+          "/^hooks/",
+          "/^pages/",
+          "/^features/",
+          "/^components/",
+          "/^assets/",
+          ["sibling", "parent", "index"]
+        ],
+        "newlinesBetween": "always",
+        "alphabetize": { "order": "asc", "ignoreCase": true }
+      }
+    ],
+    "sort-imports": ["error", { "ignoreCase": true, "ignoreDeclarationSort": true }],
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unnecessary-type-constraint": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [".*"]
+      }
+    ],
+    "prettier/prettier": "warn",
+    "react/display-name": "off",
+    "react/jsx-sort-props": [
+      "error",
+      {
+        "noSortAlphabetically": false,
+        "ignoreCase": true
+      }
+    ]
+  }
+}

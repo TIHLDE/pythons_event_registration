@@ -1,15 +1,17 @@
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import { IEvent } from "types";
-import { format } from "date-fns";
-import Chip from "@mui/material/Chip";
-import Button from "@mui/material/Button";
-import { useState } from "react";
-import EventModal from "components/EventModal";
-import ConfirmModal from "components/ConfirmModal";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { nb } from "date-fns/locale";
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import axios from 'axios';
+import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+
+import { IEvent } from 'types';
+
+import ConfirmModal from 'components/ConfirmModal';
+import EventModal from 'components/EventModal';
 
 export type AdminEventProps = {
   event: IEvent;
@@ -21,7 +23,6 @@ const AdminEvent = ({ event }: AdminEventProps) => {
   const handleCloseUpdateEventModal = () => setUpdateEventModal(false);
 
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
-  const handleOpenConfirmModal = () => setOpenConfirmModal(true);
   const handleCloseConfirmModal = () => setOpenConfirmModal(false);
 
   const router = useRouter();
@@ -33,86 +34,60 @@ const AdminEvent = ({ event }: AdminEventProps) => {
     });
   };
   const type =
-    event.eventTypeSlug === "trening"
-      ? { name: "Trening", color: "#0094FF" }
-      : event.eventTypeSlug === "kamp"
-      ? { name: "Kamp", color: "#0FDC61" }
-      : { name: "Sosialt", color: "#FF00C7" };
+    event.eventTypeSlug === 'trening'
+      ? { name: 'Trening', color: '#0094FF' }
+      : event.eventTypeSlug === 'kamp'
+      ? { name: 'Kamp', color: '#0FDC61' }
+      : { name: 'Sosialt', color: '#FF00C7' };
   return (
-    <Stack
-      sx={{ backgroundColor: "#3A2056", border: "1px solid white" }}
-      spacing={0.5}
-    >
-      <Stack padding={1} direction="row" justifyContent={"space-between"}>
-        <Typography variant="body1" fontWeight={"bold"}>
+    <Stack spacing={0.5} sx={{ backgroundColor: '#3A2056', border: '1px solid white' }}>
+      <Stack direction='row' justifyContent={'space-between'} padding={1}>
+        <Typography fontWeight={'bold'} variant='body1'>
           Type
         </Typography>
         <Chip label={type.name} sx={{ backgroundColor: type.color }} />
       </Stack>
       {event.title && (
-        <Stack padding={1} direction="row" justifyContent={"space-between"}>
-          <Typography variant="body1" fontWeight={"bold"}>
+        <Stack direction='row' justifyContent={'space-between'} padding={1}>
+          <Typography fontWeight={'bold'} variant='body1'>
             Tittel
           </Typography>
-          <Typography variant="body1">{event.title}</Typography>
+          <Typography variant='body1'>{event.title}</Typography>
         </Stack>
       )}
-      <Stack padding={1} direction="row" justifyContent={"space-between"}>
-        <Typography variant="body1" fontWeight={"bold"}>
+      <Stack direction='row' justifyContent={'space-between'} padding={1}>
+        <Typography fontWeight={'bold'} variant='body1'>
           Dato
         </Typography>
-        <Typography variant="body1">
-          {format(new Date(event.time), "EEEE - dd.MM", {
+        <Typography variant='body1'>
+          {format(new Date(event.time), 'EEEE - dd.MM', {
             locale: nb,
           })}
         </Typography>
       </Stack>
-      <Stack padding={1} direction="row" justifyContent={"space-between"}>
-        <Typography variant="body1" fontWeight={"bold"}>
+      <Stack direction='row' justifyContent={'space-between'} padding={1}>
+        <Typography fontWeight={'bold'} variant='body1'>
           Tid
         </Typography>
-        <Typography variant="body1">
-          {format(new Date(event.time), "HH:mm")}
-        </Typography>
+        <Typography variant='body1'>{format(new Date(event.time), 'HH:mm')}</Typography>
       </Stack>
-      <Stack padding={1} direction="row" justifyContent={"space-between"}>
-        <Typography variant="body1" fontWeight={"bold"}>
+      <Stack direction='row' justifyContent={'space-between'} padding={1}>
+        <Typography fontWeight={'bold'} variant='body1'>
           Sted
         </Typography>
-        <Typography variant="body1">{event.location}</Typography>
+        <Typography variant='body1'>{event.location}</Typography>
       </Stack>
-      <Stack direction="row" justifyContent="space-between">
-        <Button
-          onClick={handleUpdateEventModal}
-          size="small"
-          sx={{ textAlign: "left", justifyContent: "flex-start" }}
-        >
+      <Stack direction='row' justifyContent='space-between'>
+        <Button onClick={handleUpdateEventModal} size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }}>
           Endre
         </Button>
-        <Button
-          size="small"
-          sx={{ textAlign: "left", justifyContent: "flex-start" }}
-          color="error"
-          onClick={() => setOpenConfirmModal(true)}
-        >
+        <Button color='error' onClick={() => setOpenConfirmModal(true)} size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }}>
           Slett
         </Button>
       </Stack>
-      {updateEventModal && (
-        <EventModal
-          event={event}
-          handleClose={handleCloseUpdateEventModal}
-          open={updateEventModal}
-          title="Endre arrangement"
-        />
-      )}
+      {updateEventModal && <EventModal event={event} handleClose={handleCloseUpdateEventModal} open={updateEventModal} title='Endre arrangement' />}
       {openConfirmModal && (
-        <ConfirmModal
-          title="Slett arrangement"
-          handleClose={handleCloseConfirmModal}
-          open={openConfirmModal}
-          onConfirm={() => deleteEvent()}
-        />
+        <ConfirmModal handleClose={handleCloseConfirmModal} onConfirm={() => deleteEvent()} open={openConfirmModal} title='Slett arrangement' />
       )}
     </Stack>
   );
