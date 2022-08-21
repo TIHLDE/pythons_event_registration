@@ -1,7 +1,4 @@
-import { Grid } from '@mui/material';
-import Modal from '@mui/material/Modal';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import { Box, Modal, Stack, Typography } from '@mui/material';
 import filter from 'lodash/filter';
 import Image from 'next/image';
 import useSWR from 'swr';
@@ -17,9 +14,9 @@ export type PlayersModalProps = {
 };
 
 const PlayersModal = ({ registrations, open, handleClose, title }: PlayersModalProps) => {
-  const { data: positions } = useSWR('/api/positions', fetcher);
+  const { data: positions = [] } = useSWR<IPosition[]>('/api/positions', fetcher);
 
-  const groupedPlayers = positions?.map((position: IPosition) => ({
+  const groupedPlayers = positions.map((position) => ({
     ...position,
     players: filter(registrations, ['player.positionId', position.id]),
   }));
@@ -37,28 +34,29 @@ const PlayersModal = ({ registrations, open, handleClose, title }: PlayersModalP
           transform: 'translate(-50%, -50%)',
           width: 400,
           bgcolor: 'background.paper',
-          border: '2px solid #000',
+          border: '2px solid #fff',
           boxShadow: 24,
           p: 4,
+          borderRadius: 1,
+          outline: 0,
         }}>
         <Stack direction='row' spacing={2}>
           <Image alt='Logo' height={37.625} src='/pythons.png' width={25} />
-          <Typography variant='h6'>{title}</Typography>
+          <Typography variant='h2'>{title}</Typography>
         </Stack>
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {groupedPlayers?.map((pos: any) => (
+        {groupedPlayers.map((pos) => (
           <Stack key={pos.id} spacing={1}>
-            <Typography sx={{ fontWeight: 'bold' }} variant='body1'>
+            <Typography sx={{ fontWeight: 'bold' }} variant='h3'>
               {pos.title} ({pos.players.length})
             </Typography>
-            <Grid container justifyContent='space-between' rowSpacing={2}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
               {pos.players.map((registration: IRegistrations) => (
-                <Grid item key={registration.playerId} xs={6}>
+                <div key={registration.playerId}>
                   <Typography variant='body2'>{registration.player.name}</Typography>
                   {registration.reason && <Typography variant='body2'>- {registration.reason}</Typography>}
-                </Grid>
+                </div>
               ))}
-            </Grid>
+            </Box>
           </Stack>
         ))}
       </Stack>

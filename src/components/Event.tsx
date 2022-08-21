@@ -3,7 +3,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PeopleIcon from '@mui/icons-material/People';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import { Button, FormControl, FormControlLabel, Radio, RadioGroup, Stack, styled, TextField, Typography } from '@mui/material';
+import { Box, Button, Divider, FormControl, FormControlLabel, Radio, RadioGroup, Stack, styled, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
@@ -108,55 +108,56 @@ const Event = ({ eventDetails }: EventProps) => {
 
   return (
     <Stack
-      spacing={1}
+      gap={1}
       sx={{
         backgroundColor: backgroundColor,
         border: '1px solid white',
-        width: '280px',
+        width: '100%',
         height: 'auto',
-        padding: '12px',
+        p: 1,
+        borderRadius: 1,
       }}>
-      {eventDetails.type.slug === 'trening' && <Typography variant='h6'>💪 Trening</Typography>}
-      {eventDetails.type.slug === 'kamp' && eventDetails.title && <Typography variant='h6'>⚽️ {eventDetails.title}</Typography>}
-      {eventDetails.type.slug === 'sosialt' && eventDetails.title && <Typography variant='h6'>🎉 {eventDetails.title}</Typography>}
-      {userRegistration?.willArrive && <Typography variant='body2'>🤝 Du er påmeldt</Typography>}
-      {!userRegistration?.willArrive && userRegistration?.reason && <Typography variant='body2'>😓 Du er avmeldt</Typography>}
-      <Stack direction='row' spacing={1}>
-        <WatchLaterIcon />
-        <Typography variant='body1'>
-          {format(new Date(eventDetails.time), "EEEE - dd.MM' 'HH:mm", {
-            locale: nb,
-          })}{' '}
+      {eventDetails.type.slug === 'trening' && <Typography variant='h3'>💪 Trening</Typography>}
+      {eventDetails.type.slug === 'kamp' && eventDetails.title && <Typography variant='h3'>⚽️ {eventDetails.title}</Typography>}
+      {eventDetails.type.slug === 'sosialt' && eventDetails.title && <Typography variant='h3'>🎉 {eventDetails.title}</Typography>}
+      {userRegistration?.willArrive && (
+        <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
+          🤝 Du er påmeldt
         </Typography>
-      </Stack>
-      <Stack direction='row' spacing={1}>
+      )}
+      {!userRegistration?.willArrive && userRegistration?.reason && (
+        <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
+          😓 Du er avmeldt
+        </Typography>
+      )}
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
+        <WatchLaterIcon />
+        <Typography sx={{ textTransform: 'capitalize' }} variant='body1'>
+          {format(new Date(eventDetails.time), "EEEE dd. MMMM' 'HH:mm", {
+            locale: nb,
+          })}
+        </Typography>
         <LocationOnIcon />
         <Typography variant='body1'>{eventDetails.location}</Typography>
-      </Stack>
-      <Stack direction='row' spacing={1}>
         <PeopleIcon />
         <Link>
           <Typography onClick={handleOpenRegistratedPlayersModal} variant='body1'>
             {eventDetails.willArrive?.length} påmeldt
           </Typography>
         </Link>
-      </Stack>
-      <Stack direction='row' spacing={1}>
         <CancelIcon />
         <Link>
           <Typography onClick={handleOpenDeregistratedPlayersModal} variant='body1'>
             {eventDetails.willNotArrive?.length} avmeldt
           </Typography>
         </Link>
-      </Stack>
-      <Stack direction='row' spacing={1}>
         <QuestionMarkIcon />
         <Link>
           <Typography onClick={handleOpenHasNotAnsweredModal} variant='body1'>
             {eventDetails.hasNotResponded?.length} har ikke svart
           </Typography>
         </Link>
-      </Stack>
+      </Box>
 
       {openDeregistratedPlayersModal && (
         <PlayersModal
@@ -182,12 +183,13 @@ const Event = ({ eventDetails }: EventProps) => {
           title='Påmeldt'
         />
       )}
+      <Divider sx={{ mt: 1 }} />
       {!openRegistration ? (
         <Button disabled={!user} onClick={() => setOpenRegistration(true)}>
           {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
         </Button>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
           <FormControl>
             <Controller
               control={control}
@@ -208,8 +210,10 @@ const Event = ({ eventDetails }: EventProps) => {
               rules={{ required: 'Du må oppgi en grunn' }}
             />
           )}
-          <Button type='submit'>Bekreft</Button>
-        </form>
+          <Button type='submit' variant='contained'>
+            Bekreft
+          </Button>
+        </Stack>
       )}
     </Stack>
   );

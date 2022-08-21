@@ -12,6 +12,7 @@ export default class MyDocument extends Document {
           {/* PWA primary color */}
           <meta content={theme.palette.primary.main} name='theme-color' />
           <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap' rel='stylesheet' />
+          <link href='https://fonts.googleapis.com/css2?family=Cabin&family=Oswald:wght@500;700&family=Inter:wght@300;700;900&&display=swap' rel='stylesheet' />
           {/* Inject MUI styles first to match with the prepend: true configuration. */}
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {(this.props as any).emotionStyleTags}

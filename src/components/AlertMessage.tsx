@@ -1,5 +1,4 @@
-import WarningIcon from '@mui/icons-material/Warning';
-import Stack from '@mui/material/Stack';
+import { Alert } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
 import { INotification } from 'types';
@@ -10,13 +9,12 @@ type AlertMessageProps = {
 
 const AlertMessage = ({ notification }: AlertMessageProps) => {
   return (
-    <Stack direction='row' spacing={2} sx={{ borderLeft: '4px solid white' }}>
-      <WarningIcon fontSize='large' sx={{ marginLeft: 2 }} />
-      <Stack>
-        <Typography variant='body1'>{notification.message}</Typography>
-        <Typography variant='body2'>- {notification.author.name}</Typography>
-      </Stack>
-    </Stack>
+    <Alert severity='warning' variant='outlined'>
+      <Typography gutterBottom variant='body1'>
+        {notification.message}
+      </Typography>
+      <Typography variant='body2'>- {notification.author.name}</Typography>
+    </Alert>
   );
 };
 export default AlertMessage;

@@ -1,11 +1,10 @@
-import { Divider, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import safeJsonStringify from 'safe-json-stringify';
-import useSWR from 'swr';
 
 import { IEvent, INotification } from 'types';
 
@@ -92,29 +91,17 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const { data: user } = useSWR('user', (key) => {
-    const value = localStorage.getItem(key);
-    return !!value ? JSON.parse(value) : undefined;
-  });
   return (
     <>
       <Head>
         <title>Registrering - Pythons</title>
       </Head>
-      <Grid container spacing={4} sx={{ marginTop: 4 }}>
+      <Grid container spacing={2} sx={{ marginTop: 2 }}>
         {notifications.map((notification: INotification) => (
           <Grid item key={notification.id} xs={12}>
             <AlertMessage notification={notification} />
           </Grid>
         ))}
-        {!user && (
-          <>
-            <Typography>
-              For å logge inn må du velge navnet ditt fra listen oppe til venstre. Dersom du ikke er på listen må du kontakte Filip, Jakob eller Kristian
-            </Typography>
-            <Divider sx={{ width: '100%', backgroundColor: 'white' }} />
-          </>
-        )}
         {!events.length && <Typography>Ingen kommende arrangementer</Typography>}
         {events.map((event: IEvent) => (
           <Grid item key={event.id} lg={3} md={4} sm={6} xs={12}>

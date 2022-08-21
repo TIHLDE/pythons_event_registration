@@ -1,8 +1,13 @@
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
+  shape: {
+    borderRadius: 10,
+  },
+  spacing: 10,
   palette: {
     mode: 'dark',
+    divider: '#bbbbbb',
     primary: {
       light: '#c89efc',
       main: '#BB86FC',
@@ -27,6 +32,23 @@ const theme = createTheme({
     text: {
       primary: '#F2F2F2',
       secondary: '#aaaaaa',
+    },
+  },
+  typography: {
+    fontFamily: 'Inter',
+    h1: {
+      fontSize: '3rem',
+      fontFamily: `Oswald, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`,
+      fontWeight: 700,
+    },
+    h2: {
+      fontSize: '2rem',
+      fontFamily: `Oswald, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`,
+      fontWeight: 500,
+    },
+    h3: {
+      fontSize: '1.5rem',
+      fontFamily: `Cabin, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`,
     },
   },
 });

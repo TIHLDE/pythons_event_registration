@@ -7,9 +7,13 @@ import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useHotkeys } from 'react-hotkeys-hook';
+import useSWR from 'swr';
 import theme from 'theme';
 
+import { IPlayer } from 'types';
+
 import NavBar from 'components/NavBar';
+import SignIn from 'components/SignIn';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -25,6 +29,10 @@ export default function MyApp(props: MyAppProps) {
   useHotkeys('ctrl+a, cmd+a', () => {
     router.push('/admin');
   });
+  const { data: user, isValidating } = useSWR<IPlayer | undefined>('user', (key) => {
+    const value = localStorage.getItem(key);
+    return !!value ? JSON.parse(value) : undefined;
+  });
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -32,11 +40,10 @@ export default function MyApp(props: MyAppProps) {
         <link href='/favicon.ico' rel='shortcut icon' />
       </Head>
       <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <Container maxWidth='lg' sx={{ padding: 4 }}>
           <NavBar />
-          <Component {...pageProps} />
+          {isValidating ? null : user ? <Component {...pageProps} /> : <SignIn />}
         </Container>
       </ThemeProvider>
     </CacheProvider>

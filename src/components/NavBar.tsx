@@ -1,52 +1,41 @@
-import Autocomplete from '@mui/material/Autocomplete';
+import OpenInNewRounded from '@mui/icons-material/OpenInNewRounded';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import useSWR from 'swr';
-import { fetcher } from 'utils';
 
 import { IPlayer } from 'types';
 
 const NavBar = () => {
-  const router = useRouter();
-  const { data: players } = useSWR('/api/players', fetcher);
-
-  const { data: user } = useSWR('user', (key) => {
+  const { data: user } = useSWR<IPlayer | undefined>('user', (key) => {
     const value = localStorage.getItem(key);
     return !!value ? JSON.parse(value) : undefined;
   });
 
-  const onPlayerSelect = (player: IPlayer | null) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(player));
-      router.reload();
-    }
-  };
-
-  const toFrontPage = () => {
-    router.push('/');
-  };
   return (
-    <Stack>
-      {user ? (
-        <Typography>🏋️‍♂️ {user.name}</Typography>
-      ) : (
-        <Autocomplete
-          disablePortal
-          getOptionLabel={(option: IPlayer) => option.name}
-          id='combo-box-demo'
-          noOptionsText='Ingen spillere'
-          onChange={(e, value) => onPlayerSelect(value)}
-          options={players || []}
-          renderInput={(params) => <TextField sx={{ background: 'transparent', color: 'white' }} {...params} label='Spiller' />}
-          size='small'
-          sx={{ width: 300, color: 'text.primary' }}
-        />
-      )}
+    <Stack gap={2}>
+      <Stack direction='row' gap={2} justifyContent='space-between'>
+        <Typography sx={{ fontSize: '1rem', display: 'flex', alignItems: 'center' }} variant='h3'>
+          {user ? `🏋️‍♂️ ${user.name}` : `Du er ikke innlogget`}
+        </Typography>
+        <Typography
+          component='a'
+          href='https://tihlde.org/grupper/pythons-gutter-a/boter/'
+          rel='noreferrer'
+          sx={{ color: 'white', fontSize: '1rem', display: 'flex', alignItems: 'center', textDecoration: 'none' }}
+          target='_blank'
+          variant='h3'>
+          Botinnmelding
+          <OpenInNewRounded sx={{ width: '1rem', ml: 0.5 }} />
+        </Typography>
+      </Stack>
       <Stack alignItems='center' direction='row' justifyContent={'center'}>
-        <Image alt='Logo' height={75.25} onClick={toFrontPage} src='/pythons.png' style={{ cursor: 'pointer' }} width={50} />
+        <Link href='/'>
+          <a>
+            <Image alt='Logo' height={75.25} src='/pythons.png' width={50} />
+          </a>
+        </Link>
       </Stack>
     </Stack>
   );
