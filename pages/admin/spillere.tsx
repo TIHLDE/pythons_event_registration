@@ -1,15 +1,14 @@
-import type {
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-  NextPage,
-} from "next";
-import Grid from "@mui/material/Grid";
-import { IPosition } from "types";
-import { prisma } from "lib/prisma";
-import PlayersList from "components/PlayersList";
-import { Button } from "@mui/material";
-import { useRouter } from "next/router";
-import Head from "next/head";
+import { Button } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import { prisma } from 'lib/prisma';
+import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+
+import { IPosition } from 'types';
+
+import PlayersList from 'components/PlayersList';
+
 export const getServerSideProps: GetServerSideProps = async () => {
   const positions = await prisma.position.findMany({
     select: {
@@ -25,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
           positionId: true,
         },
         orderBy: {
-          name: "asc",
+          name: 'asc',
         },
       },
     },
@@ -34,27 +33,18 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return { props: { positions } };
 };
 
-const Players: NextPage = ({
-  positions,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Players: NextPage = ({ positions }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   return (
     <>
       <Head>
         <title>Spillere - Pythons</title>
       </Head>
-      <Button onClick={() => router.push("/admin")}>
-        Tilbake til admin-side
-      </Button>
+      <Button onClick={() => router.push('/admin')}>Tilbake til admin-side</Button>
       <Grid container sx={{ marginTop: 4 }}>
         {positions.map((position: IPosition) => (
-          <Grid key={position.id} item xs={12} sm={2}>
-            <PlayersList
-              id={position.id}
-              title={position.title}
-              players={position.Player}
-              key={position.id}
-            />
+          <Grid item key={position.id} sm={2} xs={12}>
+            <PlayersList id={position.id} key={position.id} players={position.Player} title={position.title} />
           </Grid>
         ))}
       </Grid>

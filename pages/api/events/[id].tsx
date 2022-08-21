@@ -1,19 +1,16 @@
-import HttpStatusCode from "http-status-typed";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "lib/prisma";
+import HttpStatusCode from 'http-status-typed';
+import { prisma } from 'lib/prisma';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method === "PUT") {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'PUT') {
     const {
       body: { data },
     } = req;
     const {
       query: { id },
     } = req;
-    const parsedId = parseInt(typeof id === "string" ? id : "-1");
+    const parsedId = parseInt(typeof id === 'string' ? id : '-1');
 
     const updatedEvent = await prisma.event.update({
       where: {
@@ -21,18 +18,18 @@ export default async function handler(
       },
       data: {
         eventTypeSlug: data.eventTypeSlug,
-        title: data.eventTypeSlug === "trening" ? "" : data.title,
+        title: data.eventTypeSlug === 'trening' ? '' : data.title,
         time: data.time,
         location: data.location,
       },
     });
 
     res.status(HttpStatusCode.OK).json(updatedEvent);
-  } else if (req.method === "DELETE") {
+  } else if (req.method === 'DELETE') {
     const {
       query: { id },
     } = req;
-    const parsedId = parseInt(typeof id === "string" ? id : "-1");
+    const parsedId = parseInt(typeof id === 'string' ? id : '-1');
     await prisma.event.delete({
       where: {
         id: parsedId,

@@ -1,18 +1,16 @@
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import NewMessage from "components/NewMessage";
-import {
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-  NextPage,
-} from "next";
-import { useState } from "react";
-import { prisma } from "lib/prisma";
-import safeJsonStringify from "safe-json-stringify";
-import AdminMessage from "components/AdminMessage";
-import { INotification } from "types";
-import { Grid } from "@mui/material";
+import { Grid } from '@mui/material';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { prisma } from 'lib/prisma';
+import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
+import { useState } from 'react';
+import safeJsonStringify from 'safe-json-stringify';
+
+import { INotification } from 'types';
+
+import AdminMessage from 'components/AdminMessage';
+import NewMessage from 'components/NewMessage';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const messagesQuery = await prisma.notification.findMany({
@@ -25,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       author: true,
     },
     orderBy: {
-      expiringDate: "asc",
+      expiringDate: 'asc',
     },
   });
 
@@ -34,16 +32,14 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return { props: { messages } };
 };
 
-const Messages: NextPage = ({
-  messages,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Messages: NextPage = ({ messages }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [newMessage, setNewMessage] = useState(false);
 
   const handleClose = () => {
     setNewMessage(false);
   };
   return (
-    <Stack direction="column" spacing={2} sx={{ marginTop: 2 }}>
+    <Stack direction='column' spacing={2} sx={{ marginTop: 2 }}>
       <Button disabled={newMessage} onClick={() => setNewMessage(true)}>
         Opprett ny beskjed
       </Button>
@@ -51,16 +47,16 @@ const Messages: NextPage = ({
       {messages.length ? (
         <Grid container>
           <Grid item xs={3}>
-            <Typography fontWeight={"bold"}>Beskjeder:</Typography>
+            <Typography fontWeight={'bold'}>Beskjeder:</Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography fontWeight={"bold"}>Forfatter:</Typography>
+            <Typography fontWeight={'bold'}>Forfatter:</Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography fontWeight={"bold"}>Utgår:</Typography>
+            <Typography fontWeight={'bold'}>Utgår:</Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography fontWeight={"bold"}>Handlinger:</Typography>
+            <Typography fontWeight={'bold'}>Handlinger:</Typography>
           </Grid>
           {messages.map((notification: INotification) => (
             <AdminMessage key={notification.id} notification={notification} />
