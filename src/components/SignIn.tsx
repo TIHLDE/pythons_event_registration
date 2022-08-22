@@ -7,6 +7,7 @@ import useSWR from 'swr';
 import { fetcher } from 'utils';
 
 import { IPlayer, IPosition } from 'types';
+import Head from 'next/head';
 
 const SignIn = () => {
   const router = useRouter();
@@ -21,6 +22,10 @@ const SignIn = () => {
   };
 
   return (
+    <>
+    <Head>
+      <title>Pythons - innlogging</title>
+    </Head>
     <Stack alignItems='center' gap={2}>
       <Typography variant='h1'>Oppmøte-registrering</Typography>
       <Typography variant='body1'>Du må logge inn før du kan registrere oppmøte på treninger, kamper og sosiale arrangementer.</Typography>
@@ -34,11 +39,12 @@ const SignIn = () => {
         options={players
           .sort((a, b) => a.positionId - b.positionId)
           .map((player) => ({ ...player, position: positions.find((pos) => pos.id === player.positionId)?.title || 'Annet' }))}
-        renderInput={(params) => <TextField sx={{ background: 'transparent', color: 'white' }} {...params} label='Velg spiller' />}
-        size='small'
-        sx={{ width: '100%', maxWidth: 500, color: 'text.primary' }}
-      />
+          renderInput={(params) => <TextField sx={{ background: 'transparent', color: 'white' }} {...params} label='Velg spiller' />}
+          size='small'
+          sx={{ width: '100%', maxWidth: 500, color: 'text.primary' }}
+          />
     </Stack>
+          </>
   );
 };
 
