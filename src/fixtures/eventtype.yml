@@ -4,8 +4,8 @@ items:
     slug: trening
     name: Trening
   match:
-    slug: match
-    name: Match
+    slug: kamp
+    name: Kamp
   sosialt:
     slug: sosialt
     name: Sosialt
