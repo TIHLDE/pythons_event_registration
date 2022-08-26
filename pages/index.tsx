@@ -1,5 +1,6 @@
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
+import { startOfToday } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { NextPage } from 'next';
@@ -12,11 +13,10 @@ import AlertMessage from 'components/AlertMessage';
 import Event from 'components/Event';
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const today = new Date();
   const res = await prisma.event.findMany({
     where: {
       time: {
-        gte: today,
+        gte: startOfToday(),
       },
     },
     include: {

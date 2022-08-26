@@ -5,11 +5,12 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { Box, Button, Divider, FormControl, FormControlLabel, Radio, RadioGroup, Stack, styled, TextField, Typography } from '@mui/material';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { format, formatDistanceToNow, subHours } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import rules from 'rules';
 import useSWR from 'swr';
 
 import { IEvent, IRegistrations } from 'types';
@@ -106,7 +107,6 @@ const Event = ({ eventDetails }: EventProps) => {
 
   const backgroundColor = eventDetails.type.slug === 'trening' ? '#3A2056' : eventDetails.type.slug === 'kamp' ? '#552056' : '#563A20';
 
-  console.log(userRegistration);
   return (
     <Stack
       gap={1}
@@ -186,9 +186,23 @@ const Event = ({ eventDetails }: EventProps) => {
       )}
       <Divider sx={{ mt: 1 }} />
       {!openRegistration ? (
-        <Button disabled={!user} onClick={() => setOpenRegistration(true)}>
-          {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
-        </Button>
+        <>
+          <Button disabled={!user} onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'text' : 'outlined'}>
+            {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
+          </Button>
+          {!userHasRegistrated && (eventDetails.type.slug === 'trening' || eventDetails.type.slug === 'kamp') && (
+            <Typography textAlign='center' variant='body2'>
+              Frist:{' '}
+              {formatDistanceToNow(
+                subHours(new Date(eventDetails.time), eventDetails.type.slug === 'trening' ? rules.deadlineBeforeTraining : rules.deadlineBeforeMatch),
+                {
+                  locale: nb,
+                  addSuffix: true,
+                },
+              )}
+            </Typography>
+          )}
+        </>
       ) : (
         <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
           <FormControl>
