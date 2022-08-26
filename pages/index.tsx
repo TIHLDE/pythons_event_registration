@@ -1,6 +1,7 @@
-import { Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { startOfToday } from 'date-fns';
+import { addWeeks, endOfWeek, format, getWeek, parseISO, startOfToday, startOfWeek } from 'date-fns';
+import nb from 'date-fns/locale/nb';
 import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { NextPage } from 'next';
@@ -91,24 +92,60 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const groupedEvents = (events as IEvent[]).reduce((acc, event) => {
+    const time = parseISO(event.time as unknown as string);
+
+    const getYearWeek = (time: Date) =>
+      `Uke ${getWeek(time)} (${format(startOfWeek(time, { weekStartsOn: 1 }), 'dd.MM', { locale: nb })}-${format(
+        endOfWeek(time, { weekStartsOn: 1 }),
+        'dd.MM',
+        {
+          locale: nb,
+        },
+      )})`;
+
+    // create a composed key: 'year-week'
+    const thisYearWeek = getYearWeek(new Date());
+    const nextYearWeek = getYearWeek(addWeeks(new Date(), 1));
+    let yearWeek = getYearWeek(time);
+    if (thisYearWeek === yearWeek) {
+      yearWeek = 'Denne uken';
+    }
+    if (nextYearWeek === yearWeek) {
+      yearWeek = 'Neste uke';
+    }
+
+    if (!acc[yearWeek]) {
+      acc[yearWeek] = [];
+    }
+
+    acc[yearWeek].push(event);
+    return acc;
+  }, {} as Record<string, Array<IEvent>>);
+
   return (
     <>
       <Head>
         <title>Registrering - Pythons</title>
       </Head>
-      <Grid container spacing={2}>
+      <Stack gap={2}>
         {notifications.map((notification: INotification) => (
-          <Grid item key={notification.id} xs={12}>
-            <AlertMessage notification={notification} />
-          </Grid>
+          <AlertMessage key={notification.id} notification={notification} />
         ))}
         {!events.length && <Typography>Ingen kommende arrangementer</Typography>}
-        {events.map((event: IEvent) => (
-          <Grid item key={event.id} lg={3} md={4} sm={6} xs={12}>
-            <Event eventDetails={event} />
-          </Grid>
+        {Object.keys(groupedEvents).map((group) => (
+          <Stack gap={1} key={group}>
+            <Typography variant='h3'>{group}</Typography>
+            <Grid container spacing={2}>
+              {groupedEvents[group].map((event) => (
+                <Grid item key={event.id} lg={3} md={4} sm={6} xs={12}>
+                  <Event eventDetails={event} />
+                </Grid>
+              ))}
+            </Grid>
+          </Stack>
         ))}
-      </Grid>
+      </Stack>
     </>
   );
 };
