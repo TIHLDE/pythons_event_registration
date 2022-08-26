@@ -165,7 +165,7 @@ const PlayersList = ({ title, id, players }: PlayersListProps) => {
             <Controller
               control={control}
               name={'name'}
-              render={({ field: { onChange, value } }) => <TextField label={'Navn'} onChange={onChange} required size='small' value={value} />}
+              render={({ field: { onChange, value } }) => <TextField autoFocus label={'Navn'} onChange={onChange} required size='small' value={value} />}
               rules={{ required: 'Spilleren må ha et navn' }}
             />
             <Button size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }} type='submit' variant='contained'>

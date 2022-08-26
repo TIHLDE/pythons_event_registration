@@ -1,9 +1,9 @@
 // eslint-disable-no-explicit-any
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Modal from '@mui/material/Modal';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -42,50 +42,37 @@ const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositio
   };
   const { data: positions } = useSWR('/api/positions', fetcher);
   return (
-    <Modal onClose={handleClose} open={open}>
-      <Stack
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          border: '1px solid white',
-          p: 2,
-          borderRadius: 1,
-        }}>
-        <Stack gap={2}>
-          <Typography variant='h5'>{title}</Typography>
-          <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
-            <FormControl fullWidth>
-              <InputLabel id='demo-simple-select-label'>Posisjon</InputLabel>
-              <Controller
-                control={control}
-                name='position'
-                render={({ field: { onChange, value } }) => (
-                  <Select label='Posisjon' onChange={onChange} value={value}>
-                    {positions?.map((position: IPosition) => (
-                      <MenuItem key={position.id} value={position.id}>
-                        {position.title}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-            <Stack direction='row' gap={1} justifyContent='space-between'>
-              <Button color='error' onClick={handleClose}>
-                Avbryt
-              </Button>
-              <Button color='success' type='submit' variant='contained'>
-                Bytt posisjon
-              </Button>
-            </Stack>
+    <Dialog onClose={handleClose} open={open} sx={{ '& .MuiDialog-paper': { width: 400, border: '2px solid #ffffff', p: 4 } }}>
+      <Stack gap={2}>
+        <Typography variant='h5'>{title}</Typography>
+        <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
+          <FormControl fullWidth>
+            <InputLabel id='demo-simple-select-label'>Posisjon</InputLabel>
+            <Controller
+              control={control}
+              name='position'
+              render={({ field: { onChange, value } }) => (
+                <Select label='Posisjon' onChange={onChange} value={value}>
+                  {positions?.map((position: IPosition) => (
+                    <MenuItem key={position.id} value={position.id}>
+                      {position.title}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            />
+          </FormControl>
+          <Stack direction='row' gap={1} justifyContent='space-between'>
+            <Button color='error' onClick={handleClose}>
+              Avbryt
+            </Button>
+            <Button color='success' type='submit' variant='contained'>
+              Bytt posisjon
+            </Button>
           </Stack>
         </Stack>
       </Stack>
-    </Modal>
+    </Dialog>
   );
 };
 

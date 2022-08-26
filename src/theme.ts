@@ -34,6 +34,15 @@ const theme = createTheme({
       secondary: '#aaaaaa',
     },
   },
+  components: {
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundImage: 'none',
+        },
+      },
+    },
+  },
   typography: {
     fontFamily: 'Inter',
     h1: {

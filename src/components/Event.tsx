@@ -207,7 +207,7 @@ const Event = ({ eventDetails }: EventProps) => {
             <Controller
               control={control}
               name={'reason'}
-              render={({ field: { onChange, value } }) => <TextField label={'Grunn'} onChange={onChange} required value={value} />}
+              render={({ field: { onChange, value } }) => <TextField autoFocus label={'Grunn'} onChange={onChange} required value={value} />}
               rules={{ required: 'Du må oppgi en grunn' }}
             />
           )}

@@ -1,4 +1,4 @@
-import { Box, Modal, Stack, Typography } from '@mui/material';
+import { Box, Dialog, Stack, Typography } from '@mui/material';
 import filter from 'lodash/filter';
 import Image from 'next/image';
 import useSWR from 'swr';
@@ -22,24 +22,8 @@ const PlayersModal = ({ registrations, open, handleClose, title }: PlayersModalP
   }));
 
   return (
-    <Modal onClose={handleClose} open={open}>
-      <Stack
-        spacing={2}
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          maxWidth: '90%',
-          maxHeight: '90%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          border: '2px solid #fff',
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 1,
-          outline: 0,
-        }}>
+    <Dialog onClose={handleClose} open={open} sx={{ '& .MuiDialog-paper': { width: 400, border: '2px solid #ffffff', p: 4 } }}>
+      <Stack gap={2}>
         <Stack direction='row' spacing={2}>
           <Image alt='Logo' height={37.625} src='/pythons.png' width={25} />
           <Typography variant='h2'>{title}</Typography>
@@ -60,7 +44,7 @@ const PlayersModal = ({ registrations, open, handleClose, title }: PlayersModalP
           </Stack>
         ))}
       </Stack>
-    </Modal>
+    </Dialog>
   );
 };
 

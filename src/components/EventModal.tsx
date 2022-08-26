@@ -1,8 +1,7 @@
-import { FormControl } from '@mui/material';
+import { Dialog, FormControl } from '@mui/material';
 import Button from '@mui/material/Button';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Modal from '@mui/material/Modal';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -65,50 +64,37 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
   };
 
   return (
-    <Modal onClose={handleClose} open={open}>
-      <Stack
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          border: '1px solid white',
-          p: 2,
-          borderRadius: 1,
-        }}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={2}>
-            <Typography variant='h2'>{title}</Typography>
-            <Controller
-              control={control}
-              name='eventTypeSlug'
-              render={({ field }) => (
-                <FormControl fullWidth>
-                  <InputLabel id='selectType-label'>Type</InputLabel>
-                  <Select id='selectType' labelId='selectType-label' required {...field} label='Type'>
-                    {eventTypes?.map((eventType: IEventType) => (
-                      <MenuItem key={eventType.slug} value={eventType.slug}>
-                        {eventType.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-            />
-            {watchEventType && watchEventType !== 'trening' && (
-              <Controller control={control} name='title' render={({ field }) => <TextField label={'Tittel'} placeholder='Tittel' required {...field} />} />
+    <Dialog onClose={handleClose} open={open} sx={{ '& .MuiDialog-paper': { width: 400, border: '2px solid #ffffff', p: 4 } }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing={2}>
+          <Typography variant='h2'>{title}</Typography>
+          <Controller
+            control={control}
+            name='eventTypeSlug'
+            render={({ field }) => (
+              <FormControl fullWidth>
+                <InputLabel id='selectType-label'>Type</InputLabel>
+                <Select id='selectType' labelId='selectType-label' required {...field} label='Type'>
+                  {eventTypes?.map((eventType: IEventType) => (
+                    <MenuItem key={eventType.slug} value={eventType.slug}>
+                      {eventType.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             )}
-            <Controller control={control} name='time' render={({ field }) => <TextField label={'Tidspunkt'} required type='datetime-local' {...field} />} />
-            <Controller control={control} name='location' render={({ field }) => <TextField label={'Sted'} placeholder='Sted' required {...field} />} />
-            <Button type='submit' variant='contained'>
-              {event ? 'Oppdater' : 'Opprett'}
-            </Button>
-          </Stack>
-        </form>
-      </Stack>
-    </Modal>
+          />
+          {watchEventType && watchEventType !== 'trening' && (
+            <Controller control={control} name='title' render={({ field }) => <TextField label={'Tittel'} placeholder='Tittel' required {...field} />} />
+          )}
+          <Controller control={control} name='time' render={({ field }) => <TextField label={'Tidspunkt'} required type='datetime-local' {...field} />} />
+          <Controller control={control} name='location' render={({ field }) => <TextField label={'Sted'} placeholder='Sted' required {...field} />} />
+          <Button type='submit' variant='contained'>
+            {event ? 'Oppdater' : 'Opprett'}
+          </Button>
+        </Stack>
+      </form>
+    </Dialog>
   );
 };
 
