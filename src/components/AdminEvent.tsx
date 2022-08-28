@@ -69,11 +69,11 @@ const AdminEvent = ({ event }: AdminEventProps) => {
         Sted
       </Typography>
       <Typography variant='body1'>{event.location}</Typography>
-      <Button onClick={handleUpdateEventModal} size='small' variant='outlined'>
-        Endre
-      </Button>
       <Button color='error' onClick={() => setOpenConfirmModal(true)} size='small'>
         Slett
+      </Button>
+      <Button onClick={handleUpdateEventModal} size='small' variant='outlined'>
+        Endre
       </Button>
       {updateEventModal && <EventModal event={event} handleClose={handleCloseUpdateEventModal} open={updateEventModal} title='Endre arrangement' />}
       {openConfirmModal && (

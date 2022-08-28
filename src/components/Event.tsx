@@ -187,12 +187,12 @@ const Event = ({ eventDetails }: EventProps) => {
       <Divider sx={{ mt: 1 }} />
       {!openRegistration ? (
         <>
-          <Button disabled={!user} onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'text' : 'outlined'}>
+          <Button disabled={!user} onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'text' : 'contained'}>
             {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
           </Button>
-          {!userHasRegistrated && (eventDetails.type.slug === 'trening' || eventDetails.type.slug === 'kamp') && (
+          {(eventDetails.type.slug === 'trening' || eventDetails.type.slug === 'kamp') && (
             <Typography textAlign='center' variant='body2'>
-              Frist:{' '}
+              Påmeldingsfrist{' '}
               {formatDistanceToNow(
                 subHours(new Date(eventDetails.time), eventDetails.type.slug === 'trening' ? rules.deadlineBeforeTraining : rules.deadlineBeforeMatch),
                 {

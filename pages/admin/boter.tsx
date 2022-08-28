@@ -1,12 +1,6 @@
 import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Divider, Stack } from '@mui/material';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Divider, Grid, Link as MuiLink, Stack, Typography } from '@mui/material';
 import { format, subDays, subHours } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
@@ -98,7 +92,13 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
           </Button>
         </Link>
       </Stack>
-      <Typography sx={{ mb: 1 }}>Viser bøter for arrangementer 2 uker tilbake i tid</Typography>
+      <Typography sx={{ mb: 1 }}>
+        Viser bøter for arrangementer 2 uker tilbake i tid. Bøtene er kalkulert på bakgrunn av{' '}
+        <MuiLink href='https://tihlde.org/grupper/pythons-gutter-a/lovverk/' rel='noreferrer' target='_blank'>
+          lovverket
+        </MuiLink>
+        .
+      </Typography>
       <div>
         {!events.length && <Typography>Ingen bøter å vise</Typography>}
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
