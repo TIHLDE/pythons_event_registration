@@ -200,6 +200,11 @@ const Event = ({ eventDetails }: EventProps) => {
                   addSuffix: true,
                 },
               )}
+              - klokken{' '}
+              {format(
+                subHours(new Date(eventDetails.time), eventDetails.type.slug === 'trening' ? rules.deadlineBeforeTraining : rules.deadlineBeforeMatch),
+                'HH:mm',
+              )}
             </Typography>
           )}
         </>
