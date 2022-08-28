@@ -96,7 +96,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
     const time = parseISO(event.time as unknown as string);
 
     const getYearWeek = (time: Date) =>
-      `Uke ${getWeek(time)} (${format(startOfWeek(time, { weekStartsOn: 1 }), 'dd.MM', { locale: nb })}-${format(
+      `Uke ${getWeek(time, { weekStartsOn: 1 })} (${format(startOfWeek(time, { weekStartsOn: 1 }), 'dd.MM', { locale: nb })}-${format(
         endOfWeek(time, { weekStartsOn: 1 }),
         'dd.MM',
         {
@@ -104,7 +104,6 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
         },
       )})`;
 
-    // create a composed key: 'year-week'
     const thisYearWeek = getYearWeek(new Date());
     const nextYearWeek = getYearWeek(addWeeks(new Date(), 1));
     let yearWeek = getYearWeek(time);
@@ -138,7 +137,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
             <Typography variant='h3'>{group}</Typography>
             <Grid container spacing={2}>
               {groupedEvents[group].map((event) => (
-                <Grid item key={event.id} lg={3} md={4} sm={6} xs={12}>
+                <Grid item key={event.id} md={4} sm={6} xs={12}>
                   <Event eventDetails={event} />
                 </Grid>
               ))}
