@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["filteredRelationCount"]
 }
 
@@ -26,6 +26,7 @@ model Player {
   team          Team?           @relation(fields: [teamId], references: [id])
   Notification  Notification[]
   registrations Registrations[]
+  statistic     Statistic[]
 }
 
 model Event {
@@ -40,6 +41,8 @@ model Event {
   type          EventType       @relation(fields: [eventTypeSlug], references: [slug])
   team          Team?           @relation(fields: [teamId], references: [id])
   registrations Registrations[]
+  matchId       Int?
+  Match         Match?
 }
 
 model EventType {
@@ -73,4 +76,38 @@ model Notification {
   expiringDate DateTime
   authorId     Int
   author       Player   @relation(fields: [authorId], references: [id])
+}
+
+model Match {
+  id        Int         @id @default(autoincrement())
+  opponent  String
+  result    Result
+  homeGoals Int
+  awayGoals Int
+  eventId   Int         @unique
+  statistic Statistic[]
+  Event     Event       @relation(fields: [eventId], references: [id])
+}
+
+model Statistic {
+  id        Int           @id @default(autoincrement())
+  player    Player        @relation(fields: [playerId], references: [id])
+  playerId  Int
+  match     Match         @relation(fields: [matchId], references: [id])
+  matchId   Int
+  statistic StatisticType
+}
+
+enum StatisticType {
+  GOAL
+  ASSIST
+  YELLOW_CARD
+  RED_CARD
+  CLEAN_SHEET
+}
+
+enum Result {
+  WIN
+  LOSE
+  DRAW
 }

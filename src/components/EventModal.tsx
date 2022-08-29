@@ -26,6 +26,7 @@ export type EventModalProps = {
 type FormDataProps = {
   eventTypeSlug: string;
   title?: string;
+  opoonent?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   time: any;
   location: string;
@@ -38,6 +39,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
     defaultValues: {
       eventTypeSlug: event?.eventTypeSlug || '',
       title: event?.title || '',
+      opponent: event?.opponent || '',
       time: event && event.time ? format(new Date(event.time), dateTimeFormat) : format(setMinutes(new Date(), 0), dateTimeFormat),
       location: event?.location || '',
       team: event?.teamId || null,
@@ -91,6 +93,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
             <Controller control={control} name='title' render={({ field }) => <TextField label={'Tittel'} placeholder='Tittel' required {...field} />} />
           )}
           {watchEventType === 'kamp' && (
+            <>
             <FormControl fullWidth>
               <InputLabel id='select-team'>Lag</InputLabel>
               <Controller
@@ -105,9 +108,18 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
                     ))}
                   </Select>
                 )}
-              />
+                />
             </FormControl>
+            <Controller
+              control={control}
+              name='opponent'
+              render={({ field }) => <TextField label={'Motstander'} placeholder='Motstander' required {...field} />}
+            />
+            </>
+          {watchEventType && watchEventType === 'sosialt' && (
+            <Controller control={control} name='title' render={({ field }) => <TextField label={'Tittel'} placeholder='Tittel' required {...field} />} />
           )}
+         
           <Controller control={control} name='time' render={({ field }) => <TextField label={'Tidspunkt'} required type='datetime-local' {...field} />} />
           <Controller control={control} name='location' render={({ field }) => <TextField label={'Sted'} placeholder='Sted' required {...field} />} />
           <Button type='submit' variant='contained'>

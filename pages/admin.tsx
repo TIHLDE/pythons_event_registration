@@ -27,6 +27,9 @@ const Admin: NextPage = () => {
         <Grid item sm={6} xs={12}>
           <AdminLink description='Opprett, rediger eller slett beskjeder' path='/admin/beskjeder' title='📨 Beskjeder' />
         </Grid>
+        <Grid item sm={6} xs={12}>
+          <AdminLink description='Legg inn kampresultat med statistikk' path='/admin/kamp' title='📊 Kampstatistikk' />
+        </Grid>
       </Grid>
     </>
   );
