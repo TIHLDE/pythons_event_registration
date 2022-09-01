@@ -36,7 +36,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const eventsNew = eventsQuery.map((event) => {
     const eventsRegistrationIds = event.registrations.map((registration) => registration.playerId);
     const playersWithoutRegistration = players.map((player) => {
-      if (!eventsRegistrationIds.includes(player.id)) {
+      if (!eventsRegistrationIds.includes(player.id) && player.createdAt < event.time) {
         return { player: player, reason: 'Ikke registrert seg' };
       } else {
         const registration = event.registrations.find((registration) => registration.playerId === player.id);
@@ -48,6 +48,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
             deadline = subHours(event.time, rules.deadlineBeforeMatch);
           }
           if (deadline) {
+            // Need to check if player was created before the deadline
             if (registration.updatedAt && registration.updatedAt > deadline) {
               return {
                 player: player,
