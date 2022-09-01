@@ -26,7 +26,7 @@ export type EventModalProps = {
 type FormDataProps = {
   eventTypeSlug: string;
   title?: string;
-  opoonent?: string;
+  opponent?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   time: any;
   location: string;
@@ -39,7 +39,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
     defaultValues: {
       eventTypeSlug: event?.eventTypeSlug || '',
       title: event?.title || '',
-      opponent: event?.opponent || '',
+      opponent: event?.match?.opponent || '',
       time: event && event.time ? format(new Date(event.time), dateTimeFormat) : format(setMinutes(new Date(), 0), dateTimeFormat),
       location: event?.location || '',
       team: event?.teamId || null,

@@ -1,4 +1,5 @@
 import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
+import { Divider } from '@mui/material';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -7,10 +8,15 @@ import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from '
 import Head from 'next/head';
 import Link from 'next/link';
 
+import { IMatch } from 'types';
+
+import MatchStats from 'components/MatchStats';
+
 export const getServerSideProps: GetServerSideProps = async () => {
-  const today = new Date();
-  const previousMatches = await prisma.match.findMany({
+  const today = new Date(2023, 1, 1);
+  const previousMatchesWithoutResult = await prisma.match.findMany({
     where: {
+      result: null,
       Event: {
         time: {
           lte: today,
@@ -21,11 +27,26 @@ export const getServerSideProps: GetServerSideProps = async () => {
       statistic: true,
     },
   });
-  console.log(previousMatches);
-  return { props: {} };
+
+  const previousMatchesWithResult = await prisma.match.findMany({
+    where: {
+      result: {
+        not: null,
+      },
+      Event: {
+        time: {
+          lte: today,
+        },
+      },
+    },
+    include: {
+      statistic: true,
+    },
+  });
+  return { props: { previousMatchesWithoutResult, previousMatchesWithResult } };
 };
 
-const Match: NextPage = ({}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Match: NextPage = ({ previousMatchesWithoutResult, previousMatchesWithResult }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <>
       <Head>
@@ -38,6 +59,25 @@ const Match: NextPage = ({}: InferGetServerSidePropsType<typeof getServerSidePro
             Til admin
           </Button>
         </Link>
+      </Stack>
+      <Stack spacing={2}>
+        {previousMatchesWithoutResult?.length > 0 && (
+          <Stack spacing={3}>
+            <Typography variant='h3'>Kamper som ikke har resultat</Typography>
+            {previousMatchesWithoutResult.map((match: IMatch) => (
+              <MatchStats key={match.id} match={match} />
+            ))}
+          </Stack>
+        )}
+        {previousMatchesWithResult?.length > 0 && (
+          <>
+            <Divider />
+            <Typography variant='h3'>Kamper som har resultat</Typography>
+            {previousMatchesWithResult.map((match: IMatch) => (
+              <MatchStats key={match.id} match={match} />
+            ))}
+          </>
+        )}
       </Stack>
     </>
   );

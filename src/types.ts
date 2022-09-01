@@ -11,6 +11,8 @@ export type IEvent = Event & {
   willNotArrive?: IRegistrations[];
   hasNotResponded?: IRegistrations[];
   team?: ITeam;
+  matchId?: number;
+  Match?: IMatch;
 };
 
 export type IEventType = EventType & {
@@ -33,3 +35,38 @@ export type IPosition = Position & {
 export type INotification = Notification & {
   author: IPlayer;
 };
+
+export type IMatch = {
+  id: number;
+  opponent: string;
+  result: Result;
+  homeGoals: number;
+  awayGoals: number;
+  eventId: number;
+  event: IEvent;
+  statistics: IStatistic[];
+};
+
+export type IStatistic = {
+  id: number;
+  player: IPlayer;
+  playerId: number;
+  match: IMatch;
+  matchId: number;
+  statisticType: StatisticType;
+};
+
+export enum Result {
+  Win = 'WIN',
+  Loss = 'LOSS',
+  Draw = 'DRAW',
+}
+
+export enum StatisticType {
+  GOAL = 'GOAL',
+  ASSIST = 'ASSIST',
+  YELLOW_CARD = 'YELLOW_CARD',
+  RED_CARD = 'RED_CARD',
+  CLEAN_SHEET = 'CLEAN_SHEET',
+  MOTM = 'MOTM',
+}

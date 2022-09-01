@@ -71,7 +71,6 @@ const Event = ({ eventDetails }: EventProps) => {
   });
 
   const watchRegistration: number | string | undefined = watch('registration');
-
   const [openRegistration, setOpenRegistration] = useState(false);
   const onSubmit = async (formData: FormDataProps) => {
     const data = {
@@ -120,7 +119,7 @@ const Event = ({ eventDetails }: EventProps) => {
         borderRadius: 1,
       }}>
       {eventDetails.type.slug === 'trening' && <Typography variant='h3'>💪 Trening</Typography>}
-      {eventDetails.type.slug === 'kamp' && eventDetails.title && <Typography variant='h3'>⚽️ {eventDetails.title}</Typography>}
+      {eventDetails.type.slug === 'kamp' && eventDetails.Match && <Typography variant='h3'>⚽️ Kamp mot {eventDetails.Match.opponent}</Typography>}
       {eventDetails.type.slug === 'sosialt' && eventDetails.title && <Typography variant='h3'>🎉 {eventDetails.title}</Typography>}
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
         <NoSsr>

@@ -81,9 +81,9 @@ model Notification {
 model Match {
   id        Int         @id @default(autoincrement())
   opponent  String
-  result    Result
-  homeGoals Int
-  awayGoals Int
+  result    Result?
+  homeGoals Int?
+  awayGoals Int?
   eventId   Int         @unique
   statistic Statistic[]
   Event     Event       @relation(fields: [eventId], references: [id])
@@ -104,6 +104,7 @@ enum StatisticType {
   YELLOW_CARD
   RED_CARD
   CLEAN_SHEET
+  MOTM
 }
 
 enum Result {
