@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint --fix src",
     "push": "npx prisma db push",
+    "migrate": "npx prisma migrate dev --name ${0}",
     "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
     "fixtures": "npx fixtures ./src/fixtures",
     "createdb": "docker run --name event_registration -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres",
