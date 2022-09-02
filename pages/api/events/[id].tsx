@@ -21,6 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         title: data.eventTypeSlug === 'trening' ? '' : data.title,
         time: data.time,
         location: data.location,
+        teamId: data.eventTypeSlug === 'kamp' ? data.team : null,
       },
     });
 

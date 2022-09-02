@@ -17,6 +17,9 @@ import EventModal from 'components/EventModal';
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
   const eventsQuery = await prisma.event.findMany({
+    include: {
+      team: true,
+    },
     where: {
       time: {
         gte: today,

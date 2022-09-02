@@ -49,6 +49,14 @@ const AdminEvent = ({ event }: AdminEventProps) => {
           <Typography variant='body1'>{event.title}</Typography>
         </>
       )}
+      {event.team && (
+        <>
+          <Typography fontWeight={'bold'} variant='body1'>
+            Lag
+          </Typography>
+          <Typography variant='body1'>{event.team.name}</Typography>
+        </>
+      )}
       <Typography fontWeight={'bold'} variant='body1'>
         Dato
       </Typography>

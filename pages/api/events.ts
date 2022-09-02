@@ -15,9 +15,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         location: data.location,
         time: new Date(data.time),
         eventTypeSlug: data.eventTypeSlug,
-        ...(data.title && {
-          title: data.title,
-        }),
+        ...(data.title &&
+          data.eventTypeSlug !== 'trening' && {
+            title: data.title,
+          }),
+        ...(data.team &&
+          data.eventTypeSlug === 'kamp' && {
+            teamId: Number(data.team),
+          }),
       },
     });
     res.status(200).end();

@@ -14,7 +14,7 @@ import { Controller, useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
 
-import { IEvent, IEventType } from 'types';
+import { IEvent, IEventType, ITeam } from 'types';
 
 export type EventModalProps = {
   event?: IEvent;
@@ -29,6 +29,7 @@ type FormDataProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   time: any;
   location: string;
+  team: IEvent['teamId'];
 };
 
 const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
@@ -39,10 +40,12 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
       title: event?.title || '',
       time: event && event.time ? format(new Date(event.time), dateTimeFormat) : format(setMinutes(new Date(), 0), dateTimeFormat),
       location: event?.location || '',
+      team: event?.teamId || null,
     },
   });
   const { data: eventTypes } = useSWR('/api/eventType', fetcher);
-  const watchEventType: string = watch('eventTypeSlug');
+  const { data: teams } = useSWR<ITeam[]>('/api/teams', fetcher);
+  const watchEventType = watch('eventTypeSlug');
   const router = useRouter();
 
   const onSubmit = async (formData: FormDataProps) => {
@@ -84,8 +87,26 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
               </FormControl>
             )}
           />
-          {watchEventType && watchEventType !== 'trening' && (
+          {watchEventType !== 'trening' && (
             <Controller control={control} name='title' render={({ field }) => <TextField label={'Tittel'} placeholder='Tittel' required {...field} />} />
+          )}
+          {watchEventType === 'kamp' && (
+            <FormControl fullWidth>
+              <InputLabel id='select-team'>Lag</InputLabel>
+              <Controller
+                control={control}
+                name='team'
+                render={({ field: { onChange, value } }) => (
+                  <Select label='Lag' onChange={onChange} value={value}>
+                    {teams?.map((team) => (
+                      <MenuItem key={team.id} value={team.id}>
+                        {team.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              />
+            </FormControl>
           )}
           <Controller control={control} name='time' render={({ field }) => <TextField label={'Tidspunkt'} required type='datetime-local' {...field} />} />
           <Controller control={control} name='location' render={({ field }) => <TextField label={'Sted'} placeholder='Sted' required {...field} />} />
