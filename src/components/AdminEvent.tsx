@@ -22,15 +22,11 @@ const AdminEvent = ({ event }: AdminEventProps) => {
   const handleUpdateEventModal = () => setUpdateEventModal(true);
   const handleCloseUpdateEventModal = () => setUpdateEventModal(false);
 
-  const [openConfirmModal, setOpenConfirmModal] = useState(false);
-  const handleCloseConfirmModal = () => setOpenConfirmModal(false);
-
   const router = useRouter();
 
   const deleteEvent = () => {
     axios.delete(`/api/events/${event.id}`).then(() => {
       router.replace(router.asPath);
-      handleCloseConfirmModal();
     });
   };
   const type =
@@ -69,16 +65,18 @@ const AdminEvent = ({ event }: AdminEventProps) => {
         Sted
       </Typography>
       <Typography variant='body1'>{event.location}</Typography>
-      <Button color='error' onClick={() => setOpenConfirmModal(true)} size='small'>
+      <ConfirmModal
+        color='error'
+        description='Er du sikker på at du vil slette arrangementet?'
+        onConfirm={() => deleteEvent()}
+        size='small'
+        title='Slett arrangement'>
         Slett
-      </Button>
+      </ConfirmModal>
       <Button onClick={handleUpdateEventModal} size='small' variant='outlined'>
         Endre
       </Button>
       {updateEventModal && <EventModal event={event} handleClose={handleCloseUpdateEventModal} open={updateEventModal} title='Endre arrangement' />}
-      {openConfirmModal && (
-        <ConfirmModal handleClose={handleCloseConfirmModal} onConfirm={() => deleteEvent()} open={openConfirmModal} title='Slett arrangement' />
-      )}
     </Box>
   );
 };

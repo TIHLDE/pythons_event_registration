@@ -40,7 +40,7 @@ const Messages: NextPage = ({ messages }: InferGetServerSidePropsType<typeof get
   return (
     <Stack direction='column' gap={1}>
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
-        <Typography variant='h2'>Beskjeder</Typography>
+        <Typography variant='h1'>Beskjeder</Typography>
         <Link href='/admin' passHref>
           <Button component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
             Til admin

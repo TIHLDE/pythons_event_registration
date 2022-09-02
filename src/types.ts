@@ -1,52 +1,35 @@
-export type IEvent = {
+import { Event, EventType, Notification, Player, Position, Registrations, Team } from '@prisma/client';
+
+export type ITeam = Team & {
+  players: IPlayer[];
+};
+
+export type IEvent = Event & {
   type: IEventType;
-  id: number;
-  title?: string;
-  time: Date;
-  location: string;
-  createdAt: Date;
   registrations: IRegistrations[];
-  eventTypeSlug: string;
   willArrive?: IRegistrations[];
   willNotArrive?: IRegistrations[];
   hasNotResponded?: IRegistrations[];
+  team?: ITeam;
 };
 
-export type IEventType = {
-  slug: string;
-  name: string;
+export type IEventType = EventType & {
   event: IEvent[];
 };
 
-export type IRegistrations = {
+export type IRegistrations = Registrations & {
   player: IPlayer;
-  playerId: number;
   event: IEvent;
-  eventId: number;
-  time: Date;
-  willArrive: boolean;
-  reason?: string;
-  updatedAt?: Date;
 };
 
-export type IPlayer = {
-  id: number;
-  name: string;
-  createdAt: Date;
+export type IPlayer = Player & {
   registrations: IRegistrations[];
-  positionId: number;
 };
 
-export type IPosition = {
-  id: number;
-  title: string;
+export type IPosition = Position & {
   Player: IPlayer[];
 };
 
-export type INotification = {
-  id: number;
-  message: string;
-  expiringDate: Date;
+export type INotification = Notification & {
   author: IPlayer;
-  authorId: number;
 };
