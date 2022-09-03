@@ -1,6 +1,7 @@
 import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Button, Divider, Grid, Link as MuiLink, Stack, Typography } from '@mui/material';
+import { Player } from '@prisma/client';
 import { format, subDays, subHours } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
@@ -9,6 +10,8 @@ import Link from 'next/link';
 import { Fragment, useState } from 'react';
 import rules from 'rules';
 import safeJsonStringify from 'safe-json-stringify';
+
+import { IEvent } from 'types';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
@@ -32,11 +35,13 @@ export const getServerSideProps: GetServerSideProps = async () => {
   });
 
   // Need to insert every player if either late registration or no registration
-
   const eventsNew = eventsQuery.map((event) => {
-    const eventsRegistrationIds = event.registrations.map((registration) => registration.playerId);
+    const eventRegistrationsPlayersIds = event.registrations.map((registration) => registration.playerId);
     const playersWithoutRegistration = players.map((player) => {
-      if (!eventsRegistrationIds.includes(player.id) && player.createdAt < event.time) {
+      if (event.teamId && player.teamId !== event.teamId) {
+        return;
+      }
+      if (!eventRegistrationsPlayersIds.includes(player.id) && player.createdAt < event.time) {
         return { player: player, reason: 'Ikke registrert seg' };
       } else {
         const registration = event.registrations.find((registration) => registration.playerId === player.id);
@@ -103,7 +108,7 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
       <div>
         {!events.length && <Typography>Ingen bøter å vise</Typography>}
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {events.map((event: any, idx: number) => (
+        {events.map((event: IEvent & { fines: (Player & { reason: string })[] }, idx: number) => (
           <Accordion expanded={expanded === `panel${idx}`} key={idx} onChange={handleChange(`panel${idx}`)}>
             <AccordionSummary aria-controls='panel1bh-content' expandIcon={<ExpandMoreIcon />} id='panel1bh-header'>
               <Typography sx={{ width: '33%', flexShrink: 0 }}>

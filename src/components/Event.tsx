@@ -122,17 +122,23 @@ const Event = ({ eventDetails }: EventProps) => {
       {eventDetails.type.slug === 'trening' && <Typography variant='h3'>💪 Trening</Typography>}
       {eventDetails.type.slug === 'kamp' && eventDetails.title && <Typography variant='h3'>⚽️ {eventDetails.title}</Typography>}
       {eventDetails.type.slug === 'sosialt' && eventDetails.title && <Typography variant='h3'>🎉 {eventDetails.title}</Typography>}
-      {userRegistration?.willArrive && (
-        <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
-          🤝 Du er påmeldt
-        </Typography>
-      )}
-      {!userRegistration?.willArrive && userRegistration?.reason && (
-        <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
-          😓 Du er avmeldt: {userRegistration.reason}
-        </Typography>
-      )}
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
+        {userRegistration?.willArrive && (
+          <>
+            🤝
+            <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
+              Du er påmeldt
+            </Typography>
+          </>
+        )}
+        {!userRegistration?.willArrive && userRegistration?.reason && (
+          <>
+            😓
+            <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
+              Du er avmeldt: {userRegistration.reason}
+            </Typography>
+          </>
+        )}
         <Tooltip title='Tidspunkt'>
           <WatchLaterIcon />
         </Tooltip>
@@ -260,7 +266,7 @@ const Event = ({ eventDetails }: EventProps) => {
           </>
         ) : (
           <Typography textAlign='center' variant='body2'>
-            Du er ikke en del av troppen til denne kampen og kan dermed ikke melde deg på/av. <br /> Møt opp og støtt gutta! 🏟️
+            Du er ikke en del av {eventDetails.team?.name} og kan dermed ikke registrere oppmøte. Kom og se på! 🏟️
           </Typography>
         )}
       </NoSsr>
