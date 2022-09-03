@@ -123,22 +123,24 @@ const Event = ({ eventDetails }: EventProps) => {
       {eventDetails.type.slug === 'kamp' && eventDetails.title && <Typography variant='h3'>⚽️ {eventDetails.title}</Typography>}
       {eventDetails.type.slug === 'sosialt' && eventDetails.title && <Typography variant='h3'>🎉 {eventDetails.title}</Typography>}
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
-        {userRegistration?.willArrive && (
-          <>
-            🤝
-            <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
-              Du er påmeldt
-            </Typography>
-          </>
-        )}
-        {!userRegistration?.willArrive && userRegistration?.reason && (
-          <>
-            😓
-            <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
-              Du er avmeldt: {userRegistration.reason}
-            </Typography>
-          </>
-        )}
+        <NoSsr>
+          {userRegistration?.willArrive && (
+            <>
+              🤝
+              <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
+                Du er påmeldt
+              </Typography>
+            </>
+          )}
+          {!userRegistration?.willArrive && userRegistration?.reason && (
+            <>
+              😓
+              <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
+                Du er avmeldt: {userRegistration.reason}
+              </Typography>
+            </>
+          )}
+        </NoSsr>
         <Tooltip title='Tidspunkt'>
           <WatchLaterIcon />
         </Tooltip>
