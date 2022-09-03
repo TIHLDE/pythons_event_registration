@@ -116,7 +116,7 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
           </Stack>
           <Box gap={1} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' } }}>
             {team.positions.map((position) => (
-              <PlayersList id={position.id} key={position.id} players={position.Player} title={position.title} />
+              <PlayersList id={position.id} key={position.id} players={position.Player} teamId={team.id} title={position.title} />
             ))}
           </Box>
           {index !== teams.length - 1 && <Divider sx={{ mb: 2, mt: 1 }} />}
@@ -147,7 +147,7 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
             <Typography variant='h2'>Spillere uten lagtilknytning:</Typography>
             <Box gap={1} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' } }}>
               {players_with_no_team.map((position: IPosition) => (
-                <PlayersList hideAddButton id={position.id} key={position.id} players={position.Player} title={position.title} />
+                <PlayersList id={position.id} key={position.id} players={position.Player} title={position.title} />
               ))}
             </Box>
           </Stack>

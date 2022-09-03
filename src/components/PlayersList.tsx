@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { Team } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -23,7 +24,7 @@ export type PlayersListProps = {
   title: string;
   players: IPlayer[];
   id: number;
-  hideAddButton?: boolean;
+  teamId?: Team['id'];
 };
 
 type FormDataProps = {
@@ -124,13 +125,13 @@ const Player = ({ player }: { player: IPlayer }) => {
   );
 };
 
-const PlayersList = ({ title, id, players, hideAddButton = false }: PlayersListProps) => {
+const PlayersList = ({ title, id, players, teamId }: PlayersListProps) => {
   const [openNewPlayerField, setOpenNewPlayerField] = useState(false);
   const { handleSubmit, control, reset } = useForm<FormDataProps>();
   const router = useRouter();
 
   const onSubmit = async (formData: FormDataProps) => {
-    const data = { name: formData.name, positionId: id };
+    const data = { name: formData.name, positionId: id, teamId };
     axios.post('/api/players', { data: data }).then(() => {
       setOpenNewPlayerField(false);
       reset();
@@ -148,7 +149,7 @@ const PlayersList = ({ title, id, players, hideAddButton = false }: PlayersListP
           <Player key={player.id} player={player} />
         ))}
       </Stack>
-      {!hideAddButton && (
+      {Boolean(teamId) && (
         <Stack gap={1}>
           <Divider sx={{ mt: 1 }} />
           {openNewPlayerField ? (

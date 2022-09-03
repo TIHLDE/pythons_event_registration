@@ -2,10 +2,12 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { setCookie } from 'cookies-next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
+import { USER_STORAGE_KEY } from 'values';
 
 import { IPlayer, IPosition } from 'types';
 
@@ -16,7 +18,7 @@ const SignIn = () => {
 
   const onPlayerSelect = (player: IPlayer | null) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(player));
+      setCookie(USER_STORAGE_KEY, JSON.stringify(player), { maxAge: 60 * 60 * 24 * 180 });
       router.reload();
     }
   };

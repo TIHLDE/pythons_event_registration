@@ -3,9 +3,10 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import router from 'next/router';
 import { Controller, useForm } from 'react-hook-form';
-import useSWR from 'swr';
 
 import { INotification } from 'types';
+
+import { useUser } from 'hooks/useUser';
 
 type FormDataProps = {
   message: string;
@@ -19,10 +20,8 @@ type NewMessageProps = {
 };
 
 const NewMessage = ({ handleClose, notification }: NewMessageProps) => {
-  const { data: user } = useSWR('user', (key) => {
-    const value = localStorage.getItem(key);
-    return !!value ? JSON.parse(value) : undefined;
-  });
+  const { data: user } = useUser();
+
   const dateTimeFormat = "yyyy-MM-dd'T'HH:mm";
   const { control, reset, handleSubmit } = useForm<FormDataProps>({
     defaultValues: notification
@@ -37,7 +36,8 @@ const NewMessage = ({ handleClose, notification }: NewMessageProps) => {
   });
   const onSubmit = async (formData: FormDataProps) => {
     const data = {
-      authorId: user.id,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      authorId: user!.id,
       message: formData.message,
       expiringDate: formData.expiringDate,
     };

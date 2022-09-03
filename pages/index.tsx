@@ -14,13 +14,14 @@ import AlertMessage from 'components/AlertMessage';
 import Event from 'components/Event';
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await prisma.event.findMany({
+  const allFutureEvents = await prisma.event.findMany({
     where: {
       time: {
         gte: startOfToday(),
       },
     },
     include: {
+      team: true,
       type: true,
       registrations: {
         include: {
@@ -43,11 +44,12 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
   });
 
-  const eventsWithArrivingList = res.map((event) => {
+  const eventsWithArrivingList = allFutureEvents.map((event) => {
     const willArrive = event.registrations.filter((registration) => registration.willArrive);
     const willNotArrive = event.registrations.filter((registration) => !registration.willArrive);
 
     const hasNotResponded = players
+      .filter((player) => !event.teamId || player.teamId === event.teamId)
       .map((player) => {
         const willArriveIds = willArrive.map((p) => p.playerId);
         const willNotArriveIds = willNotArrive.map((p) => p.playerId);

@@ -1,18 +1,15 @@
 import OpenInNewRounded from '@mui/icons-material/OpenInNewRounded';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { Player } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
-import useSWR from 'swr';
 
-import { IPlayer } from 'types';
+export type NavBarProps = {
+  user: Player | undefined;
+};
 
-const NavBar = () => {
-  const { data: user } = useSWR<IPlayer | undefined>('user', (key) => {
-    const value = localStorage.getItem(key);
-    return !!value ? JSON.parse(value) : undefined;
-  });
-
+const NavBar = ({ user }: NavBarProps) => {
   return (
     <Stack gap={2} sx={{ mb: 2 }}>
       <Stack direction='row' gap={2} justifyContent='space-between'>

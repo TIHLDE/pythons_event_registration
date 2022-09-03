@@ -15,6 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       data: {
         name: data.name,
         positionId: data.positionId,
+        teamId: data.teamId,
       },
     });
     res.status(200).json(newPlayer);
