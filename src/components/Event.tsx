@@ -208,7 +208,7 @@ const Event = ({ eventDetails }: EventProps) => {
           handleClose={handleCloseHasNotAnsweredModal}
           open={openHasNotAnsweredModal}
           registrations={eventDetails?.hasNotResponded || []}
-          title='Påmeldt'
+          title='Ikke svart'
         />
       )}
       <Divider sx={{ mt: 1 }} />
