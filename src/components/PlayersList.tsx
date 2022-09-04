@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { Team } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -17,11 +18,13 @@ import { IPlayer } from 'types';
 import { useModal } from 'hooks/useModal';
 
 import ChangePositionModal from 'components/ChangePositionModal';
+import ChangeTeamModal from 'components/ChangeTeamModal';
 
 export type PlayersListProps = {
   title: string;
   players: IPlayer[];
   id: number;
+  teamId?: Team['id'];
 };
 
 type FormDataProps = {
@@ -36,22 +39,12 @@ const Player = ({ player }: { player: IPlayer }) => {
   } | null>(null);
 
   const [editPlayer, setEditPlayer] = useState(false);
-
-  const { modalOpen, handleOpenModal, handleCloseModal } = useModal(false);
+  const { modalOpen: positionModalOpen, handleOpenModal: handleOpenPositionModal, handleCloseModal: handleClosePositionModal } = useModal(false);
+  const { modalOpen: teamModalOpen, handleOpenModal: handleOpenTeamModal, handleCloseModal: handleCloseTeamModal } = useModal(false);
 
   const handleContextMenu = (event: { preventDefault: () => void; clientX: number; clientY: number }) => {
     event.preventDefault();
-    setContextMenu(
-      contextMenu === null
-        ? {
-            mouseX: event.clientX + 2,
-            mouseY: event.clientY - 6,
-          }
-        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
-          // Other native context menus might behave different.
-          // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-          null,
-    );
+    setContextMenu(contextMenu === null ? { mouseX: event.clientX + 2, mouseY: event.clientY - 6 } : null);
   };
 
   const handleClose = () => {
@@ -72,7 +65,12 @@ const Player = ({ player }: { player: IPlayer }) => {
   };
 
   const changePosition = () => {
-    handleOpenModal();
+    handleOpenPositionModal();
+    handleClose();
+  };
+
+  const changeTeam = () => {
+    handleOpenTeamModal();
     handleClose();
   };
 
@@ -111,16 +109,8 @@ const Player = ({ player }: { player: IPlayer }) => {
           <Typography variant='body1'>{player.name}</Typography>
         )}
       </Stack>
-      {modalOpen && (
-        <ChangePositionModal
-          defaultValue={player.positionId}
-          handleClose={handleCloseModal}
-          onConfirm={() => null}
-          open={modalOpen}
-          player={player}
-          title='Bytt posisjon'
-        />
-      )}
+      {positionModalOpen && <ChangePositionModal handleClose={handleClosePositionModal} open={positionModalOpen} player={player} title='Bytt posisjon' />}
+      {teamModalOpen && <ChangeTeamModal handleClose={handleCloseTeamModal} open={teamModalOpen} player={player} title='Bytt lag' />}
       <Menu
         anchorPosition={contextMenu !== null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
         anchorReference='anchorPosition'
@@ -129,18 +119,19 @@ const Player = ({ player }: { player: IPlayer }) => {
         <MenuItem onClick={removePlayer}>Fjern {player.name}</MenuItem>
         <MenuItem onClick={change}>Endre navn</MenuItem>
         <MenuItem onClick={changePosition}>Bytt posisjon</MenuItem>
+        <MenuItem onClick={changeTeam}>Bytt lag</MenuItem>
       </Menu>
     </>
   );
 };
 
-const PlayersList = ({ title, id, players }: PlayersListProps) => {
+const PlayersList = ({ title, id, players, teamId }: PlayersListProps) => {
   const [openNewPlayerField, setOpenNewPlayerField] = useState(false);
   const { handleSubmit, control, reset } = useForm<FormDataProps>();
   const router = useRouter();
 
   const onSubmit = async (formData: FormDataProps) => {
-    const data = { name: formData.name, positionId: id };
+    const data = { name: formData.name, positionId: id, teamId };
     axios.post('/api/players', { data: data }).then(() => {
       setOpenNewPlayerField(false);
       reset();
@@ -158,26 +149,28 @@ const PlayersList = ({ title, id, players }: PlayersListProps) => {
           <Player key={player.id} player={player} />
         ))}
       </Stack>
-      <Stack gap={1}>
-        <Divider sx={{ mt: 1 }} />
-        {openNewPlayerField ? (
-          <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
-            <Controller
-              control={control}
-              name={'name'}
-              render={({ field: { onChange, value } }) => <TextField autoFocus label={'Navn'} onChange={onChange} required size='small' value={value} />}
-              rules={{ required: 'Spilleren må ha et navn' }}
-            />
-            <Button size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }} type='submit' variant='contained'>
-              Legg til
+      {Boolean(teamId) && (
+        <Stack gap={1}>
+          <Divider sx={{ mt: 1 }} />
+          {openNewPlayerField ? (
+            <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
+              <Controller
+                control={control}
+                name={'name'}
+                render={({ field: { onChange, value } }) => <TextField autoFocus label={'Navn'} onChange={onChange} required size='small' value={value} />}
+                rules={{ required: 'Spilleren må ha et navn' }}
+              />
+              <Button size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }} type='submit' variant='contained'>
+                Legg til
+              </Button>
+            </Stack>
+          ) : (
+            <Button onClick={() => setOpenNewPlayerField(true)} size='small' startIcon={<AddIcon />} sx={{ textAlign: 'left', justifyContent: 'flex-start' }}>
+              Ny spiller
             </Button>
-          </Stack>
-        ) : (
-          <Button onClick={() => setOpenNewPlayerField(true)} size='small' startIcon={<AddIcon />} sx={{ textAlign: 'left', justifyContent: 'flex-start' }}>
-            Ny spiller
-          </Button>
-        )}
-      </Stack>
+          )}
+        </Stack>
+      )}
     </Stack>
   );
 };

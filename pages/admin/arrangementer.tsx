@@ -17,6 +17,9 @@ import EventModal from 'components/EventModal';
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
   const eventsQuery = await prisma.event.findMany({
+    include: {
+      team: true,
+    },
     where: {
       time: {
         gte: today,
@@ -42,7 +45,7 @@ const Players: NextPage = ({ events }: InferGetServerSidePropsType<typeof getSer
         <title>Arrangementer - Pythons</title>
       </Head>
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
-        <Typography variant='h2'>Arrangementer</Typography>
+        <Typography variant='h1'>Arrangementer</Typography>
         <Link href='/admin' passHref>
           <Button component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
             Til admin

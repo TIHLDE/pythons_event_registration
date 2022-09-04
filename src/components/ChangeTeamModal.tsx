@@ -13,9 +13,9 @@ import { Controller, useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
 
-import { IPlayer, IPosition } from 'types';
+import { IPlayer, ITeam } from 'types';
 
-export type ChangePositionModalProps = {
+export type ChangeTeamModalProps = {
   player: IPlayer;
   open: boolean;
   handleClose: () => void;
@@ -23,37 +23,37 @@ export type ChangePositionModalProps = {
 };
 
 export type FormDataProps = {
-  position: number;
+  team: ITeam['id'] | null;
 };
 
-const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositionModalProps) => {
+const ChangeTeamModal = ({ open, handleClose, title, player }: ChangeTeamModalProps) => {
   const router = useRouter();
-  const { control, handleSubmit } = useForm({
-    defaultValues: { position: player.positionId },
+  const { control, handleSubmit } = useForm<FormDataProps>({
+    defaultValues: { team: player.teamId },
   });
   const onSubmit = (formData: FormDataProps) => {
-    const data = { positionId: formData.position };
+    const data = { teamId: formData.team };
     axios.put(`/api/players/${player.id}`, { data: data }).then(() => {
       handleClose();
       router.replace(router.asPath);
     });
   };
-  const { data: positions } = useSWR('/api/positions', fetcher);
+  const { data: teams } = useSWR<ITeam[]>('/api/teams', fetcher);
   return (
     <Dialog onClose={handleClose} open={open} sx={{ '& .MuiDialog-paper': { width: 400, border: '2px solid #ffffff', p: 4 } }}>
       <Stack gap={2}>
         <Typography variant='h5'>{title}</Typography>
         <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
           <FormControl fullWidth>
-            <InputLabel id='demo-simple-select-label'>Posisjon</InputLabel>
+            <InputLabel id='demo-simple-select-label'>Lag</InputLabel>
             <Controller
               control={control}
-              name='position'
+              name='team'
               render={({ field: { onChange, value } }) => (
-                <Select label='Posisjon' onChange={onChange} value={value}>
-                  {positions?.map((position: IPosition) => (
-                    <MenuItem key={position.id} value={position.id}>
-                      {position.title}
+                <Select label='Lag' onChange={onChange} value={value}>
+                  {teams?.map((team) => (
+                    <MenuItem key={team.id} value={team.id}>
+                      {team.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -65,7 +65,7 @@ const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositio
               Avbryt
             </Button>
             <Button color='success' type='submit' variant='contained'>
-              Bytt posisjon
+              Bytt lag
             </Button>
           </Stack>
         </Stack>
@@ -74,4 +74,4 @@ const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositio
   );
 };
 
-export default ChangePositionModal;
+export default ChangeTeamModal;

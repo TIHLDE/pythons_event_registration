@@ -14,4 +14,4 @@ Run `yarn` to install packages, `yarn fresh` to setup the databse and load fixtu
 
 The project uses Prisma for ORM. This includes database-migrations. When you're done with editing the `schema.prisma`-file, run `yarn migrate <migration-name>` to add a migration and update your local database.
 
-New migrations will automatically be applied in production.
+New migrations will automatically be applied in production with the Github Action which runs on push to the `main`-branch.

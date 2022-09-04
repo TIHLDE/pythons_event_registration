@@ -7,13 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Team {
+  id      Int      @id @default(autoincrement())
+  name    String   @db.VarChar(60)
+  events  Event[]
+  players Player[]
+}
+
 model Player {
   id            Int             @id @default(autoincrement())
   createdAt     DateTime        @default(now())
   name          String          @db.VarChar(60)
   positionId    Int
   active        Boolean         @default(true)
+  teamId        Int?
   position      Position        @relation(fields: [positionId], references: [id])
+  team          Team?           @relation(fields: [teamId], references: [id])
   Notification  Notification[]
   registrations Registrations[]
 }
@@ -25,7 +34,9 @@ model Event {
   time          DateTime
   location      String
   eventTypeSlug String
+  teamId        Int?
   type          EventType       @relation(fields: [eventTypeSlug], references: [slug])
+  team          Team?           @relation(fields: [teamId], references: [id])
   registrations Registrations[]
 }
 

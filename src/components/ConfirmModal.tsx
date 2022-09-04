@@ -1,32 +1,44 @@
 // eslint-disable-no-explicit-any
 import { Dialog } from '@mui/material';
-import Button from '@mui/material/Button';
+import Button, { ButtonProps } from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useState } from 'react';
 
 export type EventModalProps = {
-  open: boolean;
-  handleClose: () => void;
   title: string;
+  description?: string;
   onConfirm: () => void;
-};
+} & ButtonProps;
 
-const ConfirmModal = ({ open, handleClose, title, onConfirm }: EventModalProps) => {
+const ConfirmModal = ({ title, description = 'Er du helt sikker?', onConfirm, children, ...props }: EventModalProps) => {
+  const [open, setOpen] = useState(false);
   return (
-    <Dialog onClose={handleClose} open={open} sx={{ '& .MuiDialog-paper': { width: 400, border: '2px solid #ffffff', p: 4 } }}>
-      <Stack gap={2}>
-        <Typography variant='h2'>{title}</Typography>
-        <Typography variant='body1'>Er du sikker på at du vil slette arrangementet?</Typography>
-        <Stack direction='row' justifyContent='space-between' spacing={1}>
-          <Button color='error' onClick={handleClose}>
-            Nei
-          </Button>
-          <Button color='success' onClick={onConfirm} variant='contained'>
-            Ja
-          </Button>
+    <>
+      <Button {...props} onClick={() => setOpen(true)}>
+        {children}
+      </Button>
+      <Dialog onClose={() => setOpen(false)} open={open} sx={{ '& .MuiDialog-paper': { maxWidth: 400, width: '100%', border: '2px solid #ffffff', p: 2 } }}>
+        <Stack gap={2}>
+          <Typography variant='h2'>{title}</Typography>
+          <Typography variant='body1'>{description}</Typography>
+          <Stack direction='row' justifyContent='space-between' spacing={1}>
+            <Button color='error' onClick={() => setOpen(false)}>
+              Nei, avbryt
+            </Button>
+            <Button
+              color='success'
+              onClick={() => {
+                onConfirm();
+                setOpen(false);
+              }}
+              variant='contained'>
+              Jeg er sikker
+            </Button>
+          </Stack>
         </Stack>
-      </Stack>
-    </Dialog>
+      </Dialog>
+    </>
   );
 };
 

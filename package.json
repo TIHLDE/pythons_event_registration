@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "eslint --fix src",
     "push": "npx prisma db push",
-    "migrate": "npx prisma migrate dev --name ${0}",
-    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
+    "migrate": "npx prisma migrate dev --name",
     "fixtures": "npx fixtures ./src/fixtures",
     "createdb": "docker run --name event_registration -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres",
     "fresh": "docker rm -f -v event_registration && yarn createdb && sleep 1 && yarn push && npx prisma generate && yarn fixtures"
@@ -23,6 +22,7 @@
     "@mui/material": "5.10.1",
     "@prisma/client": "^4.2.1",
     "axios": "^0.26.1",
+    "cookies-next": "^2.1.1",
     "date-fns": "^2.28.0",
     "http-status-typed": "^1.0.1",
     "lodash": "^4.17.21",
@@ -33,7 +33,7 @@
     "react-hook-form": "^7.29.0",
     "react-hotkeys-hook": "^3.4.6",
     "safe-json-stringify": "^1.2.0",
-    "swr": "^1.2.2",
+    "swr": "^1.3.0",
     "ts-node": "^10.7.0"
   },
   "devDependencies": {
