@@ -14,7 +14,7 @@ import AlertMessage from 'components/AlertMessage';
 import Event from 'components/Event';
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const allFutureEvents = await prisma.event.findMany({
+  const allFutureEventsQuery = await prisma.event.findMany({
     where: {
       time: {
         gte: startOfToday(),
@@ -38,11 +38,13 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
   });
 
-  const players = await prisma.player.findMany({
+  const playersQuery = await prisma.player.findMany({
     where: {
       active: true,
     },
   });
+
+  const [allFutureEvents, players] = await Promise.all([allFutureEventsQuery, playersQuery]);
 
   const eventsWithArrivingList = allFutureEvents.map((event) => {
     const willArrive = event.registrations.filter((registration) => registration.willArrive);
