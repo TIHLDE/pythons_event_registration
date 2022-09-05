@@ -1,34 +1,14 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Link as MuiLink,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { Event, EventType, Player, Registrations, Team } from '@prisma/client';
-import { format, getMonth, parseISO, set, subDays, subHours } from 'date-fns';
+import { Box, Button, Divider, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { EventType, Team } from '@prisma/client';
+import { getMonth, parseISO, set } from 'date-fns';
 import { prisma } from 'lib/prisma';
-import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
+import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import rules from 'rules';
 import safeJsonStringify from 'safe-json-stringify';
-
-import { IEvent } from 'types';
 
 const removeFalsyElementsFromObject = (object: Record<string, string>) => {
   const newObject: Record<string, string> = {};
@@ -148,7 +128,6 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
       willArrive: typeof router.query.willArrive === 'string' ? router.query.willArrive : 'yes',
     },
   });
-  console.log(eventsAmount, players, teams, eventTypes);
 
   const onSubmit = async (query: FormData) => router.replace({ query: removeFalsyElementsFromObject(query) });
 
@@ -159,14 +138,13 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
       </Head>
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
         <Typography variant='h1'>Statistikk</Typography>
-        <Link href='/admin' passHref>
-          <Button component='a' variant='outlined'>
+        <Link href='/' passHref>
+          <Button color='secondary' component='a' variant='outlined'>
             Til forsiden
           </Button>
         </Link>
       </Stack>
-      <Divider />
-      <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ pt: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 1 }}>
+      <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ pt: 1, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 1 }}>
         <Controller control={control} name='from' render={({ field }) => <TextField label='Fra' type='date' {...field} />} />
         <Controller control={control} name='to' render={({ field }) => <TextField label='Til' type='date' {...field} />} />
         <FormControl fullWidth>

@@ -117,7 +117,7 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
         <Typography variant='h1'>Bøter 😈 👹</Typography>
         <Link href='/admin' passHref>
-          <Button component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+          <Button color='secondary' component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
             Til admin
           </Button>
         </Link>

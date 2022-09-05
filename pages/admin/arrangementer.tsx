@@ -47,7 +47,7 @@ const Players: NextPage = ({ events }: InferGetServerSidePropsType<typeof getSer
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
         <Typography variant='h1'>Arrangementer</Typography>
         <Link href='/admin' passHref>
-          <Button component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+          <Button color='secondary' component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
             Til admin
           </Button>
         </Link>
