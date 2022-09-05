@@ -33,6 +33,7 @@ model Event {
   title         String?
   time          DateTime
   location      String
+  finesGiven    Boolean         @default(false)
   eventTypeSlug String
   teamId        Int?
   type          EventType       @relation(fields: [eventTypeSlug], references: [slug])

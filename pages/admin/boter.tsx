@@ -1,12 +1,27 @@
 import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, Divider, Grid, Link as MuiLink, Stack, Typography } from '@mui/material';
-import { Player } from '@prisma/client';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Checkbox,
+  Divider,
+  FormControlLabel,
+  Grid,
+  Link as MuiLink,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { Event, Player } from '@prisma/client';
+import axios from 'axios';
 import { format, subDays, subHours } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Fragment, useState } from 'react';
 import rules from 'rules';
 import safeJsonStringify from 'safe-json-stringify';
@@ -25,6 +40,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
     include: {
       registrations: true,
+    },
+    orderBy: {
+      time: 'desc',
     },
   });
 
@@ -80,11 +98,19 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const router = useRouter();
   const [expanded, setExpanded] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (panel: any) => (_: any, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
   };
+
+  const setFinesGiven = async (event: Event, finesGiven: boolean) => {
+    await axios.put(`/api/events/${event.id}`, { data: { finesGiven } }).then(() => {
+      router.replace(router.asPath);
+    });
+  };
+
   return (
     <>
       <Head>
@@ -107,11 +133,11 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
       </Typography>
       <div>
         {!events.length && <Typography>Ingen bøter å vise</Typography>}
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {events.map((event: IEvent & { fines: (Player & { reason: string })[] }, idx: number) => (
-          <Accordion expanded={expanded === `panel${idx}`} key={idx} onChange={handleChange(`panel${idx}`)}>
+        {events.map((event: IEvent & { fines: { player: Player; reason: string }[] }, idx: number) => (
+          <Accordion expanded={expanded === `panel${idx}`} key={idx} onChange={handleChange(`panel${idx}`)} sx={{ backgroundColor: '#3A2056' }}>
             <AccordionSummary aria-controls='panel1bh-content' expandIcon={<ExpandMoreIcon />} id='panel1bh-header'>
               <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                {`${event.finesGiven ? '✅' : '❌'} `}
                 {event.title || 'Trening'}
                 {'  '}
                 {format(new Date(event.time), 'dd.MM HH:mm')}
@@ -119,9 +145,11 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
               <Typography sx={{ color: 'text.secondary', ml: 1 }}>{event.fines.length} bøter</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Grid container>
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {event.fines.map((fine: any, index: number) => (
+              <Box sx={{ mb: 2 }}>
+                <FormControlLabel control={<Checkbox onChange={(e) => setFinesGiven(event, e.target.checked)} value={event.finesGiven} />} label='Gitt bøter' />
+              </Box>
+              <Grid columnSpacing={1} container rowSpacing={0.5}>
+                {event.fines.map((fine, index) => (
                   <Fragment key={fine.player.id}>
                     <Grid item xs={5}>
                       <Typography variant='body1'>{fine.player.name}</Typography>

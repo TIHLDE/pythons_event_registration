@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint --fix src",
     "studio": "npx prisma studio",
+    "generate": "npx prisma generate",
     "push": "npx prisma db push",
     "migrate": "npx prisma migrate dev --name",
     "fixtures": "npx fixtures ./src/fixtures",
