@@ -13,8 +13,8 @@ import { IPlayer, IPosition } from 'types';
 
 const SignIn = () => {
   const router = useRouter();
-  const { data: players = [] } = useSWR<IPlayer[]>('/api/players', fetcher);
-  const { data: positions = [] } = useSWR<IPosition[]>('/api/positions', fetcher);
+  const { data: players = [], isValidating: isPlayersLoading } = useSWR<IPlayer[]>('/api/players', fetcher);
+  const { data: positions = [], isValidating: isPositionsLoading } = useSWR<IPosition[]>('/api/positions', fetcher);
 
   const onPlayerSelect = (player: IPlayer | null) => {
     if (typeof window !== 'undefined') {
@@ -22,6 +22,8 @@ const SignIn = () => {
       router.reload();
     }
   };
+
+  const isLoading = isPlayersLoading || isPositionsLoading;
 
   return (
     <>
@@ -32,16 +34,19 @@ const SignIn = () => {
         <Typography variant='h1'>Oppmøte-registrering</Typography>
         <Typography variant='body1'>Du må logge inn før du kan registrere oppmøte på treninger, kamper og sosiale arrangementer.</Typography>
         <Autocomplete
+          disabled={isLoading}
           disablePortal
           getOptionLabel={(option) => option.name}
           groupBy={(option) => option.position}
-          id='combo-box-demo'
+          id='select-player'
           noOptionsText='Fant ingen spillere med dette navnet, kontakt trener-teamet for å bli lagt til'
           onChange={(e, value) => onPlayerSelect(value)}
           options={players
             .sort((a, b) => a.positionId - b.positionId)
             .map((player) => ({ ...player, position: positions.find((pos) => pos.id === player.positionId)?.title || 'Annet' }))}
-          renderInput={(params) => <TextField sx={{ background: 'transparent', color: 'white' }} {...params} label='Velg spiller' />}
+          renderInput={(params) => (
+            <TextField sx={{ background: 'transparent', color: 'white' }} {...params} label={isLoading ? 'Laster spillere...' : 'Velg spiller'} />
+          )}
           size='small'
           sx={{ width: '100%', maxWidth: 500, color: 'text.primary' }}
         />
