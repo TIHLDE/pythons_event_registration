@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ 
   const eventTypeFilter = typeof query.eventType === 'string' && query.eventType !== '' ? query.eventType : undefined;
   const teamFilter = typeof query.team === 'string' && query.team !== '' ? query.team : undefined;
   const willArriveFilter =
-    typeof query.willArrive === 'string' && query.team !== '' ? (query.willArrive === 'yes' ? true : query.willArrive === 'no' ? false : null) : true;
+    typeof query.willArrive === 'string' && query.team !== '' ? (query.willArrive === 'yes' ? true : query.willArrive === 'no' ? false : null) : undefined;
 
   const eventsAmountQuery = prisma.event.aggregate({
     _count: true,
@@ -125,7 +125,7 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
       from: typeof router.query.from === 'string' && router.query.from !== '' ? router.query.from : DEFAULT_FROM_DATE.toJSON().substring(0, 10),
       eventType: typeof router.query.eventType === 'string' ? router.query.eventType : '',
       team: typeof router.query.team === 'string' ? router.query.team : '',
-      willArrive: typeof router.query.willArrive === 'string' ? router.query.willArrive : 'yes',
+      willArrive: typeof router.query.willArrive === 'string' ? router.query.willArrive : '',
     },
   });
 
