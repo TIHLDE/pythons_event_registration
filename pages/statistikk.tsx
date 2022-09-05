@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ 
   const eventTypeFilter = typeof query.eventType === 'string' && query.eventType !== '' ? query.eventType : undefined;
   const teamFilter = typeof query.team === 'string' && query.team !== '' ? query.team : undefined;
   const willArriveFilter =
-    typeof query.willArrive === 'string' && query.team !== '' ? (query.willArrive === 'yes' ? true : query.willArrive === 'no' ? false : null) : undefined;
+    typeof query.willArrive === 'string' && query.team !== '' ? (query.willArrive === 'yes' ? true : query.willArrive === 'no' ? false : null) : true;
 
   const eventsAmountQuery = prisma.event.aggregate({
     _count: true,
