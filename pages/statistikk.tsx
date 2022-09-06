@@ -1,4 +1,4 @@
-import { Box, Button, Divider, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Divider, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import { EventType, Team } from '@prisma/client';
 import { getMonth, parseISO, set } from 'date-fns';
 import { prisma } from 'lib/prisma';
@@ -43,6 +43,18 @@ export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ 
   const teamFilter = typeof query.team === 'string' && query.team !== '' ? query.team : undefined;
   const willArriveFilter =
     typeof query.willArrive === 'string' && query.team !== '' ? (query.willArrive === 'yes' ? true : query.willArrive === 'no' ? false : null) : undefined;
+
+  if (!query.to && !query.from && !query.eventType && !query.team && !query.willArrive) {
+    return {
+      redirect: {
+        destination: `/statistikk?to=${DEFAULT_TO_DATE.toJSON().substring(0, 10)}&from=${DEFAULT_FROM_DATE.toJSON().substring(
+          0,
+          10,
+        )}&eventType=trening&willArrive=yes`,
+        permanent: false,
+      },
+    };
+  }
 
   const eventsAmountQuery = prisma.event.aggregate({
     _count: true,
@@ -140,7 +152,7 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
         <Typography variant='h1'>Statistikk</Typography>
         <Link href='/' passHref>
           <Button color='secondary' component='a' variant='outlined'>
-            Til forsiden
+            Kalender
           </Button>
         </Link>
       </Stack>
@@ -197,7 +209,7 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
           />
         </FormControl>
         <Button sx={{ gridColumn: { xs: undefined, md: 'span 2' } }} type='submit' variant='contained'>
-          Oppdater
+          Oppdater filtreringen
         </Button>
       </Box>
       <Divider sx={{ mt: 1, mb: 2 }} />
@@ -205,9 +217,14 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
         Oppmøte-ledertavle
       </Typography>
       <Typography gutterBottom>
-        Med den gitte filtreringen finnes det totalt <b>{eventsAmount}</b> arrangementer. Husk at om kamper er en del av filtreringen uten at et lag er valgt,
-        så vil ingen ha 100% påmeldinger ettersom det ikke er mulig å melde seg på andre lags kamper.
+        Med den gitte filtreringen finnes det totalt <b>{eventsAmount}</b> arrangementer.
       </Typography>
+      {(router.query.eventType === 'kamp' || !router.query.eventType) && !router.query.team && (
+        <Alert severity='info' sx={{ mb: 1 }} variant='outlined'>
+          Kamper er en del av filtreringen uten at et lag er valgt. Det medfører at ingen kan ha 100% påmeldinger ettersom det ikke er mulig å melde seg på
+          andre lags kamper.
+        </Alert>
+      )}
       <Divider sx={{ mb: 0.5 }} />
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', columnGap: 2, rowGap: 0.5 }}>
         {players.map((player, index) => (
