@@ -13,7 +13,7 @@ import { IMatch } from 'types';
 import MatchStats from 'components/MatchStats';
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const today = new Date(2023, 1, 1);
+  const today = new Date();
   const previousMatchesWithoutResult = await prisma.match.findMany({
     where: {
       result: null,

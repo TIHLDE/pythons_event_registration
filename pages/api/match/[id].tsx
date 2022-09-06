@@ -13,8 +13,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const [homeGoals, awayGoals] = data.result.split('-').map((goals: string) => parseInt(goals));
 
     const parsedId = parseInt(typeof id === 'string' ? id : '-1');
-    /* const homeGoals = parseInt(data.result[0]);
-    const awayGoals = parseInt(data.result[2]); */
     const result = homeGoals > awayGoals ? Result.WIN : homeGoals < awayGoals ? Result.LOSE : Result.DRAW;
     await prisma.match.update({
       where: { id: parsedId },
