@@ -1,4 +1,4 @@
-import { Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { addWeeks, endOfWeek, format, getWeek, parseISO, startOfToday, startOfWeek } from 'date-fns';
 import nb from 'date-fns/locale/nb';
@@ -6,6 +6,7 @@ import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import safeJsonStringify from 'safe-json-stringify';
 
 import { IEvent, INotification } from 'types';
@@ -14,7 +15,7 @@ import AlertMessage from 'components/AlertMessage';
 import Event from 'components/Event';
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const allFutureEvents = await prisma.event.findMany({
+  const allFutureEventsQuery = await prisma.event.findMany({
     where: {
       time: {
         gte: startOfToday(),
@@ -38,11 +39,13 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
   });
 
-  const players = await prisma.player.findMany({
+  const playersQuery = await prisma.player.findMany({
     where: {
       active: true,
     },
   });
+
+  const [allFutureEvents, players] = await Promise.all([allFutureEventsQuery, playersQuery]);
 
   const eventsWithArrivingList = allFutureEvents.map((event) => {
     const willArrive = event.registrations.filter((registration) => registration.willArrive);
@@ -127,8 +130,16 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
   return (
     <>
       <Head>
-        <title>Registrering - Pythons</title>
+        <title>Kalender - Pythons</title>
       </Head>
+      <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
+        <Typography variant='h1'>Kalender</Typography>
+        <Link href='/statistikk' passHref>
+          <Button color='secondary' component='a' variant='outlined'>
+            Statistikk
+          </Button>
+        </Link>
+      </Stack>
       <Stack gap={2}>
         {notifications.map((notification: INotification) => (
           <AlertMessage key={notification.id} notification={notification} />

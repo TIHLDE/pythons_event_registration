@@ -100,10 +100,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
 const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const [expanded, setExpanded] = useState('');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleChange = (panel: any) => (_: any, isExpanded: boolean) => {
-    setExpanded(isExpanded ? panel : false);
-  };
+
+  const handleChange = (panel: string, isExpanded: boolean) => setExpanded(isExpanded ? panel : '');
 
   const setFinesGiven = async (event: Event, finesGiven: boolean) => {
     await axios.put(`/api/events/${event.id}`, { data: { finesGiven } }).then(() => {
@@ -119,7 +117,7 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
         <Typography variant='h1'>Bøter 😈 👹</Typography>
         <Link href='/admin' passHref>
-          <Button component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+          <Button color='secondary' component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
             Til admin
           </Button>
         </Link>
@@ -134,7 +132,11 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
       <div>
         {!events.length && <Typography>Ingen bøter å vise</Typography>}
         {events.map((event: IEvent & { fines: { player: Player; reason: string }[] }, idx: number) => (
-          <Accordion expanded={expanded === `panel${idx}`} key={idx} onChange={handleChange(`panel${idx}`)} sx={{ backgroundColor: '#3A2056' }}>
+          <Accordion
+            expanded={expanded === `panel${idx}`}
+            key={idx}
+            onChange={(_, isExpanded) => handleChange(`panel${idx}`, isExpanded)}
+            sx={{ backgroundColor: '#3A2056' }}>
             <AccordionSummary aria-controls='panel1bh-content' expandIcon={<ExpandMoreIcon />} id='panel1bh-header'>
               <Typography sx={{ width: '33%', flexShrink: 0 }}>
                 {`${event.finesGiven ? '✅' : '❌'} `}
