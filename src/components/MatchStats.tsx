@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { IMatch, Result } from 'types';
+import { IMatch } from 'types';
 
 export type MatchStatsProps = {
   match: IMatch;
@@ -15,6 +15,10 @@ const MatchStats = ({ match }: MatchStatsProps) => {
   const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Check if the first or the last element is not a number
+    if (!event.target.value[0].match(/^[0-9]*$/) || !event.target.value.at(-1)?.match(/^[0-9]*$/)) {
+      return;
+    }
     if (event.target.value.length > 3) {
       return;
     } else if (event.target.value.length === 1) {
