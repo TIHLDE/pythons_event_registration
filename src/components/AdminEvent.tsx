@@ -57,12 +57,12 @@ const AdminEvent = ({ event }: AdminEventProps) => {
           <Typography variant='body1'>{event.team.name}</Typography>
         </>
       )}
-      {event.Match && (
+      {event.match && (
         <>
           <Typography fontWeight={'bold'} variant='body1'>
             Motstander
           </Typography>
-          <Typography variant='body1'>{event.Match.opponent}</Typography>
+          <Typography variant='body1'>{event.match.opponent}</Typography>
         </>
       )}
       <Typography fontWeight={'bold'} variant='body1'>

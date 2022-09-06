@@ -19,6 +19,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const eventsQuery = await prisma.event.findMany({
     include: {
       team: true,
+      match: true,
     },
     where: {
       time: {
@@ -27,9 +28,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
     orderBy: {
       time: 'asc',
-    },
-    include: {
-      Match: true,
     },
   });
   const events = JSON.parse(safeJsonStringify(eventsQuery)) as Array<IEvent>;
@@ -41,7 +39,6 @@ const Players: NextPage = ({ events }: InferGetServerSidePropsType<typeof getSer
   const [newEventModal, setNewEventModal] = useState(false);
   const handleOpenNewEventModal = () => setNewEventModal(true);
   const handleCloseNewEventModal = () => setNewEventModal(false);
-  console.log(events);
   return (
     <>
       <Head>

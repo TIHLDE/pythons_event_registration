@@ -17,7 +17,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const previousMatchesWithoutResult = await prisma.match.findMany({
     where: {
       result: null,
-      Event: {
+      event: {
         time: {
           lte: today,
         },
@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       result: {
         not: null,
       },
-      Event: {
+      event: {
         time: {
           lte: today,
         },

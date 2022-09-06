@@ -12,7 +12,7 @@ export type IEvent = Event & {
   hasNotResponded?: IRegistrations[];
   team?: ITeam;
   matchId?: number;
-  Match?: IMatch;
+  match?: IMatch;
 };
 
 export type IEventType = EventType & {

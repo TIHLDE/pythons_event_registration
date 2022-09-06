@@ -58,8 +58,6 @@ const Event = ({ eventDetails }: EventProps) => {
 
   const { data: user } = useUser();
 
-  // console.log(eventDetails, user);
-
   const userRegistration = eventDetails.registrations.find((registration) => registration.playerId === user?.id);
 
   const userHasRegistrated = Boolean(userRegistration);
@@ -119,7 +117,7 @@ const Event = ({ eventDetails }: EventProps) => {
         borderRadius: 1,
       }}>
       {eventDetails.type.slug === 'trening' && <Typography variant='h3'>💪 Trening</Typography>}
-      {eventDetails.type.slug === 'kamp' && eventDetails.Match && <Typography variant='h3'>⚽️ Kamp mot {eventDetails.Match.opponent}</Typography>}
+      {eventDetails.type.slug === 'kamp' && eventDetails.match && <Typography variant='h3'>⚽️ Kamp mot {eventDetails.match.opponent}</Typography>}
       {eventDetails.type.slug === 'sosialt' && eventDetails.title && <Typography variant='h3'>🎉 {eventDetails.title}</Typography>}
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
         <NoSsr>
@@ -160,6 +158,7 @@ const Event = ({ eventDetails }: EventProps) => {
             <Typography variant='body1'>{eventDetails.team.name}</Typography>
           </>
         )}
+
         <Tooltip title='Påmeldte'>
           <CheckRoundedIcon />
         </Tooltip>

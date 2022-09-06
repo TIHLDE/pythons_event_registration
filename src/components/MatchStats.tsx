@@ -9,31 +9,28 @@ export type MatchStatsProps = {
   match: IMatch;
 };
 
+const validateResultInput = (value: string) => {
+  const regex = /^\d+-\d+$/;
+  return regex.test(value);
+};
+
 const MatchStats = ({ match }: MatchStatsProps) => {
   const [resultValue, setResultValue] = useState('');
   const [editResult, setEditResult] = useState(match.result === null);
   const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Check if the first or the last element is not a number
-    if (!event.target.value[0].match(/^[0-9]*$/) || !event.target.value.at(-1)?.match(/^[0-9]*$/)) {
-      return;
-    }
-    if (event.target.value.length > 3) {
-      return;
-    } else if (event.target.value.length === 1) {
-      setResultValue(event.target.value + '-');
-    } else {
-      setResultValue(event.target.value);
-    }
+    setResultValue(event.target.value);
   };
 
   const addResult = async () => {
-    await axios.put(`/api/match/${match.id}`, {
-      data: { result: resultValue },
-    });
-    setEditResult(false);
-    router.replace(router.asPath);
+    if (validateResultInput(resultValue)) {
+      await axios.put(`/api/match/${match.id}`, {
+        data: { result: resultValue },
+      });
+      setEditResult(false);
+      router.replace(router.asPath);
+    }
   };
   return (
     <>
@@ -51,12 +48,10 @@ const MatchStats = ({ match }: MatchStatsProps) => {
             </>
           ) : (
             <>
-              <TextField label='Resultat' onChange={handleChange} size='small' value={resultValue} />
-              {resultValue.length === 3 && (
-                <Button onClick={addResult} size='small' variant='outlined'>
-                  Lagre
-                </Button>
-              )}
+              <TextField helperText='Format: tall-tall' label='Resultat' onChange={handleChange} size='small' value={resultValue} />
+              <Button disabled={!validateResultInput(resultValue)} onClick={addResult} size='small' variant='outlined'>
+                Lagre
+              </Button>
             </>
           )}
         </Stack>

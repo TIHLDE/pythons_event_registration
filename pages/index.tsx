@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
     include: {
       team: true,
-      Match: true,
+      match: true,
       type: true,
       registrations: {
         include: {

@@ -13,9 +13,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await prisma.event.create({
       data: {
         ...(data.opponent && {
-          Match: {
+          match: {
             create: {
               opponent: data.opponent,
+              team: {
+                connect: {
+                  id: Number(data.team),
+                },
+              },
             },
           },
         }),
