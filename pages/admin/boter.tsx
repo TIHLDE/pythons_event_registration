@@ -26,8 +26,6 @@ import { Fragment, useState } from 'react';
 import rules from 'rules';
 import safeJsonStringify from 'safe-json-stringify';
 
-import { IEvent } from 'types';
-
 export const getServerSideProps: GetServerSideProps = async () => {
   const today = new Date();
   const twoWeeksBack = subDays(new Date(), 14);
@@ -131,7 +129,7 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
       </Typography>
       <div>
         {!events.length && <Typography>Ingen bøter å vise</Typography>}
-        {events.map((event: IEvent & { fines: { player: Player; reason: string }[] }, idx: number) => (
+        {events.map((event: Event & { fines: { player: Player; reason: string }[] }, idx: number) => (
           <Accordion
             expanded={expanded === `panel${idx}`}
             key={idx}

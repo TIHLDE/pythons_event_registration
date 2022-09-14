@@ -5,6 +5,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { Box, Button, Divider, FormControl, FormControlLabel, NoSsr, Radio, RadioGroup, Stack, styled, TextField, Tooltip, Typography } from '@mui/material';
+import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import { format, formatDistanceToNow, subHours } from 'date-fns';
 import { nb } from 'date-fns/locale';
@@ -12,8 +13,6 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import rules from 'rules';
-
-import { IEvent } from 'types';
 
 import { useModal } from 'hooks/useModal';
 import { useUser } from 'hooks/useUser';
@@ -27,8 +26,44 @@ const Link = styled('a')(() => ({
   },
 }));
 
+export type ExtendedEvent = Prisma.EventGetPayload<{
+  include: {
+    registrations: true;
+    type: true;
+    team: true;
+    match: true;
+  };
+}> & {
+  willArrive: Prisma.RegistrationsGetPayload<{
+    include: {
+      player: {
+        include: {
+          position: true;
+        };
+      };
+    };
+  }>[];
+  willNotArrive: Prisma.RegistrationsGetPayload<{
+    include: {
+      player: {
+        include: {
+          position: true;
+        };
+      };
+    };
+  }>[];
+  hasNotResponded: Prisma.RegistrationsGetPayload<{
+    include: {
+      player: {
+        include: {
+          position: true;
+        };
+      };
+    };
+  }>[];
+};
 type EventProps = {
-  eventDetails: IEvent;
+  eventDetails: ExtendedEvent;
 };
 
 type FormDataProps = {
@@ -57,7 +92,6 @@ const Event = ({ eventDetails }: EventProps) => {
   const router = useRouter();
 
   const { data: user } = useUser();
-
   const userRegistration = eventDetails.registrations.find((registration) => registration.playerId === user?.id);
 
   const userHasRegistrated = Boolean(userRegistration);

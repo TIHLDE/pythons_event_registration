@@ -1,17 +1,22 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Alert, IconButton, Stack, Typography } from '@mui/material';
+import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { INotification } from 'types';
-
 import NewMessage from 'components/NewMessage';
 
+export type ExtendedNotification = Prisma.NotificationGetPayload<{
+  include: {
+    author: true;
+  };
+}>;
+
 type AdminMessageProps = {
-  notification: INotification;
+  notification: ExtendedNotification;
 };
 
 const AdminMessage = ({ notification }: AdminMessageProps) => {

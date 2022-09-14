@@ -9,10 +9,9 @@ import Head from 'next/head';
 import Link from 'next/link';
 import safeJsonStringify from 'safe-json-stringify';
 
-import { IEvent, INotification } from 'types';
-
+import { ExtendedNotification } from 'components/AdminMessage';
 import AlertMessage from 'components/AlertMessage';
-import Event from 'components/Event';
+import Event, { ExtendedEvent } from 'components/Event';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const allFutureEventsQuery = await prisma.event.findMany({
@@ -98,7 +97,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const groupedEvents = (events as IEvent[]).reduce((acc, event) => {
+  const groupedEvents = (events as ExtendedEvent[]).reduce((acc, event) => {
     const time = parseISO(event.time as unknown as string);
 
     const getYearWeek = (time: Date) =>
@@ -126,7 +125,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
 
     acc[yearWeek].push(event);
     return acc;
-  }, {} as Record<string, Array<IEvent>>);
+  }, {} as Record<string, Array<ExtendedEvent>>);
 
   return (
     <>
@@ -142,7 +141,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
         </Link>
       </Stack>
       <Stack gap={2}>
-        {notifications.map((notification: INotification) => (
+        {notifications.map((notification: ExtendedNotification) => (
           <AlertMessage key={notification.id} notification={notification} />
         ))}
         {!events.length && <Typography>Ingen kommende arrangementer</Typography>}

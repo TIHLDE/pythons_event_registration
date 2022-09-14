@@ -6,9 +6,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import safeJsonStringify from 'safe-json-stringify';
 
-import { INotification } from 'types';
-
-import AdminMessage from 'components/AdminMessage';
+import AdminMessage, { ExtendedNotification } from 'components/AdminMessage';
 import NewMessage from 'components/NewMessage';
 
 export const getServerSideProps: GetServerSideProps = async () => {
@@ -52,7 +50,7 @@ const Messages: NextPage = ({ messages }: InferGetServerSidePropsType<typeof get
       </Button>
       {newMessage && <NewMessage handleClose={handleClose} />}
       {messages.length ? (
-        messages.map((notification: INotification) => <AdminMessage key={notification.id} notification={notification} />)
+        messages.map((notification: ExtendedNotification) => <AdminMessage key={notification.id} notification={notification} />)
       ) : (
         <Typography>Ingen å vise</Typography>
       )}

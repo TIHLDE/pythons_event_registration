@@ -27,7 +27,7 @@ model Player {
   team          Team?           @relation(fields: [teamId], references: [id])
   notification  Notification[]
   registrations Registrations[]
-  statistic     Statistic[]
+  matchEvents   MatchEvent[]
 }
 
 model Event {
@@ -80,28 +80,28 @@ model Notification {
 }
 
 model Match {
-  id        Int         @id @default(autoincrement())
-  opponent  String
-  result    Result?
-  homeGoals Int?
-  awayGoals Int?
-  eventId   Int         @unique
-  team      Team        @relation(fields: [teamId], references: [id])
-  statistic Statistic[]
-  event     Event       @relation(fields: [eventId], references: [id])
-  teamId    Int
+  id          Int          @id @default(autoincrement())
+  opponent    String
+  result      Result?
+  homeGoals   Int?
+  awayGoals   Int?
+  eventId     Int          @unique
+  team        Team         @relation(fields: [teamId], references: [id])
+  matchEvents MatchEvent[]
+  event       Event        @relation(fields: [eventId], references: [id])
+  teamId      Int
 }
 
-model Statistic {
-  id        Int           @id @default(autoincrement())
-  player    Player        @relation(fields: [playerId], references: [id])
+model MatchEvent {
+  id        Int            @id @default(autoincrement())
+  player    Player         @relation(fields: [playerId], references: [id])
   playerId  Int
-  match     Match         @relation(fields: [matchId], references: [id])
+  match     Match          @relation(fields: [matchId], references: [id])
   matchId   Int
-  statistic StatisticType
+  statistic MatchEventType
 }
 
-enum StatisticType {
+enum MatchEventType {
   GOAL
   ASSIST
   YELLOW_CARD

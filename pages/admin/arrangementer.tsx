@@ -9,9 +9,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import safeJsonStringify from 'safe-json-stringify';
 
-import { IEvent } from 'types';
-
 import AdminEvent from 'components/AdminEvent';
+import { ExtendedEvent } from 'components/Event';
 import EventModal from 'components/EventModal';
 
 export const getServerSideProps: GetServerSideProps = async () => {
@@ -30,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       time: 'asc',
     },
   });
-  const events = JSON.parse(safeJsonStringify(eventsQuery)) as Array<IEvent>;
+  const events = JSON.parse(safeJsonStringify(eventsQuery)) as Array<ExtendedEvent>;
 
   return { props: { events } };
 };
@@ -54,7 +53,7 @@ const Players: NextPage = ({ events }: InferGetServerSidePropsType<typeof getSer
       </Stack>
       {newEventModal && <EventModal handleClose={handleCloseNewEventModal} open={newEventModal} title={'Nytt arrangement'} />}
       <Grid container spacing={4}>
-        {events.map((event: IEvent) => (
+        {events.map((event: ExtendedEvent) => (
           <Grid item key={event.id} md={3} sm={4} xs={12}>
             <AdminEvent event={event} />
           </Grid>

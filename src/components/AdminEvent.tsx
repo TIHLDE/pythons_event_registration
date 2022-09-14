@@ -8,13 +8,12 @@ import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { IEvent } from 'types';
-
 import ConfirmModal from 'components/ConfirmModal';
+import { ExtendedEvent } from 'components/Event';
 import EventModal from 'components/EventModal';
 
 export type AdminEventProps = {
-  event: IEvent;
+  event: ExtendedEvent;
 };
 
 const AdminEvent = ({ event }: AdminEventProps) => {

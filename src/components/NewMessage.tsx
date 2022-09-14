@@ -1,10 +1,9 @@
 import { Button, Stack, TextField } from '@mui/material';
+import { Notification } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
 import router from 'next/router';
 import { Controller, useForm } from 'react-hook-form';
-
-import { INotification } from 'types';
 
 import { useUser } from 'hooks/useUser';
 
@@ -16,7 +15,7 @@ type FormDataProps = {
 
 type NewMessageProps = {
   handleClose: () => void;
-  notification?: INotification;
+  notification?: Notification;
 };
 
 const NewMessage = ({ handleClose, notification }: NewMessageProps) => {

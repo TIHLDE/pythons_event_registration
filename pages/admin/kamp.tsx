@@ -3,12 +3,11 @@ import { Divider } from '@mui/material';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { Match } from '@prisma/client';
 import { prisma } from 'lib/prisma';
 import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-
-import { IMatch } from 'types';
 
 import MatchStats from 'components/MatchStats';
 
@@ -24,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       },
     },
     include: {
-      statistic: true,
+      matchEvents: true,
     },
   });
 
@@ -40,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       },
     },
     include: {
-      statistic: true,
+      matchEvents: true,
     },
   });
   return { props: { previousMatchesWithoutResult, previousMatchesWithResult } };
@@ -64,7 +63,7 @@ const Match: NextPage = ({ previousMatchesWithoutResult, previousMatchesWithResu
         {previousMatchesWithoutResult?.length > 0 && (
           <Stack spacing={3}>
             <Typography variant='h3'>Kamper som ikke har resultat</Typography>
-            {previousMatchesWithoutResult.map((match: IMatch) => (
+            {previousMatchesWithoutResult.map((match: Match) => (
               <MatchStats key={match.id} match={match} />
             ))}
           </Stack>
@@ -73,7 +72,7 @@ const Match: NextPage = ({ previousMatchesWithoutResult, previousMatchesWithResu
           <>
             <Divider />
             <Typography variant='h3'>Kamper som har resultat</Typography>
-            {previousMatchesWithResult.map((match: IMatch) => (
+            {previousMatchesWithResult.map((match: Match) => (
               <MatchStats key={match.id} match={match} />
             ))}
           </>

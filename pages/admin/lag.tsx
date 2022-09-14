@@ -1,7 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
 import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/material';
-import { Team } from '@prisma/client';
+import { Prisma, Team } from '@prisma/client';
 import axios from 'axios';
 import { prisma } from 'lib/prisma';
 import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
@@ -11,10 +11,18 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { IPosition } from 'types';
-
 import ConfirmModal from 'components/ConfirmModal';
 import PlayersList from 'components/PlayersList';
+
+type PositionWithPlayer = Prisma.PositionGetPayload<{
+  select: {
+    id: true;
+    name: true;
+  };
+  include: {
+    Player: true;
+  };
+}>;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const teams_list = await prisma.team.findMany();
@@ -101,7 +109,7 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
           </Button>
         </Link>
       </Stack>
-      {teams.map((team: Team & { positions: IPosition[] }, index: number) => (
+      {teams.map((team: Team & { positions: PositionWithPlayer[] }, index: number) => (
         <Stack gap={1} key={team.id}>
           <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
             <Typography variant='h2'>{team.name}</Typography>
@@ -140,13 +148,13 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
           Nytt lag
         </Button>
       )}
-      {players_with_no_team.some((position: IPosition) => position.Player.length) && (
+      {players_with_no_team.some((position: PositionWithPlayer) => position.Player.length) && (
         <>
           <Divider sx={{ my: 2 }} />
           <Stack gap={1}>
             <Typography variant='h2'>Spillere uten lagtilknytning:</Typography>
             <Box gap={1} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' } }}>
-              {players_with_no_team.map((position: IPosition) => (
+              {players_with_no_team.map((position: PositionWithPlayer) => (
                 <PlayersList id={position.id} key={position.id} players={position.Player} title={position.title} />
               ))}
             </Box>

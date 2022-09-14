@@ -1,12 +1,11 @@
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
+import { Match } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { IMatch } from 'types';
-
 export type MatchStatsProps = {
-  match: IMatch;
+  match: Match;
 };
 
 const validateResultInput = (value: string) => {
