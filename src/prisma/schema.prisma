@@ -25,7 +25,7 @@ model Player {
   teamId        Int?
   position      Position        @relation(fields: [positionId], references: [id])
   team          Team?           @relation(fields: [teamId], references: [id])
-  notification  Notification[]
+  notifications Notification[]
   registrations Registrations[]
   matchEvents   MatchEvent[]
 }
