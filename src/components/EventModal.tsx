@@ -55,6 +55,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
     const data = {
       ...formData,
       time: new Date(formData.time),
+      matchId: event?.match?.id,
     };
     if (event) {
       await axios.put(`/api/events/${event.id}`, { data: data }).then(() => {

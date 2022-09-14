@@ -26,6 +26,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
+    if (data.eventTypeSlug === 'kamp' && data.opponent) {
+      await prisma.match.update({
+        where: {
+          id: data.matchId,
+        },
+        data: {
+          opponent: data.opponent,
+        },
+      });
+    }
+
     res.status(HttpStatusCode.OK).json(updatedEvent);
   } else if (req.method === 'DELETE') {
     const {
