@@ -54,12 +54,12 @@ const Players: NextPage = ({ events }: InferGetServerSidePropsType<typeof getSer
       {newEventModal && <EventModal handleClose={handleCloseNewEventModal} open={newEventModal} title={'Nytt arrangement'} />}
       <Grid container spacing={4}>
         {events.map((event: ExtendedEvent) => (
-          <Grid item key={event.id} md={3} sm={4} xs={12}>
+          <Grid item key={event.id} lg={3} md={4} sm={6} xs={12}>
             <AdminEvent event={event} />
           </Grid>
         ))}
-        <Grid item md={3} sm={4} xs={12}>
-          <Button color='secondary' onClick={handleOpenNewEventModal} startIcon={<AddIcon />} variant='outlined'>
+        <Grid item lg={3} md={4} sm={6} xs={12}>
+          <Button fullWidth onClick={handleOpenNewEventModal} startIcon={<AddIcon />} variant='contained'>
             Nytt arrangement
           </Button>
         </Grid>

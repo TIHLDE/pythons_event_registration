@@ -1,9 +1,6 @@
-import { Box } from '@mui/material';
-import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
-import Typography from '@mui/material/Typography';
+import { Box, Button, Chip, Divider, Typography } from '@mui/material';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -11,6 +8,7 @@ import { useState } from 'react';
 import ConfirmModal from 'components/ConfirmModal';
 import { ExtendedEvent } from 'components/Event';
 import EventModal from 'components/EventModal';
+import MatchModal from 'components/MatchModal';
 
 export type AdminEventProps = {
   event: ExtendedEvent;
@@ -28,26 +26,20 @@ const AdminEvent = ({ event }: AdminEventProps) => {
       router.replace(router.asPath);
     });
   };
+
   const type =
     event.eventTypeSlug === 'trening'
       ? { name: 'Trening', color: '#0094FF' }
       : event.eventTypeSlug === 'kamp'
       ? { name: 'Kamp', color: '#0FDC61' }
       : { name: 'Sosialt', color: '#FF00C7' };
+
   return (
     <Box gap={1} sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', p: 2, backgroundColor: '#3A2056', border: '1px solid white', borderRadius: 1 }}>
       <Typography fontWeight={'bold'} variant='body1'>
         Type
       </Typography>
       <Chip label={type.name} sx={{ backgroundColor: type.color }} />
-      {event.title && (
-        <>
-          <Typography fontWeight={'bold'} variant='body1'>
-            Tittel
-          </Typography>
-          <Typography variant='body1'>{event.title}</Typography>
-        </>
-      )}
       {event.team && (
         <>
           <Typography fontWeight={'bold'} variant='body1'>
@@ -56,12 +48,12 @@ const AdminEvent = ({ event }: AdminEventProps) => {
           <Typography variant='body1'>{event.team.name}</Typography>
         </>
       )}
-      {event.match && (
+      {event.title && (
         <>
-          <Typography fontWeight={'bold'} variant='body1'>
-            Motstander
+          <Typography fontWeight='bold' variant='body1'>
+            {event.eventTypeSlug === 'kamp' ? 'Mot' : 'Tittel'}
           </Typography>
-          <Typography variant='body1'>{event.match.opponent}</Typography>
+          <Typography variant='body1'>{event.title}</Typography>
         </>
       )}
       <Typography fontWeight={'bold'} variant='body1'>
@@ -80,6 +72,13 @@ const AdminEvent = ({ event }: AdminEventProps) => {
         Sted
       </Typography>
       <Typography variant='body1'>{event.location}</Typography>
+      {event.match && isPast(new Date(event.time)) && (
+        <>
+          <Divider sx={{ my: 1, gridColumn: 'span 2' }} />
+          <MatchModal event={event} isAdmin sx={{ gridColumn: 'span 2' }} />
+          <Divider sx={{ my: 1, gridColumn: 'span 2' }} />
+        </>
+      )}
       <ConfirmModal
         color='error'
         description='Er du sikker på at du vil slette arrangementet?'
@@ -88,7 +87,7 @@ const AdminEvent = ({ event }: AdminEventProps) => {
         title='Slett arrangement'>
         Slett
       </ConfirmModal>
-      <Button onClick={handleUpdateEventModal} size='small' variant='outlined'>
+      <Button color='secondary' onClick={handleUpdateEventModal} size='small' variant='outlined'>
         Endre
       </Button>
       {updateEventModal && <EventModal event={event} handleClose={handleCloseUpdateEventModal} open={updateEventModal} title='Endre arrangement' />}

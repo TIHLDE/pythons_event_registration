@@ -27,7 +27,6 @@ export type EventModalProps = {
 type FormDataProps = {
   eventTypeSlug: string;
   title?: string;
-  opponent?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   time: any;
   location: string;
@@ -40,7 +39,6 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
     defaultValues: {
       eventTypeSlug: event?.eventTypeSlug || '',
       title: event?.title || '',
-      opponent: event?.match?.opponent || '',
       time: event && event.time ? format(new Date(event.time), dateTimeFormat) : format(setMinutes(new Date(), 0), dateTimeFormat),
       location: event?.location || '',
       team: event?.teamId || null,
@@ -91,33 +89,37 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
               </FormControl>
             )}
           />
-          {watchEventType === 'kamp' && (
-            <>
-              <FormControl fullWidth>
-                <InputLabel id='select-team'>Lag</InputLabel>
-                <Controller
-                  control={control}
-                  name='team'
-                  render={({ field: { onChange, value } }) => (
-                    <Select label='Lag' onChange={onChange} value={value}>
-                      {teams?.map((team) => (
-                        <MenuItem key={team.id} value={team.id}>
-                          {team.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  )}
+          {watchEventType !== 'trening' && (
+            <Controller
+              control={control}
+              name='title'
+              render={({ field }) => (
+                <TextField
+                  label={watchEventType === 'kamp' ? 'Motstander' : 'Tittel'}
+                  placeholder={watchEventType === 'kamp' ? 'Motstander' : 'Tittel'}
+                  required
+                  {...field}
                 />
-              </FormControl>
+              )}
+            />
+          )}
+          {watchEventType === 'kamp' && (
+            <FormControl fullWidth>
+              <InputLabel id='select-team'>Lag</InputLabel>
               <Controller
                 control={control}
-                name='opponent'
-                render={({ field }) => <TextField label={'Motstander'} placeholder='Motstander' required {...field} />}
+                name='team'
+                render={({ field: { onChange, value } }) => (
+                  <Select label='Lag' onChange={onChange} value={value}>
+                    {teams?.map((team) => (
+                      <MenuItem key={team.id} value={team.id}>
+                        {team.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
               />
-            </>
-          )}
-          {watchEventType && watchEventType === 'sosialt' && (
-            <Controller control={control} name='title' render={({ field }) => <TextField label={'Tittel'} placeholder='Tittel' required {...field} />} />
+            </FormControl>
           )}
 
           <Controller control={control} name='time' render={({ field }) => <TextField label={'Tidspunkt'} required type='datetime-local' {...field} />} />

@@ -60,7 +60,7 @@ model Registrations {
   willArrive Boolean
   reason     String?
   event      Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  player     Player    @relation(fields: [playerId], references: [id])
+  player     Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
 
   @@id([playerId, eventId])
 }
@@ -81,24 +81,23 @@ model Notification {
 
 model Match {
   id          Int          @id @default(autoincrement())
-  opponent    String
   result      Result?
-  homeGoals   Int?
-  awayGoals   Int?
-  eventId     Int          @unique
-  team        Team         @relation(fields: [teamId], references: [id])
+  homeGoals   Int          @default(0)
+  awayGoals   Int          @default(0)
   matchEvents MatchEvent[]
-  event       Event        @relation(fields: [eventId], references: [id])
+  eventId     Int          @unique
   teamId      Int
+  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  event       Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model MatchEvent {
-  id        Int            @id @default(autoincrement())
-  player    Player         @relation(fields: [playerId], references: [id])
-  playerId  Int
-  match     Match          @relation(fields: [matchId], references: [id])
-  matchId   Int
-  statistic MatchEventType
+  id       Int            @id @default(autoincrement())
+  type     MatchEventType
+  matchId  Int
+  playerId Int
+  match    Match          @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player   Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
 }
 
 enum MatchEventType {
@@ -106,7 +105,6 @@ enum MatchEventType {
   ASSIST
   YELLOW_CARD
   RED_CARD
-  CLEAN_SHEET
   MOTM
 }
 

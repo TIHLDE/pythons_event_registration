@@ -12,18 +12,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } = req;
     await prisma.event.create({
       data: {
-        ...(data.opponent && {
-          match: {
-            create: {
-              opponent: data.opponent,
-              team: {
-                connect: {
-                  id: Number(data.team),
-                },
-              },
-            },
-          },
-        }),
         location: data.location,
         time: new Date(data.time),
         eventTypeSlug: data.eventTypeSlug,
@@ -34,6 +22,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         ...(data.team &&
           data.eventTypeSlug === 'kamp' && {
             teamId: Number(data.team),
+            match: {
+              create: {
+                homeGoals: 0,
+                awayGoals: 0,
+                team: {
+                  connect: {
+                    id: Number(data.team),
+                  },
+                },
+              },
+            },
           }),
       },
     });

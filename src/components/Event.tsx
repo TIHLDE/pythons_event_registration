@@ -7,7 +7,7 @@ import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { Box, Button, Divider, FormControl, FormControlLabel, NoSsr, Radio, RadioGroup, Stack, styled, TextField, Tooltip, Typography } from '@mui/material';
 import { Prisma } from '@prisma/client';
 import axios from 'axios';
-import { format, formatDistanceToNow, subHours } from 'date-fns';
+import { format, formatDistanceToNow, isPast, subHours } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -17,6 +17,7 @@ import rules from 'rules';
 import { useModal } from 'hooks/useModal';
 import { useUser } from 'hooks/useUser';
 
+import MatchModal from 'components/MatchModal';
 import PlayersModal from 'components/PlayersModal';
 
 const Link = styled('a')(() => ({
@@ -151,7 +152,7 @@ const Event = ({ eventDetails }: EventProps) => {
         borderRadius: 1,
       }}>
       {eventDetails.type.slug === 'trening' && <Typography variant='h3'>💪 Trening</Typography>}
-      {eventDetails.type.slug === 'kamp' && eventDetails.match && <Typography variant='h3'>⚽️ Kamp mot {eventDetails.match.opponent}</Typography>}
+      {eventDetails.type.slug === 'kamp' && eventDetails.title && <Typography variant='h3'>⚽️ Kamp mot {eventDetails.title}</Typography>}
       {eventDetails.type.slug === 'sosialt' && eventDetails.title && <Typography variant='h3'>🎉 {eventDetails.title}</Typography>}
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
         <NoSsr>
@@ -242,6 +243,12 @@ const Event = ({ eventDetails }: EventProps) => {
           registrations={eventDetails?.hasNotResponded || []}
           title='Ikke svart'
         />
+      )}
+      {eventDetails.match && isPast(new Date(eventDetails.time)) && (
+        <>
+          <Divider sx={{ my: 1 }} />
+          <MatchModal event={eventDetails} sx={{ gridColumn: 'span 2' }} />
+        </>
       )}
       <Divider sx={{ mt: 1 }} />
       <NoSsr>
