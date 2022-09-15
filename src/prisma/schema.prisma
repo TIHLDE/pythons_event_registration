@@ -60,7 +60,7 @@ model Registrations {
   willArrive Boolean
   reason     String?
   event      Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  player     Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  player     Player    @relation(fields: [playerId], references: [id])
 
   @@id([playerId, eventId])
 }
