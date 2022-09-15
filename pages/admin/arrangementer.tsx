@@ -12,22 +12,15 @@ import safeJsonStringify from 'safe-json-stringify';
 import AdminEvent from 'components/AdminEvent';
 import { ExtendedEvent } from 'components/Event';
 import EventModal from 'components/EventModal';
+import { EventsFilters, getEventsWhereFilter } from 'components/EventsFilters';
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const today = new Date();
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const eventsQuery = await prisma.event.findMany({
     include: {
       team: true,
       match: true,
     },
-    where: {
-      time: {
-        gte: today,
-      },
-    },
-    orderBy: {
-      time: 'asc',
-    },
+    ...getEventsWhereFilter({ query }),
   });
   const events = JSON.parse(safeJsonStringify(eventsQuery)) as Array<ExtendedEvent>;
 
@@ -51,14 +44,15 @@ const Players: NextPage = ({ events }: InferGetServerSidePropsType<typeof getSer
           </Button>
         </Link>
       </Stack>
+      <EventsFilters sx={{ mb: 2 }} />
       {newEventModal && <EventModal handleClose={handleCloseNewEventModal} open={newEventModal} title={'Nytt arrangement'} />}
       <Grid container spacing={4}>
         {events.map((event: ExtendedEvent) => (
-          <Grid item key={event.id} lg={3} md={4} sm={6} xs={12}>
+          <Grid item key={event.id} md={4} sm={6} xs={12}>
             <AdminEvent event={event} />
           </Grid>
         ))}
-        <Grid item lg={3} md={4} sm={6} xs={12}>
+        <Grid item md={4} sm={6} xs={12}>
           <Button fullWidth onClick={handleOpenNewEventModal} startIcon={<AddIcon />} variant='contained'>
             Nytt arrangement
           </Button>

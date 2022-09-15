@@ -1,6 +1,6 @@
 import { Button, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { addWeeks, endOfWeek, format, getWeek, parseISO, startOfToday, startOfWeek } from 'date-fns';
+import { addWeeks, endOfWeek, format, getWeek, parseISO, startOfWeek } from 'date-fns';
 import nb from 'date-fns/locale/nb';
 import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
@@ -12,14 +12,10 @@ import safeJsonStringify from 'safe-json-stringify';
 import { ExtendedNotification } from 'components/AdminMessage';
 import AlertMessage from 'components/AlertMessage';
 import Event, { ExtendedEvent } from 'components/Event';
+import { EventsFilters, getEventsWhereFilter } from 'components/EventsFilters';
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const allFutureEventsQuery = await prisma.event.findMany({
-    where: {
-      time: {
-        gte: startOfToday(),
-      },
-    },
     include: {
       team: true,
       match: true,
@@ -34,9 +30,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
         },
       },
     },
-    orderBy: {
-      time: 'asc',
-    },
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    ...(getEventsWhereFilter({ query }) as {}),
   });
 
   const playersQuery = await prisma.player.findMany({
@@ -144,6 +139,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
         {notifications.map((notification: ExtendedNotification) => (
           <AlertMessage key={notification.id} notification={notification} />
         ))}
+        <EventsFilters />
         {!events.length && <Typography>Ingen kommende arrangementer</Typography>}
         {Object.keys(groupedEvents).map((group) => (
           <Stack gap={1} key={group}>
