@@ -40,7 +40,7 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
     `/api/matches/${event.match?.id}/events`,
     fetcher,
   );
-  const { data: teamPlayers = [] } = useSWR<Player[]>(`/api/players?team=${event.team?.id}`, fetcher);
+  const { data: teamPlayers = [] } = useSWR<Player[]>(`/api/players`, fetcher);
 
   const onSubmit = async (data: FormData) =>
     axios.post(`/api/matches/${event.match?.id}/events`, { data }).then(() => {
