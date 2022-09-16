@@ -10,17 +10,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const {
       query: { id },
     } = req;
+    console.log('Recevied put');
     const parsedId = Number(typeof id === 'string' ? id : '-1');
+    console.log('parsedId', parsedId);
 
     const homeGoals = Number(data.homeGoals);
-    const awayGoals = Number(data.awayGoals);
-    const result = homeGoals > awayGoals ? Result.WIN : homeGoals < awayGoals ? Result.LOSE : Result.DRAW;
+    console.log('homeGoals', homeGoals);
 
-    await prisma.match.update({
+    const awayGoals = Number(data.awayGoals);
+    console.log('awayGoals', awayGoals);
+    const result = homeGoals > awayGoals ? Result.WIN : homeGoals < awayGoals ? Result.LOSE : Result.DRAW;
+    console.log('result', result);
+    console.log('Updating match');
+    const match = await prisma.match.update({
       where: { id: parsedId },
       data: { result, homeGoals, awayGoals },
-    }),
-      res.status(HttpStatusCode.OK).end();
+    });
+    console.log('Updated match', match);
+
+    res.status(HttpStatusCode.OK).json(match);
   } else {
     res.status(HttpStatusCode.METHOD_NOT_ALLOWED).end();
   }
