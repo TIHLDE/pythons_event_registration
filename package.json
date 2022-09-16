@@ -13,7 +13,7 @@
     "migrate": "npx prisma migrate dev --name",
     "fixtures": "npx fixtures ./src/fixtures",
     "createdb": "docker run --name event_registration -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres",
-    "fresh": "docker rm -f -v event_registration && yarn createdb && sleep 1 && yarn push && npx prisma generate && yarn fixtures"
+    "fresh": "docker rm -f -v event_registration && yarn createdb && sleep 1 && yarn push && yarn generate && yarn fixtures"
   },
   "dependencies": {
     "@emotion/cache": "11.10.1",

@@ -15,18 +15,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const playerId = parseInt(ids[0]);
       const eventId = parseInt(ids[1]);
 
+      const existingRegistration = await prisma.registrations.findFirstOrThrow({ where: { playerId, eventId } });
+
       await prisma.registrations.update({
         where: {
           playerId_eventId: { playerId, eventId },
         },
         data: {
-          updatedAt: data.updatedAt,
+          updatedAt: existingRegistration.willArrive !== willArrive ? new Date() : undefined,
           willArrive: willArrive,
-          ...(data.reason && !willArrive
-            ? {
-                reason: data.reason,
-              }
-            : { reason: '' }),
+          reason: willArrive ? '' : data.reason || 'Oppga ikke grunn',
         },
       });
       res.status(HttpStatusCode.OK).end();

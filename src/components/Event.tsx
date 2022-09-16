@@ -4,10 +4,25 @@ import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import { Box, Button, Divider, FormControl, FormControlLabel, NoSsr, Radio, RadioGroup, Stack, styled, TextField, Tooltip, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  NoSsr,
+  Radio,
+  RadioGroup,
+  Stack,
+  styled,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { Prisma } from '@prisma/client';
 import axios from 'axios';
-import { format, formatDistanceToNow, isPast, subHours } from 'date-fns';
+import { format, formatDistanceToNow, isFuture, isPast, subHours } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -113,7 +128,6 @@ const Event = ({ eventDetails }: EventProps) => {
       ...(formData.reason && {
         reason: formData.reason,
       }),
-      updatedAt: new Date(),
     };
     if (userHasRegistrated) {
       axios
@@ -137,6 +151,11 @@ const Event = ({ eventDetails }: EventProps) => {
         });
     }
   };
+
+  const registrationDeadline = subHours(
+    new Date(eventDetails.time),
+    eventDetails.type.slug === 'trening' ? rules.deadlineBeforeTraining : rules.deadlineBeforeMatch,
+  );
 
   const backgroundColor = eventDetails.type.slug === 'trening' ? '#3A2056' : eventDetails.type.slug === 'kamp' ? '#552056' : '#563A20';
 
@@ -256,29 +275,31 @@ const Event = ({ eventDetails }: EventProps) => {
           <>
             {!openRegistration ? (
               <>
-                <Button disabled={!user} onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'text' : 'contained'}>
-                  {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
-                </Button>
+                {isFuture(new Date(eventDetails.time)) ? (
+                  <Button disabled={!user} onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'text' : 'contained'}>
+                    {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
+                  </Button>
+                ) : (
+                  <Typography textAlign='center' variant='body2'>
+                    Oppmøte kan ikke endres etter arrangementsstart
+                  </Typography>
+                )}
                 {(eventDetails.type.slug === 'trening' || eventDetails.type.slug === 'kamp') && (
                   <Typography textAlign='center' variant='body2'>
-                    Påmeldingsfrist{' '}
-                    {formatDistanceToNow(
-                      subHours(new Date(eventDetails.time), eventDetails.type.slug === 'trening' ? rules.deadlineBeforeTraining : rules.deadlineBeforeMatch),
-                      {
-                        locale: nb,
-                        addSuffix: true,
-                      },
-                    )}
-                    {' - kl. '}
-                    {format(
-                      subHours(new Date(eventDetails.time), eventDetails.type.slug === 'trening' ? rules.deadlineBeforeTraining : rules.deadlineBeforeMatch),
+                    {`Påmeldingsfrist ${formatDistanceToNow(registrationDeadline, { locale: nb, addSuffix: true })} - kl. ${format(
+                      registrationDeadline,
                       'HH:mm',
-                    )}
+                    )}`}
                   </Typography>
                 )}
               </>
             ) : (
               <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
+                {isPast(registrationDeadline) && (
+                  <Alert severity='warning' variant='outlined'>
+                    Du vil få bot om du registrerer eller endrer registreringsstatus etter fristen. Oppdatering av grunn gir deg ikke bot.
+                  </Alert>
+                )}
                 <FormControl>
                   <Controller
                     control={control}
