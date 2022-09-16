@@ -5,19 +5,19 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { Box, Button, Divider, FormControl, FormControlLabel, NoSsr, Radio, RadioGroup, Stack, styled, TextField, Tooltip, Typography } from '@mui/material';
+import { Prisma } from '@prisma/client';
 import axios from 'axios';
-import { format, formatDistanceToNow, subHours } from 'date-fns';
+import { format, formatDistanceToNow, isPast, subHours } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import rules from 'rules';
 
-import { IEvent } from 'types';
-
 import { useModal } from 'hooks/useModal';
 import { useUser } from 'hooks/useUser';
 
+import MatchModal from 'components/MatchModal';
 import PlayersModal from 'components/PlayersModal';
 
 const Link = styled('a')(() => ({
@@ -27,8 +27,44 @@ const Link = styled('a')(() => ({
   },
 }));
 
+export type ExtendedEvent = Prisma.EventGetPayload<{
+  include: {
+    registrations: true;
+    type: true;
+    team: true;
+    match: true;
+  };
+}> & {
+  willArrive: Prisma.RegistrationsGetPayload<{
+    include: {
+      player: {
+        include: {
+          position: true;
+        };
+      };
+    };
+  }>[];
+  willNotArrive: Prisma.RegistrationsGetPayload<{
+    include: {
+      player: {
+        include: {
+          position: true;
+        };
+      };
+    };
+  }>[];
+  hasNotResponded: Prisma.RegistrationsGetPayload<{
+    include: {
+      player: {
+        include: {
+          position: true;
+        };
+      };
+    };
+  }>[];
+};
 type EventProps = {
-  eventDetails: IEvent;
+  eventDetails: ExtendedEvent;
 };
 
 type FormDataProps = {
@@ -57,9 +93,6 @@ const Event = ({ eventDetails }: EventProps) => {
   const router = useRouter();
 
   const { data: user } = useUser();
-
-  // console.log(eventDetails, user);
-
   const userRegistration = eventDetails.registrations.find((registration) => registration.playerId === user?.id);
 
   const userHasRegistrated = Boolean(userRegistration);
@@ -71,7 +104,6 @@ const Event = ({ eventDetails }: EventProps) => {
   });
 
   const watchRegistration: number | string | undefined = watch('registration');
-
   const [openRegistration, setOpenRegistration] = useState(false);
   const onSubmit = async (formData: FormDataProps) => {
     const data = {
@@ -120,7 +152,7 @@ const Event = ({ eventDetails }: EventProps) => {
         borderRadius: 1,
       }}>
       {eventDetails.type.slug === 'trening' && <Typography variant='h3'>💪 Trening</Typography>}
-      {eventDetails.type.slug === 'kamp' && eventDetails.title && <Typography variant='h3'>⚽️ {eventDetails.title}</Typography>}
+      {eventDetails.type.slug === 'kamp' && eventDetails.title && <Typography variant='h3'>⚽️ Kamp mot {eventDetails.title}</Typography>}
       {eventDetails.type.slug === 'sosialt' && eventDetails.title && <Typography variant='h3'>🎉 {eventDetails.title}</Typography>}
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
         <NoSsr>
@@ -161,6 +193,7 @@ const Event = ({ eventDetails }: EventProps) => {
             <Typography variant='body1'>{eventDetails.team.name}</Typography>
           </>
         )}
+
         <Tooltip title='Påmeldte'>
           <CheckRoundedIcon />
         </Tooltip>
@@ -210,6 +243,12 @@ const Event = ({ eventDetails }: EventProps) => {
           registrations={eventDetails?.hasNotResponded || []}
           title='Ikke svart'
         />
+      )}
+      {eventDetails.match && isPast(new Date(eventDetails.time)) && (
+        <>
+          <Divider sx={{ my: 1 }} />
+          <MatchModal event={eventDetails} sx={{ gridColumn: 'span 2' }} />
+        </>
       )}
       <Divider sx={{ mt: 1 }} />
       <NoSsr>

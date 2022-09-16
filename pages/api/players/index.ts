@@ -4,7 +4,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const players = await prisma.player.findMany({ where: { active: true } });
+    const {
+      query: { team },
+    } = req;
+    const parsedTeam = typeof team === 'string' ? Number(team) : undefined;
+    const players = await prisma.player.findMany({ where: { active: true, teamId: parsedTeam } });
     res.json(players);
   } else if (req.method === 'POST') {
     const {

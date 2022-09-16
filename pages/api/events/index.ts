@@ -22,6 +22,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         ...(data.team &&
           data.eventTypeSlug === 'kamp' && {
             teamId: Number(data.team),
+            match: {
+              create: {
+                homeGoals: 0,
+                awayGoals: 0,
+                team: {
+                  connect: {
+                    id: Number(data.team),
+                  },
+                },
+              },
+            },
           }),
       },
     });

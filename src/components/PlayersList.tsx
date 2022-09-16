@@ -7,13 +7,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Team } from '@prisma/client';
+import { Player, Team } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-
-import { IPlayer } from 'types';
 
 import { useModal } from 'hooks/useModal';
 
@@ -22,7 +20,7 @@ import ChangeTeamModal from 'components/ChangeTeamModal';
 
 export type PlayersListProps = {
   title: string;
-  players: IPlayer[];
+  players: Player[];
   id: number;
   teamId?: Team['id'];
 };
@@ -31,7 +29,7 @@ type FormDataProps = {
   name: string;
 };
 
-const Player = ({ player }: { player: IPlayer }) => {
+const Player = ({ player }: { player: Player }) => {
   const router = useRouter();
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
@@ -145,7 +143,7 @@ const PlayersList = ({ title, id, players, teamId }: PlayersListProps) => {
         <Typography variant='h3'>
           {title} ({players.length})
         </Typography>
-        {players.map((player: IPlayer) => (
+        {players.map((player: Player) => (
           <Player key={player.id} player={player} />
         ))}
       </Stack>

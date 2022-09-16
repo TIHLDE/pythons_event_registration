@@ -1,22 +1,27 @@
 import { Box, Dialog, Stack, Typography } from '@mui/material';
+import { Position, Prisma } from '@prisma/client';
 import filter from 'lodash/filter';
 import Image from 'next/image';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
 
-import { IPosition, IRegistrations } from 'types';
-
 import LoadingLogo from 'components/LoadingLogo';
 
+export type ExtendedRegistrations = Prisma.RegistrationsGetPayload<{
+  include: {
+    player: true;
+  };
+}>;
+
 export type PlayersModalProps = {
-  registrations: IRegistrations[];
+  registrations: ExtendedRegistrations[];
   open: boolean;
   handleClose: () => void;
   title: string;
 };
 
 const PlayersModal = ({ registrations, open, handleClose, title }: PlayersModalProps) => {
-  const { data: positions = [] } = useSWR<IPosition[]>('/api/positions', fetcher);
+  const { data: positions = [] } = useSWR<Position[]>('/api/positions', fetcher);
 
   const groupedPlayers = positions.map((position) => ({
     ...position,
@@ -39,7 +44,7 @@ const PlayersModal = ({ registrations, open, handleClose, title }: PlayersModalP
                 {pos.title} ({pos.players.length})
               </Typography>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
-                {pos.players.map((registration: IRegistrations) => (
+                {pos.players.map((registration: ExtendedRegistrations) => (
                   <div key={registration.playerId}>
                     <Typography variant='body2'>{registration.player.name}</Typography>
                     {registration.reason && <Typography variant='body2'>- {registration.reason}</Typography>}

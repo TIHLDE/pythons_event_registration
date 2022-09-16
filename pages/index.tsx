@@ -1,6 +1,6 @@
 import { Button, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { addWeeks, endOfWeek, format, getWeek, parseISO, startOfToday, startOfWeek } from 'date-fns';
+import { addWeeks, endOfWeek, format, getWeek, parseISO, startOfWeek } from 'date-fns';
 import nb from 'date-fns/locale/nb';
 import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
@@ -9,20 +9,16 @@ import Head from 'next/head';
 import Link from 'next/link';
 import safeJsonStringify from 'safe-json-stringify';
 
-import { IEvent, INotification } from 'types';
-
+import { ExtendedNotification } from 'components/AdminMessage';
 import AlertMessage from 'components/AlertMessage';
-import Event from 'components/Event';
+import Event, { ExtendedEvent } from 'components/Event';
+import { EventsFilters, getEventsWhereFilter } from 'components/EventsFilters';
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const allFutureEventsQuery = await prisma.event.findMany({
-    where: {
-      time: {
-        gte: startOfToday(),
-      },
-    },
     include: {
       team: true,
+      match: true,
       type: true,
       registrations: {
         include: {
@@ -34,9 +30,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
         },
       },
     },
-    orderBy: {
-      time: 'asc',
-    },
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    ...(getEventsWhereFilter({ query }) as {}),
   });
 
   const playersQuery = await prisma.player.findMany({
@@ -97,7 +92,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const groupedEvents = (events as IEvent[]).reduce((acc, event) => {
+  const groupedEvents = (events as ExtendedEvent[]).reduce((acc, event) => {
     const time = parseISO(event.time as unknown as string);
 
     const getYearWeek = (time: Date) =>
@@ -125,7 +120,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
 
     acc[yearWeek].push(event);
     return acc;
-  }, {} as Record<string, Array<IEvent>>);
+  }, {} as Record<string, Array<ExtendedEvent>>);
 
   return (
     <>
@@ -141,9 +136,10 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
         </Link>
       </Stack>
       <Stack gap={2}>
-        {notifications.map((notification: INotification) => (
+        {notifications.map((notification: ExtendedNotification) => (
           <AlertMessage key={notification.id} notification={notification} />
         ))}
+        <EventsFilters />
         {!events.length && <Typography>Ingen kommende arrangementer</Typography>}
         {Object.keys(groupedEvents).map((group) => (
           <Stack gap={1} key={group}>

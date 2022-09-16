@@ -2,6 +2,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { Player, Position } from '@prisma/client';
 import { setCookie } from 'cookies-next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -9,14 +10,12 @@ import useSWR from 'swr';
 import { fetcher } from 'utils';
 import { USER_STORAGE_KEY } from 'values';
 
-import { IPlayer, IPosition } from 'types';
-
 const SignIn = () => {
   const router = useRouter();
-  const { data: players = [], isValidating: isPlayersLoading } = useSWR<IPlayer[]>('/api/players', fetcher);
-  const { data: positions = [], isValidating: isPositionsLoading } = useSWR<IPosition[]>('/api/positions', fetcher);
+  const { data: players = [], isValidating: isPlayersLoading } = useSWR<Player[]>('/api/players', fetcher);
+  const { data: positions = [], isValidating: isPositionsLoading } = useSWR<Position[]>('/api/positions', fetcher);
 
-  const onPlayerSelect = (player: IPlayer | null) => {
+  const onPlayerSelect = (player: Player | null) => {
     if (typeof window !== 'undefined') {
       setCookie(USER_STORAGE_KEY, JSON.stringify(player), { maxAge: 60 * 60 * 24 * 180 });
       router.reload();

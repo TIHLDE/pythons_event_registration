@@ -6,6 +6,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'PUT') {
     const {
       body: { data },
+    } = req;
+    const {
       query: { id },
     } = req;
     const parsedId = parseInt(typeof id === 'string' ? id : '-1');

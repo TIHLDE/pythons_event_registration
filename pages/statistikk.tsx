@@ -209,7 +209,7 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
           />
         </FormControl>
         <Button sx={{ gridColumn: { xs: undefined, md: 'span 2' } }} type='submit' variant='contained'>
-          Oppdater filtreringen
+          Oppdater filtre
         </Button>
       </Box>
       <Divider sx={{ mt: 1, mb: 2 }} />

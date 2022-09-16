@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["filteredRelationCount"]
 }
 
@@ -13,6 +13,7 @@ model Team {
   name    String   @db.VarChar(60)
   events  Event[]
   players Player[]
+  Match   Match[]
 }
 
 model Player {
@@ -24,8 +25,9 @@ model Player {
   teamId        Int?
   position      Position        @relation(fields: [positionId], references: [id])
   team          Team?           @relation(fields: [teamId], references: [id])
-  Notification  Notification[]
+  notifications Notification[]
   registrations Registrations[]
+  matchEvents   MatchEvent[]
 }
 
 model Event {
@@ -40,6 +42,8 @@ model Event {
   type          EventType       @relation(fields: [eventTypeSlug], references: [slug])
   team          Team?           @relation(fields: [teamId], references: [id])
   registrations Registrations[]
+  matchId       Int?
+  match         Match?
 }
 
 model EventType {
@@ -73,4 +77,39 @@ model Notification {
   expiringDate DateTime
   authorId     Int
   author       Player   @relation(fields: [authorId], references: [id])
+}
+
+model Match {
+  id          Int          @id @default(autoincrement())
+  result      Result?
+  homeGoals   Int          @default(0)
+  awayGoals   Int          @default(0)
+  matchEvents MatchEvent[]
+  eventId     Int          @unique
+  teamId      Int
+  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  event       Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model MatchEvent {
+  id       Int            @id @default(autoincrement())
+  type     MatchEventType
+  matchId  Int
+  playerId Int
+  match    Match          @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player   Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
+}
+
+enum MatchEventType {
+  GOAL
+  ASSIST
+  YELLOW_CARD
+  RED_CARD
+  MOTM
+}
+
+enum Result {
+  WIN
+  LOSE
+  DRAW
 }

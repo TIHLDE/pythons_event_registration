@@ -9,27 +9,20 @@ import Link from 'next/link';
 import { useState } from 'react';
 import safeJsonStringify from 'safe-json-stringify';
 
-import { IEvent } from 'types';
-
 import AdminEvent from 'components/AdminEvent';
+import { ExtendedEvent } from 'components/Event';
 import EventModal from 'components/EventModal';
+import { EventsFilters, getEventsWhereFilter } from 'components/EventsFilters';
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const today = new Date();
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const eventsQuery = await prisma.event.findMany({
     include: {
       team: true,
+      match: true,
     },
-    where: {
-      time: {
-        gte: today,
-      },
-    },
-    orderBy: {
-      time: 'asc',
-    },
+    ...getEventsWhereFilter({ query }),
   });
-  const events = JSON.parse(safeJsonStringify(eventsQuery)) as Array<IEvent>;
+  const events = JSON.parse(safeJsonStringify(eventsQuery)) as Array<ExtendedEvent>;
 
   return { props: { events } };
 };
@@ -38,7 +31,6 @@ const Players: NextPage = ({ events }: InferGetServerSidePropsType<typeof getSer
   const [newEventModal, setNewEventModal] = useState(false);
   const handleOpenNewEventModal = () => setNewEventModal(true);
   const handleCloseNewEventModal = () => setNewEventModal(false);
-
   return (
     <>
       <Head>
@@ -52,15 +44,16 @@ const Players: NextPage = ({ events }: InferGetServerSidePropsType<typeof getSer
           </Button>
         </Link>
       </Stack>
+      <EventsFilters sx={{ mb: 2 }} />
       {newEventModal && <EventModal handleClose={handleCloseNewEventModal} open={newEventModal} title={'Nytt arrangement'} />}
       <Grid container spacing={4}>
-        {events.map((event: IEvent) => (
-          <Grid item key={event.id} md={3} sm={4} xs={12}>
+        {events.map((event: ExtendedEvent) => (
+          <Grid item key={event.id} md={4} sm={6} xs={12}>
             <AdminEvent event={event} />
           </Grid>
         ))}
-        <Grid item md={3} sm={4} xs={12}>
-          <Button color='secondary' onClick={handleOpenNewEventModal} startIcon={<AddIcon />} variant='outlined'>
+        <Grid item md={4} sm={6} xs={12}>
+          <Button fullWidth onClick={handleOpenNewEventModal} startIcon={<AddIcon />} variant='contained'>
             Nytt arrangement
           </Button>
         </Grid>

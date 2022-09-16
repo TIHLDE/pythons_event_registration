@@ -7,16 +7,15 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { Player, Position } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Controller, useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
 
-import { IPlayer, IPosition } from 'types';
-
 export type ChangePositionModalProps = {
-  player: IPlayer;
+  player: Player;
   open: boolean;
   handleClose: () => void;
   title: string;
@@ -51,7 +50,7 @@ const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositio
               name='position'
               render={({ field: { onChange, value } }) => (
                 <Select label='Posisjon' onChange={onChange} value={value}>
-                  {positions?.map((position: IPosition) => (
+                  {positions?.map((position: Position) => (
                     <MenuItem key={position.id} value={position.id}>
                       {position.title}
                     </MenuItem>

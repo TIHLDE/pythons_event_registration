@@ -7,23 +7,22 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { Player, Team } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Controller, useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
 
-import { IPlayer, ITeam } from 'types';
-
 export type ChangeTeamModalProps = {
-  player: IPlayer;
+  player: Player;
   open: boolean;
   handleClose: () => void;
   title: string;
 };
 
 export type FormDataProps = {
-  team: ITeam['id'] | null;
+  team: Team['id'] | null;
 };
 
 const ChangeTeamModal = ({ open, handleClose, title, player }: ChangeTeamModalProps) => {
@@ -38,7 +37,7 @@ const ChangeTeamModal = ({ open, handleClose, title, player }: ChangeTeamModalPr
       router.replace(router.asPath);
     });
   };
-  const { data: teams } = useSWR<ITeam[]>('/api/teams', fetcher);
+  const { data: teams } = useSWR<Team[]>('/api/teams', fetcher);
   return (
     <Dialog onClose={handleClose} open={open} sx={{ '& .MuiDialog-paper': { width: 400, border: '2px solid #ffffff', p: 4 } }}>
       <Stack gap={2}>

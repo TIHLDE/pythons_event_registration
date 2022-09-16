@@ -1,10 +1,10 @@
 import { Alert } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
-import { INotification } from 'types';
+import { ExtendedNotification } from 'components/AdminMessage';
 
 type AlertMessageProps = {
-  notification: INotification;
+  notification: ExtendedNotification;
 };
 
 const AlertMessage = ({ notification }: AlertMessageProps) => {

@@ -19,7 +19,7 @@ const Admin: NextPage = () => {
           <AdminLink description='Se lag med spillere og gjør endringer i spillerstallen' path='/admin/lag' title='👨‍👧 Lag og spillere' />
         </Grid>
         <Grid item sm={6} xs={12}>
-          <AdminLink description='Gjør endringer på kommende arrangementer' path='/admin/arrangementer' title='🎉 Arrangementer' />
+          <AdminLink description='Administrer tidligere og kommende arrangementer' path='/admin/arrangementer' title='🎉 Arrangementer' />
         </Grid>
         <Grid item sm={6} xs={12}>
           <AdminLink description='Se hvem av gutta som fortjener bøter basert på registrering' path='/admin/boter' title='🤫 Bøter' />

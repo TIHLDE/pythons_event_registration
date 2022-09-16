@@ -6,6 +6,7 @@ import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { EventType, Team } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { setMinutes } from 'date-fns';
@@ -14,10 +15,10 @@ import { Controller, useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
 
-import { IEvent, IEventType, ITeam } from 'types';
+import { ExtendedEvent } from 'components/Event';
 
 export type EventModalProps = {
-  event?: IEvent;
+  event?: ExtendedEvent;
   open: boolean;
   handleClose: () => void;
   title: string;
@@ -29,7 +30,7 @@ type FormDataProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   time: any;
   location: string;
-  team: IEvent['teamId'];
+  team: ExtendedEvent['teamId'];
 };
 
 const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
@@ -44,7 +45,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
     },
   });
   const { data: eventTypes } = useSWR('/api/eventType', fetcher);
-  const { data: teams } = useSWR<ITeam[]>('/api/teams', fetcher);
+  const { data: teams } = useSWR<Team[]>('/api/teams', fetcher);
   const watchEventType = watch('eventTypeSlug');
   const router = useRouter();
 
@@ -52,6 +53,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
     const data = {
       ...formData,
       time: new Date(formData.time),
+      matchId: event?.match?.id,
     };
     if (event) {
       await axios.put(`/api/events/${event.id}`, { data: data }).then(() => {
@@ -78,7 +80,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
               <FormControl fullWidth>
                 <InputLabel id='selectType-label'>Type</InputLabel>
                 <Select id='selectType' labelId='selectType-label' required {...field} label='Type'>
-                  {eventTypes?.map((eventType: IEventType) => (
+                  {eventTypes?.map((eventType: EventType) => (
                     <MenuItem key={eventType.slug} value={eventType.slug}>
                       {eventType.name}
                     </MenuItem>
@@ -88,7 +90,18 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
             )}
           />
           {watchEventType !== 'trening' && (
-            <Controller control={control} name='title' render={({ field }) => <TextField label={'Tittel'} placeholder='Tittel' required {...field} />} />
+            <Controller
+              control={control}
+              name='title'
+              render={({ field }) => (
+                <TextField
+                  label={watchEventType === 'kamp' ? 'Motstander' : 'Tittel'}
+                  placeholder={watchEventType === 'kamp' ? 'Motstander' : 'Tittel'}
+                  required
+                  {...field}
+                />
+              )}
+            />
           )}
           {watchEventType === 'kamp' && (
             <FormControl fullWidth>
@@ -108,6 +121,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
               />
             </FormControl>
           )}
+
           <Controller control={control} name='time' render={({ field }) => <TextField label={'Tidspunkt'} required type='datetime-local' {...field} />} />
           <Controller control={control} name='location' render={({ field }) => <TextField label={'Sted'} placeholder='Sted' required {...field} />} />
           <Button type='submit' variant='contained'>
