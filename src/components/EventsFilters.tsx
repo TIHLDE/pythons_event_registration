@@ -4,22 +4,13 @@ import { EventType, Prisma, Team } from '@prisma/client';
 import { addMonths, isFuture, parseISO, startOfToday } from 'date-fns';
 import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import useSWR from 'swr';
-import { fetcher } from 'utils';
+import { fetcher, removeFalsyElementsFromObject } from 'utils';
 
 const DEFAULT_FROM_DATE = startOfToday();
 const DEFAULT_TO_DATE = addMonths(DEFAULT_FROM_DATE, 2);
-
-const removeFalsyElementsFromObject = (object: Record<string, string>) => {
-  const newObject: Record<string, string> = {};
-  Object.keys(object).forEach((key) => {
-    if (object[key]) {
-      newObject[key] = object[key];
-    }
-  });
-  return newObject;
-};
 
 export const getEventsWhereFilter = ({ query }: { query: ParsedUrlQuery }): Prisma.EventFindManyArgs => {
   const dateFrom = typeof query.from === 'string' && query.from !== '' ? parseISO(query.from) : DEFAULT_FROM_DATE;
@@ -55,6 +46,7 @@ export const EventsFilters = (props: BoxProps) => {
   const router = useRouter();
   const { data: teams = [] } = useSWR<Team[]>('/api/teams', fetcher);
   const { data: eventTypes = [] } = useSWR<EventType[]>('/api/eventType', fetcher);
+  const [open, setOpen] = useState(false);
 
   const { handleSubmit, control, reset } = useForm<FormData>({
     defaultValues: {
@@ -65,7 +57,10 @@ export const EventsFilters = (props: BoxProps) => {
     },
   });
 
-  const onSubmit = async (query: Partial<FormData>) => router.replace({ query: removeFalsyElementsFromObject(query) });
+  const onSubmit = async (query: Partial<FormData>) => {
+    router.replace({ query: removeFalsyElementsFromObject(query) });
+    setOpen(false);
+  };
   const clearFilters = () => {
     onSubmit({});
     reset();
@@ -73,7 +68,7 @@ export const EventsFilters = (props: BoxProps) => {
 
   return (
     <Box {...props}>
-      <Accordion sx={{ backgroundColor: '#001731' }}>
+      <Accordion expanded={open} onChange={() => setOpen((prev) => !prev)} sx={{ backgroundColor: '#001731' }}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>Filtrering</AccordionSummary>
         <AccordionDetails>
           <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ pt: 1, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 1 }}>
