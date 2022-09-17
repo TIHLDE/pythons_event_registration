@@ -129,11 +129,18 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
       </Head>
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
         <Typography variant='h1'>Kalender</Typography>
-        <Link href='/statistikk' passHref>
-          <Button color='secondary' component='a' variant='outlined'>
-            Statistikk
-          </Button>
-        </Link>
+        <Stack direction='row' spacing={1}>
+          <Link href={`/?to=${format(new Date(), 'R-MM-dd')}&from=2022-07-01&eventType=kamp`} passHref>
+            <Button color='secondary' component='a' variant='outlined'>
+              Vis kampdetaljer
+            </Button>
+          </Link>
+          <Link href='/statistikk' passHref>
+            <Button color='secondary' component='a' variant='outlined'>
+              Statistikk
+            </Button>
+          </Link>
+        </Stack>
       </Stack>
       <Stack gap={2}>
         {notifications.map((notification: ExtendedNotification) => (
