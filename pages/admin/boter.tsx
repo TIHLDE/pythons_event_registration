@@ -146,7 +146,10 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
             </AccordionSummary>
             <AccordionDetails>
               <Box sx={{ mb: 2 }}>
-                <FormControlLabel control={<Checkbox onChange={(e) => setFinesGiven(event, e.target.checked)} value={event.finesGiven} />} label='Gitt bøter' />
+                <FormControlLabel
+                  control={<Checkbox checked={event.finesGiven} onChange={(e) => setFinesGiven(event, e.target.checked)} />}
+                  label='Gitt bøter'
+                />
               </Box>
               <Grid columnSpacing={1} container rowSpacing={0.5}>
                 {event.fines.map((fine, index) => (
