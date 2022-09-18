@@ -133,7 +133,7 @@ export const EventsFilters = (props: StackProps) => {
           size='large'
           sx={{ fontWeight: view === 'matches' ? 'bold' : undefined }}
           variant={view === 'matches' ? 'contained' : 'outlined'}>
-          Kun kamper
+          Terminliste
         </Button>
       </Stack>
       {view === 'all' ? (
