@@ -14,7 +14,7 @@ export const getSemesters = (): Semester[] => {
   const initialDate = set(startOfToday(), { year: 2022, month: 6, date: 1 });
   const semesters: Semester[] = [
     {
-      id: '0',
+      id: 'H22',
       from: initialDate,
       to: set(endOfToday(), { year: 2022, month: 11, date: 31 }),
       label: `Høst 22`,
@@ -26,7 +26,7 @@ export const getSemesters = (): Semester[] => {
     const newFromDate = addMonths(prevSemester.from, 6);
     const newToDate = addMonths(prevSemester.to, 6);
     semesters.push({
-      id: String(Number(prevSemester.id) + 1),
+      id: `${getMonth(newFromDate) < 7 ? 'V' : 'H'}${String(getYear(newFromDate)).substring(2, 4)}`,
       from: newFromDate,
       to: newToDate,
       label: `${getMonth(newFromDate) < 7 ? 'Vår' : 'Høst'} ${String(getYear(newFromDate)).substring(2, 4)}`,
@@ -53,3 +53,9 @@ export const MATCH_EVENT_TYPES = {
   [MatchEventType.YELLOW_CARD]: '🟨 Gult kort',
   [MatchEventType.MOTM]: '🏅 MOTM',
 };
+
+export const stripEmojis = (str: string) =>
+  str
+    .replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();

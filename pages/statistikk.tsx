@@ -1,4 +1,4 @@
-import { Box, Divider, FormControl, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material';
+import { Box, Divider, FormControl, InputLabel, MenuItem, Select, Stack, Typography, TypographyProps } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { MatchEventType, Player, Team } from '@prisma/client';
 import { prisma } from 'lib/prisma';
@@ -7,7 +7,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Fragment, useState } from 'react';
 import safeJsonStringify from 'safe-json-stringify';
-import { getSemesters, MATCH_EVENT_TYPES, removeFalsyElementsFromObject } from 'utils';
+import { getSemesters, MATCH_EVENT_TYPES, removeFalsyElementsFromObject, stripEmojis } from 'utils';
 
 import { MainLinkMenu } from 'components/LinkMenu';
 
@@ -27,6 +27,15 @@ export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ 
   const teamFilter = typeof query.team === 'string' && query.team !== '' ? Number(query.team) : undefined;
   const matchEventTypeFilter =
     typeof query.matchEventType === 'string' && query.matchEventType !== '' ? (query.matchEventType as MatchEventType) : MatchEventType.GOAL;
+
+  if (!query.semester && !query.team && !query.matchEventType) {
+    return {
+      redirect: {
+        destination: `/statistikk?semester=${semesters[semesters.length - 1].id}&matchEventType=${MatchEventType.GOAL}`,
+        permanent: false,
+      },
+    };
+  }
 
   const playersQuery = prisma.player.findMany({
     include: {
@@ -69,6 +78,12 @@ export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ 
     },
   };
 };
+
+const TableText = ({ children, sx }: Pick<TypographyProps, 'children' | 'sx'>) => (
+  <Typography component='p' sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' }, ...sx }} variant='h3'>
+    {children}
+  </Typography>
+);
 
 type Filters = {
   semester: string;
@@ -141,23 +156,24 @@ const Statistics = ({ teams, players }: StatisticsProps) => {
           </Select>
         </FormControl>
       </Stack>
-      <Divider sx={{ mb: 0.5 }} />
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', columnGap: 2, rowGap: 0.5 }}>
-        {players.map((player, index) => (
-          <Fragment key={player.id}>
-            <Typography component='p' sx={{ pl: 0.5, fontSize: { xs: '1.2rem', md: '1.5rem' } }} variant='h3'>
-              {index + 1}.
-            </Typography>
-            <Typography component='p' sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' } }} variant='h3'>
-              {player.name}
-            </Typography>
-            <Typography component='p' sx={{ pr: 0.5, fontSize: { xs: '1.2rem', md: '1.5rem' } }} variant='h3'>
-              {player._count.matchEvents}
-            </Typography>
-            <Divider sx={{ gridColumn: 'span 3' }} />
-          </Fragment>
-        ))}
-      </Box>
+      {players.length ? (
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', columnGap: 2, rowGap: 0.5 }}>
+          <TableText sx={{ pl: 0.5, fontWeight: 'bold' }}>#</TableText>
+          <TableText sx={{ fontWeight: 'bold' }}>Navn</TableText>
+          <TableText sx={{ pr: 0.5, fontWeight: 'bold' }}>{stripEmojis(MATCH_EVENT_TYPES[filters.matchEventType])}</TableText>
+          <Divider sx={{ gridColumn: 'span 3' }} />
+          {players.map((player, index) => (
+            <Fragment key={player.id}>
+              <TableText sx={{ pl: 0.5 }}>{index + 1}.</TableText>
+              <TableText>{player.name}</TableText>
+              <TableText sx={{ pr: 0.5 }}>{player._count.matchEvents}</TableText>
+              <Divider sx={{ gridColumn: 'span 3' }} />
+            </Fragment>
+          ))}
+        </Box>
+      ) : (
+        <Typography>Fant ingen treff med denne filtreringen</Typography>
+      )}
     </>
   );
 };

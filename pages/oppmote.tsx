@@ -13,6 +13,7 @@ import {
   Select,
   TextField,
   Typography,
+  TypographyProps,
 } from '@mui/material';
 import { EventType, Team } from '@prisma/client';
 import { getMonth, parseISO, set } from 'date-fns';
@@ -128,6 +129,12 @@ export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ 
   };
 };
 
+const TableText = ({ children, sx }: Pick<TypographyProps, 'children' | 'sx'>) => (
+  <Typography component='p' sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' }, ...sx }} variant='h3'>
+    {children}
+  </Typography>
+);
+
 type FormData = {
   from: string;
   to: string;
@@ -224,7 +231,7 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
         </Accordion>
       </Box>
       <Typography gutterBottom>
-        Med den gitte filtreringen finnes det totalt <b>{eventsAmount}</b> arrangementer.
+        Med nåværende filtrering finnes det totalt <b>{eventsAmount}</b> arrangementer.
       </Typography>
       {(router.query.eventType === 'kamp' || !router.query.eventType) && !router.query.team && (
         <Alert severity='info' sx={{ mb: 1 }} variant='outlined'>
@@ -232,19 +239,18 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
           andre lags kamper.
         </Alert>
       )}
-      <Divider sx={{ mb: 0.5 }} />
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', columnGap: 2, rowGap: 0.5 }}>
+        <TableText sx={{ pl: 0.5, fontWeight: 'bold' }}>#</TableText>
+        <TableText sx={{ fontWeight: 'bold' }}>Navn</TableText>
+        <TableText sx={{ pr: 0.5, fontWeight: 'bold' }}>Antall</TableText>
+        <Divider sx={{ gridColumn: 'span 3' }} />
         {players.map((player, index) => (
           <Fragment key={player.id}>
-            <Typography component='p' sx={{ pl: 0.5, fontSize: { xs: '1.2rem', md: '1.5rem' } }} variant='h3'>
-              {index + 1}.
-            </Typography>
-            <Typography component='p' sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' } }} variant='h3'>
-              {player.name}
-            </Typography>
-            <Typography component='p' sx={{ pr: 0.5, fontSize: { xs: '1.2rem', md: '1.5rem' } }} variant='h3'>
+            <TableText sx={{ pl: 0.5 }}>{index + 1}.</TableText>
+            <TableText sx={{}}>{player.name}</TableText>
+            <TableText sx={{ pr: 0.5 }}>
               {player._count.registrations} ({Math.round((player._count.registrations / eventsAmount) * 100) || 0}%)
-            </Typography>
+            </TableText>
             <Divider sx={{ gridColumn: 'span 3' }} />
           </Fragment>
         ))}
