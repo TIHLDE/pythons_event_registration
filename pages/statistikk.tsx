@@ -1,97 +1,63 @@
-import { Alert, Box, Button, Divider, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
-import { EventType, Team } from '@prisma/client';
-import { getMonth, parseISO, set } from 'date-fns';
+import { Box, Divider, FormControl, InputLabel, MenuItem, Select, Stack, Typography, TypographyProps } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
+import { MatchEventType, Player, Team } from '@prisma/client';
 import { prisma } from 'lib/prisma';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Fragment } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Fragment, useState } from 'react';
 import safeJsonStringify from 'safe-json-stringify';
+import { getSemesters, MATCH_EVENT_TYPES, removeFalsyElementsFromObject, stripEmojis } from 'utils';
 
-const removeFalsyElementsFromObject = (object: Record<string, string>) => {
-  const newObject: Record<string, string> = {};
-  Object.keys(object).forEach((key) => {
-    if (object[key]) {
-      newObject[key] = object[key];
-    }
-  });
-  return newObject;
-};
+import { MainLinkMenu } from 'components/LinkMenu';
 
-const DEFAULT_TO_DATE = set(new Date(), { hours: 12, minutes: 0 });
-const DEFAULT_FROM_DATE = set(new Date(), { month: getMonth(new Date()) > 6 ? 6 : 0, date: 1, hours: 12, minutes: 0 });
+const semesters = getSemesters();
 
 type StatisticsProps = {
-  eventsAmount: number;
-  players: {
-    _count: {
-      registrations: number;
-    };
-    id: number;
-    name: string;
-  }[];
   teams: Team[];
-  eventTypes: EventType[];
+  players: (Player & {
+    _count: {
+      matchEvents: number;
+    };
+  })[];
 };
 
 export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ query }) => {
-  const dateTo = typeof query.to === 'string' && query.to !== '' ? parseISO(query.to) : DEFAULT_TO_DATE;
-  const dateFrom = typeof query.from === 'string' && query.from !== '' ? parseISO(query.from) : DEFAULT_FROM_DATE;
-  const eventTypeFilter = typeof query.eventType === 'string' && query.eventType !== '' ? query.eventType : undefined;
-  const teamFilter = typeof query.team === 'string' && query.team !== '' ? query.team : undefined;
-  const willArriveFilter =
-    typeof query.willArrive === 'string' && query.team !== '' ? (query.willArrive === 'yes' ? true : query.willArrive === 'no' ? false : null) : undefined;
+  const semesterFilter = typeof query.semester === 'string' && query.semester !== '' ? semesters.find((semester) => semester.id === query.semester) : undefined;
+  const teamFilter = typeof query.team === 'string' && query.team !== '' ? Number(query.team) : undefined;
+  const matchEventTypeFilter =
+    typeof query.matchEventType === 'string' && query.matchEventType !== '' ? (query.matchEventType as MatchEventType) : MatchEventType.GOAL;
 
-  if (!query.to && !query.from && !query.eventType && !query.team && !query.willArrive) {
+  if (!query.semester && !query.team && !query.matchEventType) {
     return {
       redirect: {
-        destination: `/statistikk?to=${DEFAULT_TO_DATE.toJSON().substring(0, 10)}&from=${DEFAULT_FROM_DATE.toJSON().substring(
-          0,
-          10,
-        )}&eventType=trening&willArrive=yes`,
+        destination: `/statistikk?semester=${semesters[semesters.length - 1].id}&matchEventType=${MatchEventType.GOAL}`,
         permanent: false,
       },
     };
   }
 
-  const eventsAmountQuery = prisma.event.aggregate({
-    _count: true,
-    where: {
-      AND: {
-        time: {
-          gte: dateFrom,
-          lte: dateTo,
-        },
-        eventTypeSlug: eventTypeFilter ? { in: eventTypeFilter.split(',') } : undefined,
-      },
-      ...(teamFilter ? { OR: [{ teamId: null }, { teamId: Number(teamFilter) }] } : {}),
-    },
-  });
-
   const playersQuery = prisma.player.findMany({
-    where: {
-      active: true,
-      teamId: teamFilter ? Number(teamFilter) : undefined,
-    },
-    select: {
-      id: true,
-      name: true,
+    include: {
       _count: {
         select: {
-          registrations: {
+          matchEvents: {
             where: {
-              willArrive: willArriveFilter === null ? undefined : willArriveFilter,
-              event: {
-                AND: {
-                  time: {
-                    gte: dateFrom,
-                    lt: dateTo,
+              type: matchEventTypeFilter,
+              match: {
+                is: {
+                  teamId: teamFilter,
+                  event: {
+                    is: {
+                      time: semesterFilter
+                        ? {
+                            gte: semesterFilter.from,
+                            lte: semesterFilter.to,
+                          }
+                        : undefined,
+                    },
                   },
-                  eventTypeSlug: eventTypeFilter ? { in: eventTypeFilter.split(',') } : undefined,
                 },
-                ...(teamFilter ? { OR: [{ teamId: null }, { teamId: Number(teamFilter) }] } : {}),
               },
             },
           },
@@ -101,147 +67,113 @@ export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ 
   });
 
   const teamsQuery = prisma.team.findMany();
-  const eventTypesQuery = prisma.eventType.findMany();
 
-  const [eventsAmount, players, teams, eventTypes] = await Promise.all([eventsAmountQuery, playersQuery, teamsQuery, eventTypesQuery]);
-  const sortedPlayers = players
-    .map((player) => ({
-      ...player,
-      _count: { registrations: willArriveFilter === null ? eventsAmount._count - player._count.registrations : player._count.registrations },
-    }))
-    .sort((a, b) => b._count.registrations - a._count.registrations);
+  const [teams, players] = await Promise.all([teamsQuery, playersQuery]);
+  const sortedPlayers = players.filter((player) => player._count.matchEvents > 0).sort((a, b) => b._count.matchEvents - a._count.matchEvents);
 
   return {
     props: {
-      eventsAmount: eventsAmount._count,
-      players: sortedPlayers,
+      players: JSON.parse(safeJsonStringify(sortedPlayers)),
       teams: JSON.parse(safeJsonStringify(teams)),
-      eventTypes: JSON.parse(safeJsonStringify(eventTypes)),
     },
   };
 };
 
-type FormData = {
-  from: string;
-  to: string;
-  eventType: string;
+const TableText = ({ children, sx }: Pick<TypographyProps, 'children' | 'sx'>) => (
+  <Typography component='p' sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' }, ...sx }} variant='h3'>
+    {children}
+  </Typography>
+);
+
+type Filters = {
+  semester: string;
   team: string;
-  willArrive: string;
+  matchEventType: MatchEventType;
 };
 
-const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProps) => {
-  const router = useRouter();
-  const { handleSubmit, control } = useForm<FormData>({
-    defaultValues: {
-      to: typeof router.query.to === 'string' && router.query.to !== '' ? router.query.to : DEFAULT_TO_DATE.toJSON().substring(0, 10),
-      from: typeof router.query.from === 'string' && router.query.from !== '' ? router.query.from : DEFAULT_FROM_DATE.toJSON().substring(0, 10),
-      eventType: typeof router.query.eventType === 'string' ? router.query.eventType : '',
-      team: typeof router.query.team === 'string' ? router.query.team : '',
-      willArrive: typeof router.query.willArrive === 'string' ? router.query.willArrive : '',
-    },
+const Statistics = ({ teams, players }: StatisticsProps) => {
+  const { replace, query } = useRouter();
+  const [filters, setFilters] = useState<Filters>({
+    semester: typeof query.semester === 'string' ? query.semester : '',
+    team: typeof query.team === 'string' ? query.team : '',
+    matchEventType: typeof query.matchEventType === 'string' ? (query.matchEventType as MatchEventType) : MatchEventType.GOAL,
   });
 
-  const onSubmit = async (query: FormData) => router.replace({ query: removeFalsyElementsFromObject(query) });
+  const handleChange = (event: SelectChangeEvent, field: keyof Filters) => {
+    const newFilters = { ...filters, [field]: event.target.value as string };
+    setFilters(newFilters);
+    replace({ query: removeFalsyElementsFromObject(newFilters) });
+  };
 
   return (
     <>
       <Head>
         <title>Statistikk - Pythons</title>
       </Head>
-      <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
-        <Typography variant='h1'>Statistikk</Typography>
-        <Link href='/' passHref>
-          <Button color='secondary' component='a' variant='outlined'>
-            Kalender
-          </Button>
-        </Link>
-      </Stack>
-      <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ pt: 1, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 1 }}>
-        <Controller control={control} name='from' render={({ field }) => <TextField label='Fra' type='date' {...field} />} />
-        <Controller control={control} name='to' render={({ field }) => <TextField label='Til' type='date' {...field} />} />
+      <MainLinkMenu sx={{ mb: 2 }} />
+      <Stack direction='row' gap={1} sx={{ mb: 2 }}>
         <FormControl fullWidth>
-          <InputLabel id='selectType-type'>Type</InputLabel>
-          <Controller
-            control={control}
-            name='eventType'
-            render={({ field }) => (
-              <Select id='type' label='Type' labelId='selectType-type' {...field}>
-                <MenuItem value=''>Alle</MenuItem>
-                {eventTypes.map((eventType) => (
-                  <MenuItem key={eventType.slug} value={eventType.slug}>
-                    {eventType.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            )}
-          />
+          <InputLabel id='select-semester'>Semester</InputLabel>
+          <Select
+            id='semester'
+            label='Semester'
+            labelId='select-semester'
+            onChange={(e) => handleChange(e as SelectChangeEvent<string>, 'semester')}
+            value={filters.semester}>
+            <MenuItem value=''>Alle</MenuItem>
+            {semesters.map((semester) => (
+              <MenuItem key={semester.id} value={semester.id}>
+                {semester.label}
+              </MenuItem>
+            ))}
+          </Select>
         </FormControl>
         <FormControl fullWidth>
           <InputLabel id='select-team'>Lag</InputLabel>
-          <Controller
-            control={control}
-            name='team'
-            render={({ field }) => (
-              <Select id='team' label='Lag' labelId='select-team' {...field}>
-                <MenuItem value=''>Alle</MenuItem>
-                {teams.map((team) => (
-                  <MenuItem key={team.id} value={team.id}>
-                    {team.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            )}
-          />
+          <Select id='team' label='Lag' labelId='select-team' onChange={(e) => handleChange(e as SelectChangeEvent<string>, 'team')} value={filters.team}>
+            <MenuItem value=''>Alle</MenuItem>
+            {teams.map((team) => (
+              <MenuItem key={team.id} value={team.id}>
+                {team.name}
+              </MenuItem>
+            ))}
+          </Select>
         </FormControl>
         <FormControl fullWidth>
-          <InputLabel id='select-willArrive'>Oppmøte</InputLabel>
-          <Controller
-            control={control}
-            name='willArrive'
-            render={({ field }) => (
-              <Select id='willArrive' label='Oppmøte' labelId='select-willArrive' {...field}>
-                <MenuItem value=''>Alle</MenuItem>
-                <MenuItem value='yes'>Ja</MenuItem>
-                <MenuItem value='no'>Nei</MenuItem>
-                <MenuItem value='none'>Ikke registrert</MenuItem>
-              </Select>
-            )}
-          />
+          <InputLabel id='type-label'>Type</InputLabel>
+          <Select
+            id='type'
+            label='Type'
+            labelId='type-label'
+            onChange={(e) => handleChange(e as SelectChangeEvent<string>, 'matchEventType')}
+            required
+            value={filters.matchEventType}>
+            <MenuItem value={MatchEventType.GOAL}>{MATCH_EVENT_TYPES[MatchEventType.GOAL]}</MenuItem>
+            <MenuItem value={MatchEventType.ASSIST}>{MATCH_EVENT_TYPES[MatchEventType.ASSIST]}</MenuItem>
+            <MenuItem value={MatchEventType.RED_CARD}>{MATCH_EVENT_TYPES[MatchEventType.RED_CARD]}</MenuItem>
+            <MenuItem value={MatchEventType.YELLOW_CARD}>{MATCH_EVENT_TYPES[MatchEventType.YELLOW_CARD]}</MenuItem>
+            <MenuItem value={MatchEventType.MOTM}>{MATCH_EVENT_TYPES[MatchEventType.MOTM]}</MenuItem>
+          </Select>
         </FormControl>
-        <Button sx={{ gridColumn: { xs: undefined, md: 'span 2' } }} type='submit' variant='contained'>
-          Oppdater filtre
-        </Button>
-      </Box>
-      <Divider sx={{ mt: 1, mb: 2 }} />
-      <Typography gutterBottom variant='h2'>
-        Oppmøte-ledertavle
-      </Typography>
-      <Typography gutterBottom>
-        Med den gitte filtreringen finnes det totalt <b>{eventsAmount}</b> arrangementer.
-      </Typography>
-      {(router.query.eventType === 'kamp' || !router.query.eventType) && !router.query.team && (
-        <Alert severity='info' sx={{ mb: 1 }} variant='outlined'>
-          Kamper er en del av filtreringen uten at et lag er valgt. Det medfører at ingen kan ha 100% påmeldinger ettersom det ikke er mulig å melde seg på
-          andre lags kamper.
-        </Alert>
+      </Stack>
+      {players.length ? (
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', columnGap: 2, rowGap: 0.5 }}>
+          <TableText sx={{ pl: 0.5, fontWeight: 'bold' }}>#</TableText>
+          <TableText sx={{ fontWeight: 'bold' }}>Navn</TableText>
+          <TableText sx={{ pr: 0.5, fontWeight: 'bold' }}>{stripEmojis(MATCH_EVENT_TYPES[filters.matchEventType])}</TableText>
+          <Divider sx={{ gridColumn: 'span 3' }} />
+          {players.map((player, index) => (
+            <Fragment key={player.id}>
+              <TableText sx={{ pl: 0.5 }}>{index + 1}.</TableText>
+              <TableText>{player.name}</TableText>
+              <TableText sx={{ pr: 0.5 }}>{player._count.matchEvents}</TableText>
+              <Divider sx={{ gridColumn: 'span 3' }} />
+            </Fragment>
+          ))}
+        </Box>
+      ) : (
+        <Typography>Fant ingen treff med denne filtreringen</Typography>
       )}
-      <Divider sx={{ mb: 0.5 }} />
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', columnGap: 2, rowGap: 0.5 }}>
-        {players.map((player, index) => (
-          <Fragment key={player.id}>
-            <Typography component='p' sx={{ pl: 0.5, fontSize: { xs: '1.2rem', md: '1.5rem' } }} variant='h3'>
-              {index + 1}.
-            </Typography>
-            <Typography component='p' sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' } }} variant='h3'>
-              {player.name}
-            </Typography>
-            <Typography component='p' sx={{ pr: 0.5, fontSize: { xs: '1.2rem', md: '1.5rem' } }} variant='h3'>
-              {player._count.registrations} ({Math.round((player._count.registrations / eventsAmount) * 100) || 0}%)
-            </Typography>
-            <Divider sx={{ gridColumn: 'span 3' }} />
-          </Fragment>
-        ))}
-      </Box>
     </>
   );
 };

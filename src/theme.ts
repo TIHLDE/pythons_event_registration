@@ -1,5 +1,20 @@
 import { createTheme } from '@mui/material/styles';
 
+declare module '@mui/material/styles' {
+  interface Palette {
+    menu: Palette['primary'];
+  }
+  interface PaletteOptions {
+    menu: PaletteOptions['primary'];
+  }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    menu: true;
+  }
+}
+
 const theme = createTheme({
   shape: {
     borderRadius: 10,
@@ -18,6 +33,10 @@ const theme = createTheme({
       light: '#35e1d0',
       main: '#03DAC5',
       dark: '#018786',
+      contrastText: '#000',
+    },
+    menu: {
+      main: '#fafafa',
       contrastText: '#000',
     },
     error: {

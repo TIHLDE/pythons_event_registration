@@ -275,21 +275,17 @@ const Event = ({ eventDetails }: EventProps) => {
           <>
             {!openRegistration ? (
               <>
-                {isFuture(new Date(eventDetails.time)) ? (
+                {isFuture(new Date(eventDetails.time)) && (
                   <Button disabled={!user} onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'text' : 'contained'}>
                     {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
                   </Button>
-                ) : (
-                  <Typography textAlign='center' variant='body2'>
-                    Oppmøte kan ikke endres etter arrangementsstart
-                  </Typography>
                 )}
                 {(eventDetails.type.slug === 'trening' || eventDetails.type.slug === 'kamp') && (
                   <Typography textAlign='center' variant='body2'>
-                    {`Påmeldingsfrist ${formatDistanceToNow(registrationDeadline, { locale: nb, addSuffix: true })} - kl. ${format(
-                      registrationDeadline,
-                      'HH:mm',
-                    )}`}
+                    {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
+                      locale: nb,
+                      addSuffix: true,
+                    })} - kl. ${format(registrationDeadline, 'HH:mm')}`}
                   </Typography>
                 )}
               </>

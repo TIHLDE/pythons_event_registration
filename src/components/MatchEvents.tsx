@@ -3,7 +3,7 @@ import { MatchEvent, MatchEventType, Player, Prisma } from '@prisma/client';
 import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
 import useSWR from 'swr';
-import { fetcher } from 'utils';
+import { fetcher, MATCH_EVENT_TYPES } from 'utils';
 
 export type MatchEventsProps = {
   isAdmin?: boolean;
@@ -14,14 +14,6 @@ export type MatchEventsProps = {
       match: true;
     };
   }>;
-};
-
-const MATCH_EVENT_TYPES = {
-  [MatchEventType.GOAL]: '⚽ Mål',
-  [MatchEventType.ASSIST]: '🥈 Assist',
-  [MatchEventType.RED_CARD]: '🟥 Rødt kort',
-  [MatchEventType.YELLOW_CARD]: '🟨 Gult kort',
-  [MatchEventType.MOTM]: '🏅 MOTM',
 };
 
 type FormData = Pick<MatchEvent, 'type'> & {

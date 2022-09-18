@@ -1,4 +1,4 @@
-import { Button, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { addWeeks, endOfWeek, format, getWeek, parseISO, startOfWeek } from 'date-fns';
 import nb from 'date-fns/locale/nb';
@@ -6,13 +6,13 @@ import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import safeJsonStringify from 'safe-json-stringify';
 
 import { ExtendedNotification } from 'components/AdminMessage';
 import AlertMessage from 'components/AlertMessage';
 import Event, { ExtendedEvent } from 'components/Event';
 import { EventsFilters, getEventsWhereFilter } from 'components/EventsFilters';
+import { MainLinkMenu } from 'components/LinkMenu';
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const allFutureEventsQuery = await prisma.event.findMany({
@@ -127,14 +127,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
       <Head>
         <title>Kalender - Pythons</title>
       </Head>
-      <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
-        <Typography variant='h1'>Kalender</Typography>
-        <Link href='/statistikk' passHref>
-          <Button color='secondary' component='a' variant='outlined'>
-            Statistikk
-          </Button>
-        </Link>
-      </Stack>
+      <MainLinkMenu sx={{ mb: 2 }} />
       <Stack gap={2}>
         {notifications.map((notification: ExtendedNotification) => (
           <AlertMessage key={notification.id} notification={notification} />
