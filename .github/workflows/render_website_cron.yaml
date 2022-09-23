@@ -2,31 +2,16 @@
 name: Render website
 
 on:
-  push:
-    branches:
-      - feat/supabase
-
-# on:
-#   schedule:
-#     - cron: 0 12 * * *
+  schedule:
+    - cron: 0 12 * * *
 
 jobs:
-  build:
+  render:
+    name: Render website
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
 
     steps:
       - name: Fetch URL
         uses: boyeborg/fetch-url-action@v1.1
-        id: fetch
         with:
           url: https://pythons.tihlde.org
-      - name: Output
-        # run: |
-        #   echo "${{join(steps.fetch.outputs.result, '\n')}}"
-        #   exit 0
-        run: print(str(${{join(steps.fetch.outputs.result, '\n')}}))
-        shell: python
