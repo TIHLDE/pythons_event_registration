@@ -21,8 +21,9 @@ jobs:
     steps:
       - name: Fetch URL
         uses: boyeborg/fetch-url-action@v1.1
+        id: fetch
         with:
           url: https://pythons.tihlde.org
-      # - name: Render website
-        # run: |
-          # xdg-open https://pythons.tihlde.org && sleep 10
+      - name: Output
+        run: |
+          echo "${{join(steps.fetch.outputs.*, '\n')}}"
