@@ -1,0 +1,17 @@
+# Used to avoid Supabase to enter sleep-mode (https://supabase.com/docs/going-into-prod#availability)
+name: Render website
+
+on:
+  schedule:
+    - cron: 0 12 * * *
+
+jobs:
+  render:
+    name: Render website
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch URL
+        uses: boyeborg/fetch-url-action@v1.1
+        with:
+          url: https://pythons.tihlde.org
