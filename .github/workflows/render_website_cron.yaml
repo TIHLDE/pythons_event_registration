@@ -19,6 +19,10 @@ jobs:
         node-version: [16.x]
 
     steps:
-      - name: Render website
-        run: |
-          xdg-open https://pythons.tihlde.org && sleep 10
+      - name: Fetch URL
+        uses: boyeborg/fetch-url-action@v1.1
+        with:
+          url: https://pythons.tihlde.org
+      # - name: Render website
+        # run: |
+          # xdg-open https://pythons.tihlde.org && sleep 10
