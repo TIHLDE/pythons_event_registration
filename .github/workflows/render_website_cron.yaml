@@ -27,3 +27,4 @@ jobs:
       - name: Output
         run: |
           echo "${{join(steps.fetch.outputs.*, '\n')}}"
+          exit 0
