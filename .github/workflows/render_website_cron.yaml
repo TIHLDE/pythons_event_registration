@@ -1,0 +1,24 @@
+# Used to avoid Supabase to enter sleep-mode (https://supabase.com/docs/going-into-prod#availability)
+name: Render website
+
+on:
+  push:
+    branches:
+      - feat/supabase
+
+# on:
+#   schedule:
+#     - cron: 0 12 * * *
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Render website
+        run: |
+          xdg-open www.example.com && sleep 10
