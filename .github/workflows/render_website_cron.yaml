@@ -21,4 +21,4 @@ jobs:
     steps:
       - name: Render website
         run: |
-          xdg-open www.example.com && sleep 10
+          xdg-open https://pythons.tihlde.org && sleep 10
