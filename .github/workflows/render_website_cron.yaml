@@ -26,5 +26,5 @@ jobs:
           url: https://pythons.tihlde.org
       - name: Output
         run: |
-          echo "${{join(steps.fetch.outputs.*, '\n')}}"
+          echo "${{join(steps.fetch.outputs.result, '\n')}}"
           exit 0
