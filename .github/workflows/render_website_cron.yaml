@@ -28,5 +28,5 @@ jobs:
         # run: |
         #   echo "${{join(steps.fetch.outputs.result, '\n')}}"
         #   exit 0
-        run: print(${{join(steps.fetch.outputs.result, '\n')}})
+        run: print(str(${{join(steps.fetch.outputs.result, '\n')}}))
         shell: python
