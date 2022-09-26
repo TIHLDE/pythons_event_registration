@@ -15,7 +15,21 @@ import { EventsFilters, getEventsWhereFilter } from 'components/EventsFilters';
 import { MainLinkMenu } from 'components/LinkMenu';
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const allFutureEventsQuery = await prisma.event.findMany({
+  const notificationsQuery = prisma.notification.findMany({
+    where: {
+      expiringDate: {
+        gt: new Date(),
+      },
+    },
+    orderBy: {
+      expiringDate: 'asc',
+    },
+    include: {
+      author: true,
+    },
+  });
+
+  const allFutureEventsQuery = prisma.event.findMany({
     include: {
       team: true,
       match: true,
@@ -34,13 +48,13 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     ...(getEventsWhereFilter({ query }) as {}),
   });
 
-  const playersQuery = await prisma.player.findMany({
+  const playersQuery = prisma.player.findMany({
     where: {
       active: true,
     },
   });
 
-  const [allFutureEvents, players] = await Promise.all([allFutureEventsQuery, playersQuery]);
+  const [allFutureEvents, players, notifications] = await Promise.all([allFutureEventsQuery, playersQuery, notificationsQuery]);
 
   const eventsWithArrivingList = allFutureEvents.map((event) => {
     const willArrive = event.registrations.filter((registration) => registration.willArrive);
@@ -66,43 +80,26 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     };
   });
 
-  const notificationsQuery = await prisma.notification.findMany({
-    where: {
-      expiringDate: {
-        gt: new Date(),
-      },
-    },
-    orderBy: {
-      expiringDate: 'asc',
-    },
-    include: {
-      author: true,
-    },
-  });
-
-  const events = JSON.parse(safeJsonStringify(eventsWithArrivingList));
-  const notifications = JSON.parse(safeJsonStringify(notificationsQuery));
-
   return {
     props: {
-      events,
-      notifications,
+      events: JSON.parse(safeJsonStringify(eventsWithArrivingList)),
+      notifications: JSON.parse(safeJsonStringify(notifications)),
     },
   };
 };
 
+const getYearWeek = (time: Date) =>
+  `Uke ${getWeek(time, { weekStartsOn: 1 })} (${format(startOfWeek(time, { weekStartsOn: 1 }), 'dd.MM', { locale: nb })}-${format(
+    endOfWeek(time, { weekStartsOn: 1 }),
+    'dd.MM',
+    {
+      locale: nb,
+    },
+  )})`;
+
 const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const groupedEvents = (events as ExtendedEvent[]).reduce((acc, event) => {
     const time = parseISO(event.time as unknown as string);
-
-    const getYearWeek = (time: Date) =>
-      `Uke ${getWeek(time, { weekStartsOn: 1 })} (${format(startOfWeek(time, { weekStartsOn: 1 }), 'dd.MM', { locale: nb })}-${format(
-        endOfWeek(time, { weekStartsOn: 1 }),
-        'dd.MM',
-        {
-          locale: nb,
-        },
-      )})`;
 
     const thisYearWeek = getYearWeek(new Date());
     const nextYearWeek = getYearWeek(addWeeks(new Date(), 1));
