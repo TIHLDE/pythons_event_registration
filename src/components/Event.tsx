@@ -27,6 +27,7 @@ import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useReward } from 'react-rewards';
 import rules from 'rules';
 
 import { useModal } from 'hooks/useModal';
@@ -105,6 +106,9 @@ const Event = ({ eventDetails }: EventProps) => {
     handleCloseModal: handleCloseHasNotAnsweredModal,
   } = useModal(false);
 
+  const { reward: willArriveConfetti } = useReward('willArriveConfetti', 'confetti', { elementCount: 100, elementSize: 15 });
+  const { reward: willNotArriveConfetti } = useReward('willNotArriveConfetti', 'emoji', { emoji: ['😭', '😢', '💔'], elementCount: 40 });
+
   const router = useRouter();
 
   const { data: user } = useUser();
@@ -129,11 +133,17 @@ const Event = ({ eventDetails }: EventProps) => {
         reason: formData.reason,
       }),
     };
+    const willArrive = formData.registration === '1';
+    if (willArrive) {
+      willArriveConfetti();
+    } else {
+      willNotArriveConfetti();
+    }
     if (userHasRegistrated) {
       axios
         .put(`/api/registration/${data.playerId}_${data.eventId}`, {
           data,
-          willArrive: formData.registration === '1',
+          willArrive,
         })
         .then(() => {
           setOpenRegistration(false);
@@ -143,7 +153,7 @@ const Event = ({ eventDetails }: EventProps) => {
       axios
         .post('/api/registration', {
           data: data,
-          willArrive: formData.registration === '1',
+          willArrive,
         })
         .then(() => {
           setOpenRegistration(false);
@@ -271,6 +281,10 @@ const Event = ({ eventDetails }: EventProps) => {
       )}
       <Divider sx={{ mt: 1 }} />
       <NoSsr>
+        <Box component='span' sx={{ mt: -1, alignSelf: 'center' }}>
+          <span id='willArriveConfetti' />
+          <span id='willNotArriveConfetti' />
+        </Box>
         {!eventDetails.teamId || eventDetails.teamId === user?.teamId ? (
           <>
             {!openRegistration ? (
