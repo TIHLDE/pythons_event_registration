@@ -106,8 +106,11 @@ const Event = ({ eventDetails }: EventProps) => {
     handleCloseModal: handleCloseHasNotAnsweredModal,
   } = useModal(false);
 
-  const { reward: willArriveConfetti } = useReward('willArriveConfetti', 'confetti', { elementCount: 100, elementSize: 15 });
-  const { reward: willNotArriveConfetti } = useReward('willNotArriveConfetti', 'emoji', { emoji: ['😭', '😢', '💔'], elementCount: 40 });
+  const willArriveConfettiId = `willArriveConfetti-${eventDetails.id}`;
+  const willNotArriveConfettiId = `willNotArriveConfetti-${eventDetails.id}`;
+
+  const { reward: willArriveConfetti } = useReward(willArriveConfettiId, 'confetti', { elementCount: 100, elementSize: 15 });
+  const { reward: willNotArriveConfetti } = useReward(willNotArriveConfettiId, 'emoji', { emoji: ['😭', '😢', '💔'], elementCount: 40 });
 
   const router = useRouter();
 
@@ -282,8 +285,8 @@ const Event = ({ eventDetails }: EventProps) => {
       <Divider sx={{ mt: 1 }} />
       <NoSsr>
         <Box component='span' sx={{ mt: -1, alignSelf: 'center' }}>
-          <span id='willArriveConfetti' />
-          <span id='willNotArriveConfetti' />
+          <span id={willArriveConfettiId} />
+          <span id={willNotArriveConfettiId} />
         </Box>
         {!eventDetails.teamId || eventDetails.teamId === user?.teamId ? (
           <>
