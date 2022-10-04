@@ -6,8 +6,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'PUT') {
     const {
       query: { id },
-    } = req;
-    const {
       body: { data, willArrive },
     } = req;
     if (typeof id === 'string') {
@@ -15,7 +13,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const playerId = parseInt(ids[0]);
       const eventId = parseInt(ids[1]);
 
-      const existingRegistration = await prisma.registrations.findFirstOrThrow({ where: { playerId, eventId } });
+      const existingRegistration = await prisma.registrations.findFirstOrThrow({
+        where: { playerId, eventId },
+        include: { event: { select: { time: true } } },
+      });
+
+      if (existingRegistration.event.time < new Date()) {
+        return res.status(HttpStatusCode.FORBIDDEN).json({ message: `Det er ikke lov å endre en registrering etter at arrangementet har startet` });
+      }
 
       await prisma.registrations.update({
         where: {
@@ -29,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
       res.status(HttpStatusCode.OK).end();
     } else {
-      res.status(HttpStatusCode.BAD_REQUEST).json({ message: "Forventer 2 id'er" });
+      res.status(HttpStatusCode.BAD_REQUEST).json({ message: `Forventer 2 id'er med format: "<spiller-id>_<kamp-id>"` });
     }
   } else {
     res.status(HttpStatusCode.METHOD_NOT_ALLOWED).end();
