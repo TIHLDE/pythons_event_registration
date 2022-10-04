@@ -3,36 +3,12 @@ import { prisma } from 'lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'PUT') {
+  if (req.method === 'DELETE') {
     const {
-      body: { data },
+      query: { match_event_id },
     } = req;
-    const {
-      query: { id },
-    } = req;
-    const parsedId = parseInt(typeof id === 'string' ? id : '-1');
-
-    const updatedEvent = await prisma.event.update({
-      where: {
-        id: parsedId,
-      },
-      data: {
-        eventTypeSlug: data.eventTypeSlug,
-        title: data.eventTypeSlug === 'trening' ? '' : data.title,
-        time: data.time,
-        location: data.location,
-        teamId: data.eventTypeSlug === 'kamp' ? data.team : null,
-        finesGiven: data.finesGiven || false,
-      },
-    });
-
-    res.status(HttpStatusCode.OK).json(updatedEvent);
-  } else if (req.method === 'DELETE') {
-    const {
-      query: { id },
-    } = req;
-    const parsedId = parseInt(typeof id === 'string' ? id : '-1');
-    await prisma.event.delete({
+    const parsedId = Number(typeof match_event_id === 'string' ? match_event_id : '-1');
+    await prisma.matchEvent.delete({
       where: {
         id: parsedId,
       },

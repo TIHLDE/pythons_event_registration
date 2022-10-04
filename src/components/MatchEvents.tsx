@@ -5,6 +5,8 @@ import { Controller, useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { fetcher, MATCH_EVENT_TYPES } from 'utils';
 
+import ConfirmModal from 'components/ConfirmModal';
+
 export type MatchEventsProps = {
   isAdmin?: boolean;
   event: Prisma.EventGetPayload<{
@@ -39,10 +41,24 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
       mutate();
     });
 
+  const deleteMatchEvent = async (id: MatchEvent['id']) =>
+    axios.delete(`/api/matches/${event.match?.id}/events/${id}`).then(() => {
+      mutate();
+    });
+
   return (
     <Stack gap={1}>
       {matchEvents && matchEvents.length ? (
-        matchEvents.map((matchEvent) => <Typography key={matchEvent.id}>{`${MATCH_EVENT_TYPES[matchEvent.type]} - ${matchEvent.player.name}`}</Typography>)
+        matchEvents.map((matchEvent) => (
+          <Typography key={matchEvent.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <span>{`${MATCH_EVENT_TYPES[matchEvent.type]} - ${matchEvent.player.name}`}</span>
+            {isAdmin && (
+              <ConfirmModal color='error' onConfirm={() => deleteMatchEvent(matchEvent.id)} size='small' title='Slett hendelse' variant='outlined'>
+                Slett
+              </ConfirmModal>
+            )}
+          </Typography>
+        ))
       ) : (
         <Typography>Ingen hendelser er registrert</Typography>
       )}
