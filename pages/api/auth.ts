@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       body: { user_id, password },
     } = req;
     try {
-      await authenticate({ user_id, password }, req, res);
+      await authenticate({ user_id, password, req, res });
       res.status(HttpStatusCode.NO_CONTENT).end();
     } catch (e) {
       res.status(HttpStatusCode.BAD_REQUEST).json({ error: (e as Error).message });
