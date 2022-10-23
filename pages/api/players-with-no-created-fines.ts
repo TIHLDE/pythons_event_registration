@@ -1,38 +1,7 @@
 import axios from 'axios';
 import HttpStatusCode from 'http-status-typed';
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-type PaginationResponse<T> = {
-  count: number;
-  next: number | null;
-  previous: number | null;
-  results: Array<T>;
-};
-
-export type TIHLDEMembership = {
-  user: User;
-  created_at: string;
-};
-
-export type TIHLDEGroupFine = {
-  id: string;
-  user: User;
-  amount: number;
-  approved: boolean;
-  payed: boolean;
-  description: string;
-  reason: string;
-  defense: string;
-  image: string | null;
-  created_by: User;
-  created_at: string;
-};
-
-export type User = {
-  first_name: string;
-  last_name: string;
-  user_id: string;
-};
+import type { PaginationResponse, TIHLDEGroupFine, TIHLDEMembership, TIHLDEUser } from 'tihlde';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -67,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const users = memberships.map((membership) => membership.user);
 
       const usersWithNoCreatedFines = users.filter((user) => !notPayedFines.some((fine) => fine.created_by.user_id === user.user_id));
-      const mappedUsers: Array<User> = usersWithNoCreatedFines.map((user) => ({
+      const mappedUsers: Array<TIHLDEUser> = usersWithNoCreatedFines.map((user) => ({
         user_id: user.user_id,
         first_name: user.first_name,
         last_name: user.last_name,

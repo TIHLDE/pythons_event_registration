@@ -12,7 +12,7 @@ import { useRouter } from 'next/router';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { SWRConfig } from 'swr';
 import theme from 'theme';
-import { USER_STORAGE_KEY } from 'values';
+import { AUTH_TOKEN_COOKIE_KEY, USER_STORAGE_KEY } from 'values';
 
 import NavBar from 'components/NavBar';
 import SignIn from 'components/SignIn';
@@ -30,7 +30,10 @@ const PythonsApp = ({ Component, emotionCache = clientSideEmotionCache, pageProp
     router.push('/admin');
   });
 
-  const logout = () => deleteCookie(USER_STORAGE_KEY);
+  const logout = () => {
+    deleteCookie(USER_STORAGE_KEY);
+    deleteCookie(AUTH_TOKEN_COOKIE_KEY);
+  };
 
   return (
     <SWRConfig value={user ? { fallback: { [`/api/players/${user.id}`]: user } } : undefined}>
@@ -75,8 +78,9 @@ PythonsApp.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext);
 
   const user = getCookie(USER_STORAGE_KEY, appContext.ctx);
+  const authToken = getCookie(AUTH_TOKEN_COOKIE_KEY, appContext.ctx);
 
-  return { ...appProps, user: user ? JSON.parse(user.toString()) : undefined };
+  return { ...appProps, user: user && authToken ? JSON.parse(user.toString()) : undefined };
 };
 
 export default PythonsApp;

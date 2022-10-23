@@ -1,5 +1,6 @@
 import { Player } from '@prisma/client';
 import { getCookie, setCookie } from 'cookies-next';
+import { hoursToSeconds } from 'date-fns';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
@@ -19,7 +20,7 @@ export const useUser = () => {
     fallbackData: storedUser,
     isPaused: () => !storedUser,
     onSuccess: (data) => {
-      setCookie(USER_STORAGE_KEY, JSON.stringify(data), { maxAge: 60 * 60 * 24 * 180 });
+      setCookie(USER_STORAGE_KEY, JSON.stringify(data), { maxAge: hoursToSeconds(24) * 180 });
     },
   });
 };

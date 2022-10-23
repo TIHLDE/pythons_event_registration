@@ -6,9 +6,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-
-// eslint-disable-next-line no-restricted-imports
-import { User as TIHLDEUser } from '../api/players-with-no-created-fines';
+import type { TIHLDEUser } from 'tihlde';
 
 type FormDataProps = {
   username: string;
@@ -25,7 +23,6 @@ const PlayersWithNoCreatedFines: NextPage = () => {
     try {
       const playersResponse = await axios.post<Array<TIHLDEUser>>(`/api/players-with-no-created-fines`, data);
       setPlayers(playersResponse.data);
-      console.log(playersResponse.data);
     } catch {
       setIsError(true);
     }

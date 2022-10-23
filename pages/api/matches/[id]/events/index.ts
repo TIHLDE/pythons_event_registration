@@ -26,8 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       query: { id },
     } = req;
     const parsedId = Number(typeof id === 'string' ? id : '-1');
-    console.log(parsedId, data);
-    const evet = await prisma.matchEvent.create({
+    await prisma.matchEvent.create({
       data: {
         type: data.type,
         match: {
@@ -42,7 +41,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       },
     });
-    console.log(evet);
     res.status(200).end();
   } else {
     res.status(HttpStatusCode.METHOD_NOT_ALLOWED).end();
