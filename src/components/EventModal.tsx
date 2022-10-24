@@ -77,7 +77,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
             control={control}
             name='eventTypeSlug'
             render={({ field }) => (
-              <FormControl fullWidth>
+              <FormControl disabled={Boolean(event)} fullWidth>
                 <InputLabel id='selectType-label'>Type</InputLabel>
                 <Select id='selectType' labelId='selectType-label' required {...field} label='Type'>
                   {eventTypes?.map((eventType: EventType) => (

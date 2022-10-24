@@ -15,15 +15,7 @@ export const isMemberOfPythonsGroup = async ({ req, res }: NextResponseRequest) 
 };
 
 export const getAllPythonsMemberships = async ({ req, res }: NextResponseRequest) => {
-  const now = new Date().getTime();
-  console.log('start Memberships');
-  const resp = await axios
+  return axios
     .get<PaginationResponse<TIHLDEMembership>>(`${TIHLDE_API_URL}/groups/${PYTHONS_GROUP_SLUG}/memberships/?None=500`, getAuthHeaders({ req, res }))
     .then((response) => response.data);
-  console.log('Memberships: ' + (new Date().getTime() - now));
-
-  return resp;
-  // return axios
-  // .get<PaginationResponse<TIHLDEMembership>>(`${TIHLDE_API_URL}/groups/${PYTHONS_GROUP_SLUG}/memberships/?None=500`, getAuthHeaders({ req, res }))
-  // .then((response) => response.data);
 };

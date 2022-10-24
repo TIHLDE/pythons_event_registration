@@ -40,7 +40,6 @@ export const authenticate = async ({ user_id, password, req, res }: { user_id: s
         'Det har ikke blitt opprettet en spiller-profil for deg enda. Spiller-profiler oppdateres/genereres automatisk hver hele time basert på hvem som er medlem i Pythons-gruppen på TIHLDE.org',
       );
     }
-    console.log(player);
     setCookie(USER_STORAGE_KEY, JSON.stringify(player), { req, res, maxAge: hoursToSeconds(24) * 180 });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
