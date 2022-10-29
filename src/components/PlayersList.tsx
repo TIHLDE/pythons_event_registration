@@ -1,13 +1,6 @@
-import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVertRounded';
-import { Divider, IconButton } from '@mui/material';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import { Player, Team } from '@prisma/client';
+import { Button, IconButton, Menu, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Player } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -21,8 +14,6 @@ import ChangeTeamModal from 'components/ChangeTeamModal';
 export type PlayersListProps = {
   title: string;
   players: Player[];
-  id: number;
-  teamId?: Team['id'];
 };
 
 type FormDataProps = {
@@ -123,20 +114,7 @@ const Player = ({ player }: { player: Player }) => {
   );
 };
 
-const PlayersList = ({ title, id, players, teamId }: PlayersListProps) => {
-  const [openNewPlayerField, setOpenNewPlayerField] = useState(false);
-  const { handleSubmit, control, reset } = useForm<FormDataProps>();
-  const router = useRouter();
-
-  const onSubmit = async (formData: FormDataProps) => {
-    const data = { name: formData.name, positionId: id, teamId };
-    axios.post('/api/players', { data: data }).then(() => {
-      setOpenNewPlayerField(false);
-      reset();
-      router.replace(router.asPath);
-    });
-  };
-
+const PlayersList = ({ title, players }: PlayersListProps) => {
   return (
     <Stack gap={1} justifyContent='space-between' sx={{ flex: 1, borderRadius: 1, border: '1px solid white', p: 1 }}>
       <Stack gap={1}>
@@ -147,28 +125,6 @@ const PlayersList = ({ title, id, players, teamId }: PlayersListProps) => {
           <Player key={player.id} player={player} />
         ))}
       </Stack>
-      {Boolean(teamId) && (
-        <Stack gap={1}>
-          <Divider sx={{ mt: 1 }} />
-          {openNewPlayerField ? (
-            <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
-              <Controller
-                control={control}
-                name={'name'}
-                render={({ field: { onChange, value } }) => <TextField autoFocus label={'Navn'} onChange={onChange} required size='small' value={value} />}
-                rules={{ required: 'Spilleren må ha et navn' }}
-              />
-              <Button size='small' sx={{ textAlign: 'left', justifyContent: 'flex-start' }} type='submit' variant='contained'>
-                Legg til
-              </Button>
-            </Stack>
-          ) : (
-            <Button onClick={() => setOpenNewPlayerField(true)} size='small' startIcon={<AddIcon />} sx={{ textAlign: 'left', justifyContent: 'flex-start' }}>
-              Ny spiller
-            </Button>
-          )}
-        </Stack>
-      )}
     </Stack>
   );
 };
