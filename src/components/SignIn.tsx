@@ -1,54 +1,66 @@
-import Autocomplete from '@mui/material/Autocomplete';
+import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Player, Position } from '@prisma/client';
-import { setCookie } from 'cookies-next';
+import axios from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import useSWR from 'swr';
-import { fetcher } from 'utils';
-import { USER_STORAGE_KEY } from 'values';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+
+type FormDataProps = {
+  user_id: string;
+  password: string;
+};
 
 const SignIn = () => {
+  const { control, handleSubmit, formState } = useForm<FormDataProps>();
+  const [error, setError] = useState<string>();
   const router = useRouter();
-  const { data: players = [], isValidating: isPlayersLoading } = useSWR<Player[]>('/api/players', fetcher);
-  const { data: positions = [], isValidating: isPositionsLoading } = useSWR<Position[]>('/api/positions', fetcher);
 
-  const onPlayerSelect = (player: Player | null) => {
-    if (typeof window !== 'undefined') {
-      setCookie(USER_STORAGE_KEY, JSON.stringify(player), { maxAge: 60 * 60 * 24 * 180 });
+  const signIn = async (data: FormDataProps) => {
+    setError(undefined);
+    try {
+      await axios.post(`/api/auth`, data);
       router.reload();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      setError(e.response?.data?.error || (e as Error).message);
     }
   };
 
-  const isLoading = isPlayersLoading || isPositionsLoading;
+  const isLoading = formState.isSubmitting;
 
   return (
     <>
       <Head>
         <title>Pythons - innlogging</title>
       </Head>
-      <Stack alignItems='center' gap={2}>
+      <Stack
+        alignItems='center'
+        component='form'
+        gap={2}
+        onSubmit={handleSubmit(signIn)}
+        sx={{ py: 1, m: 'auto', width: { xs: '100%', md: '50%' } }}
+        textAlign='center'>
         <Typography variant='h1'>Oppmøte-registrering</Typography>
-        <Typography variant='body1'>Du må logge inn før du kan registrere oppmøte på treninger, kamper og sosiale arrangementer.</Typography>
-        <Autocomplete
-          disabled={isLoading}
-          disablePortal
-          getOptionLabel={(option) => option.name}
-          groupBy={(option) => option.position}
-          id='select-player'
-          noOptionsText='Fant ingen spillere med dette navnet, kontakt trener-teamet for å bli lagt til'
-          onChange={(e, value) => onPlayerSelect(value)}
-          options={players
-            .sort((a, b) => a.positionId - b.positionId)
-            .map((player) => ({ ...player, position: positions.find((pos) => pos.id === player.positionId)?.title || 'Annet' }))}
-          renderInput={(params) => (
-            <TextField sx={{ background: 'transparent', color: 'white' }} {...params} label={isLoading ? 'Laster spillere...' : 'Velg spiller'} />
-          )}
-          size='small'
-          sx={{ width: '100%', maxWidth: 500, color: 'text.primary' }}
+        <Typography variant='body1'>
+          Du må logge inn med din TIHLDE-bruker før du kan registrere oppmøte på treninger, kamper og sosiale arrangementer.
+        </Typography>
+        {error && <Typography color='red'>{error}</Typography>}
+        <Controller
+          control={control}
+          name='user_id'
+          render={({ field }) => <TextField disabled={isLoading} fullWidth label='Brukernavn' required variant='outlined' {...field} />}
         />
+        <Controller
+          control={control}
+          name='password'
+          render={({ field }) => <TextField disabled={isLoading} fullWidth label='Passord' required type='password' variant='outlined' {...field} />}
+        />
+        <Button disabled={isLoading} fullWidth type='submit' variant='contained'>
+          {isLoading ? 'Logger inn...' : 'Logg inn'}
+        </Button>
       </Stack>
     </>
   );

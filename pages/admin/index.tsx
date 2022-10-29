@@ -29,7 +29,7 @@ const Admin: NextPage = () => {
         </Grid>
         <Grid item sm={6} xs={12}>
           <AdminLink
-            description='Sjekk hvem som ikke har gitt bøter siden forrige botfest'
+            description='Sjekk hvem som ikke har gitt bøter siden forrige botfest (tar tid å laste inn)'
             path='/admin/ikke-gitt-boter'
             title="🥸 Snitches don't get stitches"
           />

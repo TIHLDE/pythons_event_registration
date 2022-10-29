@@ -1,0 +1,24 @@
+# Two roles:
+# 1. Runs often to avoid Supabase to enter sleep-mode (https://supabase.com/docs/going-into-prod#availability)
+# 2. Updates the player-table in the database with the memberships on TIHLDE.org
+name: Update users
+
+on:
+  schedule:
+    - cron: 0 * * * *
+
+jobs:
+  render:
+    name: Render website
+    runs-on: ubuntu-latest
+
+    steps:
+      # - name: Fetch URL
+      #   uses: boyeborg/fetch-url-action@v1.1
+      #   with:
+      #     url: https://pythons.tihlde.org
+      - name: Deploy Stage
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://pythons.tihlde.org/api/refresh-players'
+          method: 'POST'

@@ -124,7 +124,7 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
           </Stack>
           <Box gap={1} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' } }}>
             {team.positions.map((position) => (
-              <PlayersList id={position.id} key={position.id} players={position.Player} teamId={team.id} title={position.title} />
+              <PlayersList key={position.id} players={position.Player} title={position.title} />
             ))}
           </Box>
           {index !== teams.length - 1 && <Divider sx={{ mb: 2, mt: 1 }} />}
@@ -148,6 +148,10 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
           Nytt lag
         </Button>
       )}
+      <Typography sx={{ my: 2 }}>
+        Ny spillere legges automatisk til her når de legges til i Pythons gruppe på TIHLDE.org. Om spillere fjernes fra Pythons gruppe på TIHLDE.org vil de også
+        fjernes her automatisk.
+      </Typography>
       {players_with_no_team.some((position: PositionWithPlayer) => position.Player.length) && (
         <>
           <Divider sx={{ my: 2 }} />
@@ -155,7 +159,7 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
             <Typography variant='h2'>Spillere uten lagtilknytning:</Typography>
             <Box gap={1} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' } }}>
               {players_with_no_team.map((position: PositionWithPlayer) => (
-                <PlayersList id={position.id} key={position.id} players={position.Player} title={position.title} />
+                <PlayersList key={position.id} players={position.Player} title={position.title} />
               ))}
             </Box>
           </Stack>
