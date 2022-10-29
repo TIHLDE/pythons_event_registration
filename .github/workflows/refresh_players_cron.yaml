@@ -13,12 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # - name: Fetch URL
-      #   uses: boyeborg/fetch-url-action@v1.1
-      #   with:
-      #     url: https://pythons.tihlde.org
       - name: Deploy Stage
         uses: fjogeleit/http-request-action@v1
         with:
           url: 'https://pythons.tihlde.org/api/refresh-players'
-          method: 'POST'
+          method: 'GET'
+          timeout: 20000
