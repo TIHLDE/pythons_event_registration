@@ -18,7 +18,7 @@ model Team {
 
 model Player {
   id             Int             @id @default(autoincrement())
-  tihlde_user_id String?
+  tihlde_user_id String
   createdAt      DateTime        @default(now())
   name           String          @db.VarChar(60)
   positionId     Int
