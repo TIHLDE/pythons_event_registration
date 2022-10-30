@@ -27,7 +27,10 @@ export const authenticate = async ({ user_id, password, req, res }: { user_id: s
     setCookie(AUTH_TOKEN_COOKIE_KEY, token, { req, res, maxAge: hoursToSeconds(24) * 180 });
     const playerQuery = prisma.player.findFirst({
       where: {
-        tihlde_user_id: user_id,
+        tihlde_user_id: {
+          equals: user_id,
+          mode: 'insensitive',
+        },
         active: true,
       },
     });

@@ -6,6 +6,7 @@ name: Update users
 on:
   schedule:
     - cron: 0 * * * *
+  workflow_dispatch:
 
 jobs:
   render:
@@ -14,8 +15,13 @@ jobs:
 
     steps:
       - name: Deploy Stage
+        id: request
         uses: fjogeleit/http-request-action@v1
         with:
           url: 'https://pythons.tihlde.org/api/refresh-players'
-          method: 'GET'
+          method: 'POST'
           timeout: 20000
+          data: '{"authToken": "${{ secrets.TIHLDE_AUTH_TOKEN }}"}'
+      - name: Respons
+        run: |
+          echo ${{ steps.request.outputs.response }}
