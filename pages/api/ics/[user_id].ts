@@ -3,6 +3,7 @@ import { format, getDate, getHours, getMinutes, getMonth, getYear, set } from 'd
 import { nb } from 'date-fns/locale';
 import HttpStatusCode from 'http-status-typed';
 import { createEvents, DateArray, EventAttributes } from 'ics';
+import { prisma } from 'lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ExtendedEvent, getEventsWithRegistrations } from 'queries';
 import stream, { Readable } from 'stream';
@@ -62,19 +63,18 @@ const createIcsEvent =
 /**
  * Generates an ICS-file with the user's events where attendence is true or not registered
  *
- * Format of url is: `/api/ics/<user_id>.ics`
+ * Format of url is: `/api/ics/<user_id>`
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { params } = req.query;
-    if (!Array.isArray(params) || params.length !== 1 || params[0].length < 5 || params[0].slice(-4) !== '.ics') {
+    const { user_id } = req.query;
+    if (!user_id || typeof user_id !== 'string') {
       return res.status(HttpStatusCode.BAD_REQUEST).json({ detail: 'Wrong URL-format' });
     }
-    const userId = params[0].split('.')[0];
     const playerQuery = prisma.player.findFirst({
       where: {
         tihlde_user_id: {
-          equals: userId,
+          equals: user_id,
           mode: 'insensitive',
         },
       },
@@ -99,7 +99,7 @@ X-PUBLISHED-TTL:PT1H
 END:VCALENDAR`;
 
     res.setHeader('Content-Type', 'text/calendar');
-    res.setHeader('Content-Disposition', `attachment; filename=${userId}.ics`);
+    res.setHeader('Content-Disposition', `attachment; filename=${user_id}.ics`);
 
     res.status(HttpStatusCode.OK);
     await pipeline(Readable.from(Buffer.from(calendar)), res);
