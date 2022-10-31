@@ -37,7 +37,7 @@ export const CalendarSubscription = (props: Partial<StandaloneExpandProps>) => {
         det være fordi kalenderen sjelden ser etter oppdateringer. Oppdaterings-frekvensen varierer fra kalender til kalender, enkelte oppdateres kun daglig.
       </Typography>
       <NoSsr>
-        <Pre>{`${typeof window !== 'undefined' ? window.location.origin : ''}/${user?.tihlde_user_id}/events.ics`}</Pre>
+        <Pre>{`${typeof window !== 'undefined' ? window.location.origin : ''}/api/ics/${user?.tihlde_user_id}.ics`}</Pre>
       </NoSsr>
     </StandaloneExpand>
   );

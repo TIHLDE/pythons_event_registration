@@ -39,7 +39,7 @@ const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositio
   };
   const { data: positions } = useSWR('/api/positions', fetcher);
   return (
-    <Dialog onClose={handleClose} open={open} sx={{ '& .MuiDialog-paper': { width: 400, border: '2px solid #ffffff', p: 4 } }}>
+    <Dialog onClose={handleClose} open={open}>
       <Stack gap={2}>
         <Typography variant='h5'>{title}</Typography>
         <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>

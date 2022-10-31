@@ -29,7 +29,7 @@ const PlayersModal = ({ registrations, open, handleClose, title }: PlayersModalP
   }));
 
   return (
-    <Dialog onClose={handleClose} open={open} sx={{ '& .MuiDialog-paper': { width: 400, border: '2px solid #ffffff', p: 4 } }}>
+    <Dialog onClose={handleClose} open={open}>
       {!positions.length ? (
         <LoadingLogo />
       ) : (

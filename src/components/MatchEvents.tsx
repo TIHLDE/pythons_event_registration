@@ -70,7 +70,11 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
         <Typography>Ingen hendelser er registrert</Typography>
       )}
       {isAdmin && (
-        <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)} sx={{ border: '1px solid white', p: 2, borderRadius: 1 }}>
+        <Stack
+          component='form'
+          gap={1}
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{ border: (theme) => `1px solid ${theme.palette.divider}`, p: 2, borderRadius: 1 }}>
           <Stack direction='row' gap={1}>
             <Controller
               control={control}
