@@ -18,7 +18,7 @@ const ConfirmModal = ({ title, description = 'Er du helt sikker?', onConfirm, ch
       <Button {...props} onClick={() => setOpen(true)}>
         {children}
       </Button>
-      <Dialog onClose={() => setOpen(false)} open={open} sx={{ '& .MuiDialog-paper': { maxWidth: 400, width: '100%', border: '2px solid #ffffff', p: 2 } }}>
+      <Dialog onClose={() => setOpen(false)} open={open}>
         <Stack gap={2}>
           <Typography variant='h2'>{title}</Typography>
           <Typography variant='body1'>{description}</Typography>

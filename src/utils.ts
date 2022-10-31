@@ -1,5 +1,6 @@
 import { MatchEventType } from '@prisma/client';
 import { addMonths, endOfToday, getMonth, getYear, set, startOfToday } from 'date-fns';
+import { ExtendedEvent } from 'queries';
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -59,3 +60,16 @@ export const stripEmojis = (str: string) =>
     .replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '')
     .replace(/\s+/g, ' ')
     .trim();
+
+export const getEventTitle = (event: ExtendedEvent) => {
+  switch (event.eventTypeSlug) {
+    case 'trening':
+      return `💪 Trening`;
+    case 'kamp':
+      return `⚽️ Kamp mot ${event.title || 'en motstander'}`;
+    case 'sosialt':
+      return `🎉 ${event.title || 'Sosialt'}`;
+    default:
+      return `Ukjent arrangementtype`;
+  }
+};

@@ -80,7 +80,7 @@ const MatchModal = ({ event, isAdmin = false, ...props }: MatchModalProps) => {
           </Button>
         )}
       </Stack>
-      <Dialog onClose={handleClose} open={open} sx={{ '& .MuiDialog-paper': { width: '100%', maxWidth: 500, border: '2px solid #ffffff', p: 4 } }}>
+      <Dialog onClose={handleClose} open={open}>
         <Stack gap={1}>
           <Typography variant='h2'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</Typography>
           {isAdmin && (

@@ -20,15 +20,16 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import { format, formatDistanceToNow, isFuture, isPast, subHours } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
+import { ExtendedEvent } from 'queries';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useReward } from 'react-rewards';
 import rules from 'rules';
+import { getEventTitle } from 'utils';
 
 import { useModal } from 'hooks/useModal';
 import { useUser } from 'hooks/useUser';
@@ -36,49 +37,13 @@ import { useUser } from 'hooks/useUser';
 import MatchModal from 'components/MatchModal';
 import PlayersModal from 'components/PlayersModal';
 
-const Link = styled('a')(() => ({
+const DialogText = styled(Typography)(() => ({
   cursor: 'pointer',
   '&:hover': {
     textDecoration: 'underline',
   },
 }));
 
-export type ExtendedEvent = Prisma.EventGetPayload<{
-  include: {
-    registrations: true;
-    type: true;
-    team: true;
-    match: true;
-  };
-}> & {
-  willArrive: Prisma.RegistrationsGetPayload<{
-    include: {
-      player: {
-        include: {
-          position: true;
-        };
-      };
-    };
-  }>[];
-  willNotArrive: Prisma.RegistrationsGetPayload<{
-    include: {
-      player: {
-        include: {
-          position: true;
-        };
-      };
-    };
-  }>[];
-  hasNotResponded: Prisma.RegistrationsGetPayload<{
-    include: {
-      player: {
-        include: {
-          position: true;
-        };
-      };
-    };
-  }>[];
-};
 type EventProps = {
   eventDetails: ExtendedEvent;
 };
@@ -170,19 +135,8 @@ const Event = ({ eventDetails }: EventProps) => {
   const backgroundColor = eventDetails.type.slug === 'trening' ? '#3A2056' : eventDetails.type.slug === 'kamp' ? '#552056' : '#563A20';
 
   return (
-    <Stack
-      gap={1}
-      sx={{
-        backgroundColor: backgroundColor,
-        border: '1px solid white',
-        width: '100%',
-        height: 'auto',
-        p: 1,
-        borderRadius: 1,
-      }}>
-      {eventDetails.type.slug === 'trening' && <Typography variant='h3'>💪 Trening</Typography>}
-      {eventDetails.type.slug === 'kamp' && eventDetails.title && <Typography variant='h3'>⚽️ Kamp mot {eventDetails.title}</Typography>}
-      {eventDetails.type.slug === 'sosialt' && eventDetails.title && <Typography variant='h3'>🎉 {eventDetails.title}</Typography>}
+    <Stack gap={1} sx={{ backgroundColor: backgroundColor, width: '100%', height: 'auto', p: 1, borderRadius: 1 }}>
+      <Typography variant='h3'>{getEventTitle(eventDetails)}</Typography>
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
         <NoSsr>
           {userRegistration?.willArrive && (
@@ -226,27 +180,21 @@ const Event = ({ eventDetails }: EventProps) => {
         <Tooltip title='Påmeldte'>
           <CheckRoundedIcon />
         </Tooltip>
-        <Link>
-          <Typography onClick={handleOpenRegistratedPlayersModal} variant='body1'>
-            {eventDetails.willArrive?.length} påmeldt
-          </Typography>
-        </Link>
+        <DialogText onClick={handleOpenRegistratedPlayersModal} role='button' tabIndex={0} variant='body1'>
+          {eventDetails.willArrive?.length} påmeldt
+        </DialogText>
         <Tooltip title='Avmeldte'>
           <CancelIcon />
         </Tooltip>
-        <Link>
-          <Typography onClick={handleOpenDeregistratedPlayersModal} variant='body1'>
-            {eventDetails.willNotArrive?.length} avmeldt
-          </Typography>
-        </Link>
+        <DialogText onClick={handleOpenDeregistratedPlayersModal} role='button' tabIndex={0} variant='body1'>
+          {eventDetails.willNotArrive?.length} avmeldt
+        </DialogText>
         <Tooltip title='Ikke svart'>
           <QuestionMarkIcon />
         </Tooltip>
-        <Link>
-          <Typography onClick={handleOpenHasNotAnsweredModal} variant='body1'>
-            {eventDetails.hasNotResponded?.length} har ikke svart
-          </Typography>
-        </Link>
+        <DialogText onClick={handleOpenHasNotAnsweredModal} role='button' tabIndex={0} variant='body1'>
+          {eventDetails.hasNotResponded?.length} har ikke svart
+        </DialogText>
       </Box>
 
       {openDeregistratedPlayersModal && (

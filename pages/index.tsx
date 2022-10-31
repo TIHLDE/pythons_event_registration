@@ -6,12 +6,14 @@ import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { ExtendedEvent, getEventsWithRegistrations } from 'queries';
 import safeJsonStringify from 'safe-json-stringify';
 
 import { ExtendedNotification } from 'components/AdminMessage';
 import AlertMessage from 'components/AlertMessage';
-import Event, { ExtendedEvent } from 'components/Event';
-import { EventsFilters, getEventsWhereFilter } from 'components/EventsFilters';
+import { CalendarSubscription } from 'components/CalendarSubscription';
+import Event from 'components/Event';
+import { EventsFilters } from 'components/EventsFilters';
 import { MainLinkMenu } from 'components/LinkMenu';
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
@@ -29,60 +31,11 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     },
   });
 
-  const allFutureEventsQuery = prisma.event.findMany({
-    include: {
-      team: true,
-      match: true,
-      type: true,
-      registrations: {
-        include: {
-          player: {
-            include: {
-              position: true,
-            },
-          },
-        },
-      },
-    },
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    ...(getEventsWhereFilter({ query }) as {}),
-  });
-
-  const playersQuery = prisma.player.findMany({
-    where: {
-      active: true,
-    },
-  });
-
-  const [allFutureEvents, players, notifications] = await Promise.all([allFutureEventsQuery, playersQuery, notificationsQuery]);
-
-  const eventsWithArrivingList = allFutureEvents.map((event) => {
-    const willArrive = event.registrations.filter((registration) => registration.willArrive);
-    const willNotArrive = event.registrations.filter((registration) => !registration.willArrive);
-
-    const hasNotResponded = players
-      .filter((player) => !event.teamId || player.teamId === event.teamId)
-      .map((player) => {
-        const willArriveIds = willArrive.map((p) => p.playerId);
-        const willNotArriveIds = willNotArrive.map((p) => p.playerId);
-        const playerHasResponded = willArriveIds.includes(player.id) || willNotArriveIds.includes(player.id);
-
-        if (!playerHasResponded) {
-          return { player: player, playerId: player.id, willArrive: true };
-        }
-      })
-      .filter(Boolean);
-    return {
-      ...event,
-      willArrive: willArrive,
-      willNotArrive: willNotArrive,
-      hasNotResponded: hasNotResponded,
-    };
-  });
+  const [eventsWithRegistrations, notifications] = await Promise.all([getEventsWithRegistrations({ query }), notificationsQuery]);
 
   return {
     props: {
-      events: JSON.parse(safeJsonStringify(eventsWithArrivingList)),
+      events: JSON.parse(safeJsonStringify(eventsWithRegistrations)),
       notifications: JSON.parse(safeJsonStringify(notifications)),
     },
   };
@@ -143,6 +96,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
             </Grid>
           </Stack>
         ))}
+        <CalendarSubscription sx={{ mt: 2 }} />
       </Stack>
     </>
   );

@@ -1,20 +1,5 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Alert,
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-  TypographyProps,
-} from '@mui/material';
+import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
+import { Alert, Box, Button, Divider, FormControl, InputLabel, MenuItem, Select, TextField, Typography, TypographyProps } from '@mui/material';
 import { EventType, Team } from '@prisma/client';
 import { getMonth, parseISO, set } from 'date-fns';
 import { prisma } from 'lib/prisma';
@@ -26,6 +11,7 @@ import { Controller, useForm } from 'react-hook-form';
 import safeJsonStringify from 'safe-json-stringify';
 import { removeFalsyElementsFromObject } from 'utils';
 
+import { StandaloneExpand } from 'components/Expand';
 import { MainLinkMenu } from 'components/LinkMenu';
 
 const DEFAULT_TO_DATE = set(new Date(), { hours: 12, minutes: 0 });
@@ -167,69 +153,64 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
         <title>Oppmøte - Pythons</title>
       </Head>
       <MainLinkMenu sx={{ mb: 2 }} />
-      <Box sx={{ mb: 2 }}>
-        <Accordion expanded={open} onChange={() => setOpen((prev) => !prev)} sx={{ backgroundColor: '#001731' }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>Filtrering</AccordionSummary>
-          <AccordionDetails>
-            <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ pt: 1, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 1 }}>
-              <Controller control={control} name='from' render={({ field }) => <TextField label='Fra' type='date' {...field} />} />
-              <Controller control={control} name='to' render={({ field }) => <TextField label='Til' type='date' {...field} />} />
-              <FormControl fullWidth>
-                <InputLabel id='selectType-type'>Type</InputLabel>
-                <Controller
-                  control={control}
-                  name='eventType'
-                  render={({ field }) => (
-                    <Select id='type' label='Type' labelId='selectType-type' {...field}>
-                      <MenuItem value=''>Alle</MenuItem>
-                      {eventTypes.map((eventType) => (
-                        <MenuItem key={eventType.slug} value={eventType.slug}>
-                          {eventType.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-              </FormControl>
-              <FormControl fullWidth>
-                <InputLabel id='select-team'>Lag</InputLabel>
-                <Controller
-                  control={control}
-                  name='team'
-                  render={({ field }) => (
-                    <Select id='team' label='Lag' labelId='select-team' {...field}>
-                      <MenuItem value=''>Alle</MenuItem>
-                      {teams.map((team) => (
-                        <MenuItem key={team.id} value={team.id}>
-                          {team.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-              </FormControl>
-              <FormControl fullWidth>
-                <InputLabel id='select-willArrive'>Oppmøte</InputLabel>
-                <Controller
-                  control={control}
-                  name='willArrive'
-                  render={({ field }) => (
-                    <Select id='willArrive' label='Oppmøte' labelId='select-willArrive' {...field}>
-                      <MenuItem value=''>Alle</MenuItem>
-                      <MenuItem value='yes'>Ja</MenuItem>
-                      <MenuItem value='no'>Nei</MenuItem>
-                      <MenuItem value='none'>Ikke registrert</MenuItem>
-                    </Select>
-                  )}
-                />
-              </FormControl>
-              <Button sx={{ gridColumn: { xs: undefined, md: 'span 2' } }} type='submit' variant='contained'>
-                Oppdater filtre
-              </Button>
-            </Box>
-          </AccordionDetails>
-        </Accordion>
-      </Box>
+      <StandaloneExpand expanded={open} icon={<FilterListRoundedIcon />} onExpand={() => setOpen((prev) => !prev)} primary='Filtrering' sx={{ mb: 2 }}>
+        <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ pt: 1, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 1 }}>
+          <Controller control={control} name='from' render={({ field }) => <TextField label='Fra' type='date' {...field} />} />
+          <Controller control={control} name='to' render={({ field }) => <TextField label='Til' type='date' {...field} />} />
+          <FormControl fullWidth>
+            <InputLabel id='selectType-type'>Type</InputLabel>
+            <Controller
+              control={control}
+              name='eventType'
+              render={({ field }) => (
+                <Select id='type' label='Type' labelId='selectType-type' {...field}>
+                  <MenuItem value=''>Alle</MenuItem>
+                  {eventTypes.map((eventType) => (
+                    <MenuItem key={eventType.slug} value={eventType.slug}>
+                      {eventType.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            />
+          </FormControl>
+          <FormControl fullWidth>
+            <InputLabel id='select-team'>Lag</InputLabel>
+            <Controller
+              control={control}
+              name='team'
+              render={({ field }) => (
+                <Select id='team' label='Lag' labelId='select-team' {...field}>
+                  <MenuItem value=''>Alle</MenuItem>
+                  {teams.map((team) => (
+                    <MenuItem key={team.id} value={team.id}>
+                      {team.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            />
+          </FormControl>
+          <FormControl fullWidth>
+            <InputLabel id='select-willArrive'>Oppmøte</InputLabel>
+            <Controller
+              control={control}
+              name='willArrive'
+              render={({ field }) => (
+                <Select id='willArrive' label='Oppmøte' labelId='select-willArrive' {...field}>
+                  <MenuItem value=''>Alle</MenuItem>
+                  <MenuItem value='yes'>Ja</MenuItem>
+                  <MenuItem value='no'>Nei</MenuItem>
+                  <MenuItem value='none'>Ikke registrert</MenuItem>
+                </Select>
+              )}
+            />
+          </FormControl>
+          <Button sx={{ gridColumn: { xs: undefined, md: 'span 2' } }} type='submit' variant='contained'>
+            Oppdater filtre
+          </Button>
+        </Box>
+      </StandaloneExpand>
       <Typography gutterBottom>
         Med nåværende filtrering finnes det totalt <b>{eventsAmount}</b> arrangementer.
       </Typography>

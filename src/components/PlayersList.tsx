@@ -116,7 +116,7 @@ const Player = ({ player }: { player: Player }) => {
 
 const PlayersList = ({ title, players }: PlayersListProps) => {
   return (
-    <Stack gap={1} justifyContent='space-between' sx={{ flex: 1, borderRadius: 1, border: '1px solid white', p: 1 }}>
+    <Stack gap={1} justifyContent='space-between' sx={{ flex: 1, borderRadius: 1, border: (theme) => `1px solid ${theme.palette.divider}`, p: 1 }}>
       <Stack gap={1}>
         <Typography variant='h3'>
           {title} ({players.length})

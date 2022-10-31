@@ -11,11 +11,10 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import { setMinutes } from 'date-fns';
 import { useRouter } from 'next/router';
+import { ExtendedEvent } from 'queries';
 import { Controller, useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
-
-import { ExtendedEvent } from 'components/Event';
 
 export type EventModalProps = {
   event?: ExtendedEvent;
@@ -69,7 +68,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open} sx={{ '& .MuiDialog-paper': { width: 400, border: '2px solid #ffffff', p: 4 } }}>
+    <Dialog onClose={handleClose} open={open}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
           <Typography variant='h2'>{title}</Typography>

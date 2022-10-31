@@ -6,11 +6,11 @@ import { prisma } from 'lib/prisma';
 import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { ExtendedEvent } from 'queries';
 import { useState } from 'react';
 import safeJsonStringify from 'safe-json-stringify';
 
 import AdminEvent from 'components/AdminEvent';
-import { ExtendedEvent } from 'components/Event';
 import EventModal from 'components/EventModal';
 import { EventsFilters, getEventsWhereFilter } from 'components/EventsFilters';
 

@@ -14,5 +14,5 @@ export const middleware = (request: NextRequest) => {
 };
 
 export const config = {
-  matcher: ['/admin', '/admin/(.*)', '/api/((?!auth|refresh-players).*)'],
+  matcher: ['/admin', '/admin/(.*)', '/api/((?!auth|refresh-players|ics).*)'],
 };

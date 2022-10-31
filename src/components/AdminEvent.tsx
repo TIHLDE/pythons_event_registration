@@ -3,10 +3,10 @@ import axios from 'axios';
 import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
+import { ExtendedEvent } from 'queries';
 import { useState } from 'react';
 
 import ConfirmModal from 'components/ConfirmModal';
-import { ExtendedEvent } from 'components/Event';
 import EventModal from 'components/EventModal';
 import MatchModal from 'components/MatchModal';
 
@@ -35,7 +35,16 @@ const AdminEvent = ({ event }: AdminEventProps) => {
       : { name: 'Sosialt', color: '#FF00C7' };
 
   return (
-    <Box gap={1} sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', p: 2, backgroundColor: '#3A2056', border: '1px solid white', borderRadius: 1 }}>
+    <Box
+      gap={1}
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'auto 1fr',
+        p: 2,
+        backgroundColor: '#3A2056',
+        border: (theme) => `1px solid ${theme.palette.divider}`,
+        borderRadius: 1,
+      }}>
       <Typography fontWeight={'bold'} variant='body1'>
         Type
       </Typography>
