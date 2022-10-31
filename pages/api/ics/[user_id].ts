@@ -1,3 +1,4 @@
+import { Player } from '@prisma/client';
 import { format, getDate, getHours, getMinutes, getMonth, getYear, set } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import HttpStatusCode from 'http-status-typed';
@@ -13,18 +14,22 @@ const pipeline = promisify(stream.pipeline);
 
 const PRODUCT_ID = 'pythons/ics';
 
-const removeEventWereUserWillNotAttend = (userId: string) => (event: ExtendedEvent) =>
-  !event.willNotArrive.some((registration) => registration.player.tihlde_user_id === userId);
+/**
+ * A filter which removes events where the player won't attend and matches where the player isn't part of the playing team.
+ */
+const removeNonRelevantEvents = (player: Player) => (event: ExtendedEvent) =>
+  !event.willNotArrive.some((registration) => registration.player.tihlde_user_id === player.tihlde_user_id) &&
+  (event.eventTypeSlug !== 'kamp' || event.teamId === player.teamId);
 
-const willUserAttendEvent = (userId: string) => (event: ExtendedEvent) =>
-  event.willArrive.some((registration) => registration.player.tihlde_user_id === userId);
+const willUserAttendEvent = (player: Player) => (event: ExtendedEvent) =>
+  event.willArrive.some((registration) => registration.player.tihlde_user_id === player.tihlde_user_id);
 
 const dateToIcsDate = (date: Date): DateArray => [getYear(date), getMonth(date) + 1, getDate(date), getHours(date), getMinutes(date)];
 
 const createIcsEvent =
-  (userId: string) =>
+  (player: Player) =>
   (event: ExtendedEvent): EventAttributes => {
-    const userWillAttend = willUserAttendEvent(userId)(event);
+    const userWillAttend = willUserAttendEvent(player)(event);
 
     const description = [
       ...(userWillAttend ? ['🤝 Du er påmeldt'] : []),
@@ -57,19 +62,30 @@ const createIcsEvent =
 /**
  * Generates an ICS-file with the user's events where attendence is true or not registered
  *
- * Format of url is: `/api/ics/<user_id>.ics`
+ * Format of url is: `/api/ics/<user_id>`
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { params } = req.query;
-    if (!Array.isArray(params) || params.length !== 1 || params[0].length < 5 || params[0].slice(-4) !== '.ics') {
+    const { user_id } = req.query;
+    if (!user_id || typeof user_id !== 'string') {
       return res.status(HttpStatusCode.BAD_REQUEST).json({ detail: 'Wrong URL-format' });
     }
-    const userId = params[0].split('.')[0];
-    const events = await getEventsWithRegistrations({
+    const playerQuery = prisma.player.findFirst({
+      where: {
+        tihlde_user_id: {
+          equals: user_id,
+          mode: 'insensitive',
+        },
+      },
+    });
+    const eventsQuery = getEventsWithRegistrations({
       query: { from: set(new Date(), { year: 2022, month: 5 }).toISOString(), to: set(new Date(), { year: 2100 }).toISOString() },
     });
-    const icsEvents = await createIcsEvents(events.filter(removeEventWereUserWillNotAttend(userId)).map(createIcsEvent(userId)));
+    const [player, events] = await Promise.all([playerQuery, eventsQuery]);
+    if (!player) {
+      return res.status(HttpStatusCode.BAD_REQUEST).json({ detail: 'Could not find a user with the given user_id' });
+    }
+    const icsEvents = await createIcsEvents(events.filter(removeNonRelevantEvents(player)).map(createIcsEvent(player)));
 
     const calendar =
       icsEvents ||
@@ -82,7 +98,7 @@ X-PUBLISHED-TTL:PT1H
 END:VCALENDAR`;
 
     res.setHeader('Content-Type', 'text/calendar');
-    res.setHeader('Content-Disposition', `attachment; filename=${userId}.ics`);
+    res.setHeader('Content-Disposition', `attachment; filename=${user_id}.ics`);
 
     res.status(HttpStatusCode.OK);
     await pipeline(Readable.from(Buffer.from(calendar)), res);
