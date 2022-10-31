@@ -50,7 +50,7 @@ const createIcsEvent =
       title: `${userWillAttend ? '' : '[Mangler registrering] '}${getEventTitle(event)}`,
       start: dateToIcsDate(event.time),
       startInputType: 'utc',
-      duration: event.eventTypeSlug === 'trening' ? { hours: 1, minutes: 30 } : { hours: 3 },
+      duration: event.eventTypeSlug === 'trening' ? { hours: 1, minutes: 30 } : { hours: 2 },
       location: event.location,
       created: dateToIcsDate(event.createdAt),
       organizer: { name: 'TIHLDE Pythons', email: 'pythons@tihlde.org', dir: 'https://pythons.tihlde.org' },
@@ -62,18 +62,19 @@ const createIcsEvent =
 /**
  * Generates an ICS-file with the user's events where attendence is true or not registered
  *
- * Format of url is: `/api/ics/<user_id>`
+ * Format of url is: `/api/ics/<user_id>.ics`
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { user_id } = req.query;
-    if (!user_id || typeof user_id !== 'string') {
+    const { params } = req.query;
+    if (!Array.isArray(params) || params.length !== 1 || params[0].length < 5 || params[0].slice(-4) !== '.ics') {
       return res.status(HttpStatusCode.BAD_REQUEST).json({ detail: 'Wrong URL-format' });
     }
+    const userId = params[0].split('.')[0];
     const playerQuery = prisma.player.findFirst({
       where: {
         tihlde_user_id: {
-          equals: user_id,
+          equals: userId,
           mode: 'insensitive',
         },
       },
@@ -98,7 +99,7 @@ X-PUBLISHED-TTL:PT1H
 END:VCALENDAR`;
 
     res.setHeader('Content-Type', 'text/calendar');
-    res.setHeader('Content-Disposition', `attachment; filename=${user_id}.ics`);
+    res.setHeader('Content-Disposition', `attachment; filename=${userId}.ics`);
 
     res.status(HttpStatusCode.OK);
     await pipeline(Readable.from(Buffer.from(calendar)), res);
