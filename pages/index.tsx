@@ -10,6 +10,7 @@ import safeJsonStringify from 'safe-json-stringify';
 
 import { ExtendedNotification } from 'components/AdminMessage';
 import AlertMessage from 'components/AlertMessage';
+import { CalendarSubscription } from 'components/CalendarSubscription';
 import Event, { ExtendedEvent } from 'components/Event';
 import { EventsFilters, getEventsWhereFilter } from 'components/EventsFilters';
 import { MainLinkMenu } from 'components/LinkMenu';
@@ -143,6 +144,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
             </Grid>
           </Stack>
         ))}
+        <CalendarSubscription sx={{ mt: 2 }} />
       </Stack>
     </>
   );

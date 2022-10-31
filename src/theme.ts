@@ -22,7 +22,7 @@ const theme = createTheme({
   spacing: 10,
   palette: {
     mode: 'dark',
-    divider: '#bbbbbb',
+    divider: '#aaaaaa',
     primary: {
       light: '#c89efc',
       main: '#BB86FC',
@@ -46,7 +46,7 @@ const theme = createTheme({
     },
     background: {
       default: '#001328',
-      paper: '#1E1E1E',
+      paper: '#001731',
     },
     text: {
       primary: '#F2F2F2',
@@ -54,6 +54,14 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        '@global': {
+          html: { WebkitFontSmoothing: 'auto' },
+        },
+        a: { color: '#F2F2F2' },
+      },
+    },
     MuiDialog: {
       styleOverrides: {
         paper: {
