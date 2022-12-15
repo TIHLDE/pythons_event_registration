@@ -12,7 +12,7 @@ import { fetcher, getSemesters, removeFalsyElementsFromObject } from 'utils';
 import { StandaloneExpand } from 'components/Expand';
 
 const DEFAULT_FROM_DATE = startOfToday();
-const DEFAULT_TO_DATE = addMonths(DEFAULT_FROM_DATE, 2);
+const DEFAULT_TO_DATE = addMonths(DEFAULT_FROM_DATE, 4);
 
 export const getEventsWhereFilter = ({ query }: { query: ParsedUrlQuery }): Prisma.EventFindManyArgs => {
   const semester = typeof query.semester === 'string' && query.semester !== '' ? semesters.find((semester) => semester.id === query.semester) : undefined;
