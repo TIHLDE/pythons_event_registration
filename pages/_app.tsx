@@ -66,6 +66,16 @@ const PythonsApp = ({ Component, emotionCache = clientSideEmotionCache, pageProp
                   </>
                 )}
               </Typography>
+              <Typography align='center'>
+                {'Laget med ⚽️ av '}
+                <Link color='secondary' href='https://github.com/olros' rel='noreferrer' target='_blank'>
+                  Olaf Rosendahl
+                </Link>
+                {' og '}
+                <Link color='secondary' href='https://github.com/maxschau' rel='noreferrer' target='_blank'>
+                  Max Torre Schau
+                </Link>
+              </Typography>
             </Stack>
           </Container>
         </ThemeProvider>
