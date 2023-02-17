@@ -73,13 +73,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
             if (registration.updatedAt && registration.updatedAt > deadline) {
               return {
                 player: player,
-                reason: `Oppdaterte registrering for sent ${format(registration.updatedAt, 'dd.MM HH:mm')}`,
+                reason: 'Oppdaterte registrering for sent',
+                time: registration.updatedAt,
               };
             }
             if (registration.time > deadline) {
               return {
                 player: player,
-                reason: `Registrerte seg for sent - ${format(registration.time, 'dd.MM HH:mm')}`,
+                reason: 'Registrerte seg for sent',
+                time: registration.time,
               };
             }
           }
@@ -98,9 +100,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const [expanded, setExpanded] = useState('');
-
   const handleChange = (panel: string, isExpanded: boolean) => setExpanded(isExpanded ? panel : '');
-
   const setFinesGiven = async (event: Event, finesGiven: boolean) => {
     await axios.put(`/api/events/${event.id}`, { data: { finesGiven } }).then(() => {
       router.replace(router.asPath);
@@ -129,7 +129,7 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
       </Typography>
       <div>
         {!events.length && <Typography>Ingen bøter å vise</Typography>}
-        {events.map((event: Event & { fines: { player: Player; reason: string }[] }, idx: number) => (
+        {events.map((event: Event & { fines: { player: Player; reason: string; time: string }[] }, idx: number) => (
           <Accordion
             expanded={expanded === `panel${idx}`}
             key={idx}
@@ -158,7 +158,12 @@ const Fines: NextPage = ({ events }: InferGetServerSidePropsType<typeof getServe
                       <Typography variant='body1'>{fine.player.name}</Typography>
                     </Grid>
                     <Grid item xs={7}>
-                      <Typography variant='body1'>{fine.reason}</Typography>
+                      <Typography variant='body1'>
+                        <>
+                          {`${fine.reason}`}
+                          {fine.time && ` (${format(new Date(fine.time), 'dd.MM HH:mm')})`}
+                        </>
+                      </Typography>
                     </Grid>
                     {index + 1 !== event.fines.length && (
                       <Grid item xs={12}>
