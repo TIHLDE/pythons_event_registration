@@ -9,7 +9,9 @@ import createEmotionCache from 'createEmotionCache';
 import App, { AppContext, AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { stats } from 'stats';
 import { SWRConfig } from 'swr';
 import theme from 'theme';
 import { AUTH_TOKEN_COOKIE_KEY, USER_STORAGE_KEY } from 'values';
@@ -26,13 +28,19 @@ interface MyAppProps extends AppProps {
 const PythonsApp = ({ Component, emotionCache = clientSideEmotionCache, pageProps, user }: MyAppProps & { user: Player | undefined }) => {
   const router = useRouter();
 
+  useEffect(() => {
+    stats.pageview();
+  }, [router.pathname, router.query]);
+
   useHotkeys('ctrl+a, cmd+a', () => {
     router.push('/admin');
+    stats.event('admin-hotkeys');
   });
 
   const logout = () => {
     deleteCookie(USER_STORAGE_KEY);
     deleteCookie(AUTH_TOKEN_COOKIE_KEY);
+    stats.event('logout');
   };
 
   return (
