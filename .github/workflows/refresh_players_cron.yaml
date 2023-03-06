@@ -1,6 +1,9 @@
 # Two roles:
 # 1. Runs often to avoid Supabase to enter sleep-mode (https://supabase.com/docs/going-into-prod#availability)
 # 2. Updates the player-table in the database with the memberships on TIHLDE.org
+#
+# An auth token from tihlde.org MUST be set as a secret in TIHLDE_AUTH_TOKEN
+# Since that is needed at the /api/refresh-players endpoint
 name: Update users
 
 on:

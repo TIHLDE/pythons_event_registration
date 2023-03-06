@@ -20,15 +20,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const tihldeMembershipsQuery = getAllPythonsMemberships({ req, res });
       const [players, memberships] = await Promise.all([playersQuery, tihldeMembershipsQuery]);
 
+      // Create new players when there are new memberships at TIHLDE.org
       const newPlayers: Prisma.Enumerable<Prisma.PlayerCreateManyInput> = memberships.results
         .filter((membership) => !players.some((player) => player.tihlde_user_id === membership.user.user_id))
         .map((membership) => ({ tihlde_user_id: membership.user.user_id, positionId: 1, name: membershipToName(membership) }));
       const createPlayersQuery = prisma.player.createMany({ data: newPlayers, skipDuplicates: true });
 
+      // Deactivate players when they are no longer a member of the group at TIHLDE.org
       const updateActivePlayersQueries = players
         .filter((player) => !memberships.results.some((membership) => membership.user.user_id === player.tihlde_user_id))
         .map((player) => prisma.player.update({ where: { id: player.id }, data: { active: false } }));
 
+      // Reactivate players when which rejoin the group at TIHLDE.org
+      const updateDeactivatedPlayersQueries = players
+        .filter((player) => !player.active && memberships.results.some((membership) => membership.user.user_id === player.tihlde_user_id))
+        .map((player) => prisma.player.update({ where: { id: player.id }, data: { active: true } }));
+
+      // Update the player's name if it have changed at TIHLDE.org
       const updatePlayerNamesQueries = memberships.results
         .filter((membership) => {
           const player = players.find((p) => membership.user.user_id === p.tihlde_user_id);
@@ -36,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
         .map((membership) => prisma.player.updateMany({ where: { tihlde_user_id: membership.user.user_id }, data: { name: membershipToName(membership) } }));
 
-      await Promise.all([createPlayersQuery, ...updateActivePlayersQueries, ...updatePlayerNamesQueries]);
+      await Promise.all([createPlayersQuery, ...updateActivePlayersQueries, ...updateDeactivatedPlayersQueries, ...updatePlayerNamesQueries]);
 
       res.status(HttpStatusCode.OK).json({ detail: 'Successfully refreshed players' });
     } catch (e) {
