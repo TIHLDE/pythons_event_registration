@@ -8,3 +8,13 @@ export const getAllnotPayedFines = async ({ req, res }: NextResponseRequest) => 
     .get<PaginationResponse<TIHLDEGroupFine>>(`${TIHLDE_API_URL}/groups/${PYTHONS_GROUP_SLUG}/fines/?&payed=false&None=1500`, getAuthHeaders({ req, res }))
     .then((response) => response.data);
 };
+
+export type FineCreate = Pick<TIHLDEGroupFine, 'amount' | 'description' | 'reason' | 'image'> & {
+  user: TIHLDEGroupFine['user']['user_id'][];
+};
+
+export const createFine = async ({ req, res }: NextResponseRequest, fine: FineCreate) => {
+  return axios
+    .post<PaginationResponse<TIHLDEGroupFine>>(`${TIHLDE_API_URL}/groups/${PYTHONS_GROUP_SLUG}/fines/`, fine, getAuthHeaders({ req, res }))
+    .then((response) => response.data);
+};
