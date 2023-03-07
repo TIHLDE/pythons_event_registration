@@ -127,7 +127,8 @@ const Event = ({ eventDetails }: EventProps) => {
     }
   };
 
-  const registrationDeadline = subHours(new Date(eventDetails.time), rules[eventDetails.eventTypeSlug].deadlines.signupBefore);
+  const registrationDeadline =
+    eventDetails.eventTypeSlug in rules ? subHours(new Date(eventDetails.time), rules[eventDetails.eventTypeSlug].deadlines.signupBefore) : undefined;
 
   const backgroundColor = eventDetails.type.slug === 'trening' ? '#3A2056' : eventDetails.type.slug === 'kamp' ? '#552056' : '#563A20';
 
@@ -236,7 +237,7 @@ const Event = ({ eventDetails }: EventProps) => {
                     {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
                   </Button>
                 )}
-                {(eventDetails.type.slug === 'trening' || eventDetails.type.slug === 'kamp') && (
+                {registrationDeadline !== undefined && (
                   <Typography textAlign='center' variant='body2'>
                     {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
                       locale: nb,
@@ -247,7 +248,7 @@ const Event = ({ eventDetails }: EventProps) => {
               </>
             ) : (
               <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
-                {isPast(registrationDeadline) && (
+                {registrationDeadline !== undefined && isPast(registrationDeadline) && (
                   <Alert severity='warning' variant='outlined'>
                     Du vil få bot om du registrerer eller endrer registreringsstatus etter fristen. Oppdatering av grunn gir deg ikke bot.
                   </Alert>
