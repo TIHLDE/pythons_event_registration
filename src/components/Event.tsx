@@ -28,7 +28,7 @@ import { ExtendedEvent } from 'queries';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useReward } from 'react-rewards';
-import rules from 'rules';
+import { rules } from 'rules';
 import { getEventTitle } from 'utils';
 
 import { useModal } from 'hooks/useModal';
@@ -127,10 +127,7 @@ const Event = ({ eventDetails }: EventProps) => {
     }
   };
 
-  const registrationDeadline = subHours(
-    new Date(eventDetails.time),
-    eventDetails.type.slug === 'trening' ? rules.deadlineBeforeTraining : rules.deadlineBeforeMatch,
-  );
+  const registrationDeadline = subHours(new Date(eventDetails.time), rules[eventDetails.eventTypeSlug].deadlines.signupBefore);
 
   const backgroundColor = eventDetails.type.slug === 'trening' ? '#3A2056' : eventDetails.type.slug === 'kamp' ? '#552056' : '#563A20';
 
