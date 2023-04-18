@@ -6,6 +6,7 @@ import { createEvents, DateArray, EventAttributes } from 'ics';
 import { prisma } from 'lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ExtendedEvent, getEventsWithRegistrations } from 'queries';
+import { stats } from 'stats';
 import stream, { Readable } from 'stream';
 import { promisify } from 'util';
 import { getEventTitle } from 'utils';
@@ -86,6 +87,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!player) {
       return res.status(HttpStatusCode.BAD_REQUEST).json({ detail: 'Could not find a user with the given user_id' });
     }
+
+    stats.event(`Retrieve ics-events for user: ${player.tihlde_user_id}`);
+
     const icsEvents = await createIcsEvents(events.filter(removeNonRelevantEvents(player)).map(createIcsEvent(player)));
 
     const calendar =
