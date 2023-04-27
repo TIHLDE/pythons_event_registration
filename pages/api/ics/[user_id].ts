@@ -49,7 +49,7 @@ const createIcsEvent =
     return {
       productId: PRODUCT_ID,
       calName: 'TIHLDE Pythons',
-      title: `${userWillAttend ? '' : '[Mangler registrering] '}${getEventTitle(event)}`,
+      title: `${userWillAttend ? '' : '[Mangler registrering] '}${getEventTitle(event).fullTitle}`,
       start: dateToIcsDate(event.time),
       startInputType: 'utc',
       duration: event.eventTypeSlug === 'trening' ? { hours: 1, minutes: 30 } : { hours: 2 },

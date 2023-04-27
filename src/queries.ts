@@ -49,6 +49,19 @@ export type ExtendedEvent = Prisma.EventGetPayload<{
   }>[];
 };
 
+export const getAllMatches = async (): Promise<Prisma.EventGetPayload<{ include: { type: true; team: true; match: true } }>[]> => {
+  return prisma.event.findMany({
+    include: {
+      match: true,
+      team: true,
+      type: true,
+    },
+    where: {
+      eventTypeSlug: 'kamp',
+    },
+  });
+};
+
 export const getEventsWithRegistrations = async ({ query }: Pick<NextApiRequest, 'query'>): Promise<ExtendedEvent[]> => {
   const allFutureEventsQuery = prisma.event.findMany({
     include: {

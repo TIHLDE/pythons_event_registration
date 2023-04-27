@@ -66,7 +66,7 @@ const theme = createTheme({
       styleOverrides: {
         paper: {
           backgroundImage: 'none',
-          border: '1px solid #aaaaaa',
+          border: '1px solid #424242',
           width: 400,
           padding: 3 * 10,
         },

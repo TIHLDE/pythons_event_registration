@@ -8,6 +8,7 @@ import {
   Alert,
   Box,
   Button,
+  Collapse,
   Divider,
   FormControl,
   FormControlLabel,
@@ -25,16 +26,17 @@ import { format, formatDistanceToNow, isFuture, isPast, subHours } from 'date-fn
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { ExtendedEvent } from 'queries';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useReward } from 'react-rewards';
 import { rules } from 'rules';
+import { stats } from 'stats';
 import { getEventTitle } from 'utils';
 
 import { useModal } from 'hooks/useModal';
 import { useUser } from 'hooks/useUser';
 
-import MatchModal from 'components/MatchModal';
+import MatchModal, { MatchModalProps } from 'components/MatchModal';
 import PlayersModal from 'components/PlayersModal';
 
 const DialogText = styled(Typography)(() => ({
@@ -44,8 +46,9 @@ const DialogText = styled(Typography)(() => ({
   },
 }));
 
-type EventProps = {
+export type EventProps = {
   eventDetails: ExtendedEvent;
+  relatedMatches: MatchModalProps['event'][];
 };
 
 type FormDataProps = {
@@ -53,7 +56,7 @@ type FormDataProps = {
   registration?: string | number | undefined;
 };
 
-const Event = ({ eventDetails }: EventProps) => {
+const Event = ({ eventDetails, relatedMatches }: EventProps) => {
   const {
     modalOpen: openRegistratedPlayersModal,
     handleOpenModal: handleOpenRegistratedPlayersModal,
@@ -75,6 +78,13 @@ const Event = ({ eventDetails }: EventProps) => {
   const { reward: willNotArriveConfetti } = useReward('confetti', 'emoji', { emoji: ['😭', '😢', '💔'], elementCount: 40 });
 
   const router = useRouter();
+
+  const [showPreviousMatches, setShowPreviousMatches] = useState(false);
+
+  const toggleShowPreviousMatches = useCallback(() => {
+    setShowPreviousMatches((prev) => !prev);
+    stats.event(`Show previous matches`);
+  }, []);
 
   const { data: user } = useUser();
   const userRegistration = eventDetails.registrations.find((registration) => registration.playerId === user?.id);
@@ -130,30 +140,21 @@ const Event = ({ eventDetails }: EventProps) => {
   const registrationDeadline =
     eventDetails.eventTypeSlug in rules ? subHours(new Date(eventDetails.time), rules[eventDetails.eventTypeSlug].deadlines.signupBefore) : undefined;
 
-  const backgroundColor = eventDetails.type.slug === 'trening' ? '#3A2056' : eventDetails.type.slug === 'kamp' ? '#552056' : '#563A20';
+  const backgroundColor =
+    eventDetails.type.slug === 'trening'
+      ? 'linear-gradient(to bottom, #3A2056, #0b0941)'
+      : eventDetails.type.slug === 'kamp'
+      ? 'linear-gradient(to bottom, #6e2a70, #4c126b)'
+      : 'linear-gradient(to bottom, #565220, #563A20)';
 
   return (
-    <Stack gap={1} sx={{ backgroundColor: backgroundColor, width: '100%', height: 'auto', p: 1, borderRadius: 1 }}>
-      <Typography variant='h3'>{getEventTitle(eventDetails)}</Typography>
+    <Stack gap={1} sx={{ background: backgroundColor, width: '100%', height: 'auto', p: 1, borderRadius: 1 }}>
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
-        <NoSsr>
-          {userRegistration?.willArrive && (
-            <>
-              🤝
-              <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
-                Du er påmeldt
-              </Typography>
-            </>
-          )}
-          {!userRegistration?.willArrive && userRegistration?.reason && (
-            <>
-              😓
-              <Typography sx={{ fontStyle: 'italic' }} variant='body1'>
-                Du er avmeldt: {userRegistration.reason}
-              </Typography>
-            </>
-          )}
-        </NoSsr>
+        <Typography component='span' variant='h3'>
+          {getEventTitle(eventDetails).icon}
+        </Typography>
+        <Typography variant='h3'>{getEventTitle(eventDetails).title}</Typography>
+
         <Tooltip title='Tidspunkt'>
           <WatchLaterIcon />
         </Tooltip>
@@ -219,14 +220,27 @@ const Event = ({ eventDetails }: EventProps) => {
           title='Ikke svart'
         />
       )}
-      {eventDetails.match && isPast(new Date(eventDetails.time)) && (
-        <>
-          <Divider sx={{ my: 1 }} />
-          <MatchModal event={eventDetails} sx={{ gridColumn: 'span 2' }} />
-        </>
+      {((eventDetails.match && isPast(new Date(eventDetails.time))) || relatedMatches.length > 0) && <Divider sx={{ my: 0.5 }} />}
+      {eventDetails.match && isPast(new Date(eventDetails.time)) && <MatchModal event={eventDetails} sx={{ my: -0.5 }} />}
+      {relatedMatches.length > 0 && (
+        <Stack gap={0.5}>
+          <Button color='menu' onClick={toggleShowPreviousMatches}>
+            {showPreviousMatches ? 'Skjul' : 'Vis'} tidligere oppgjør
+          </Button>
+          <Collapse in={showPreviousMatches} mountOnEnter unmountOnExit>
+            {relatedMatches.map((relatedMatch) => (
+              <MatchModal event={relatedMatch} key={relatedMatch.id} />
+            ))}
+          </Collapse>
+        </Stack>
       )}
-      <Divider sx={{ mt: 1 }} />
+      <Divider sx={{ mt: 0.5 }} />
       <NoSsr>
+        {userRegistration && (
+          <Typography fontWeight='bold' sx={{ mb: -0.5 }} textAlign='center' variant='body1'>
+            {userRegistration.willArrive ? '🤝 Du er påmeldt' : `😥 Du er avmeldt: ${userRegistration.reason}`}
+          </Typography>
+        )}
         <Box component='span' id='confetti' sx={{ position: 'fixed', bottom: 0, left: '50%', translate: '-50% 0' }} />
         {!eventDetails.teamId || eventDetails.teamId === user?.teamId ? (
           <>
@@ -238,7 +252,7 @@ const Event = ({ eventDetails }: EventProps) => {
                   </Button>
                 )}
                 {registrationDeadline !== undefined && (
-                  <Typography textAlign='center' variant='body2'>
+                  <Typography sx={{ mt: -0.5 }} textAlign='center' variant='body2'>
                     {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
                       locale: nb,
                       addSuffix: true,
@@ -275,6 +289,9 @@ const Event = ({ eventDetails }: EventProps) => {
                 )}
                 <Button type='submit' variant='contained'>
                   Bekreft
+                </Button>
+                <Button onClick={() => setOpenRegistration(false)} variant='text'>
+                  Avbryt
                 </Button>
               </Stack>
             )}

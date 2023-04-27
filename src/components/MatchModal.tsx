@@ -1,13 +1,15 @@
-import { Box, Button, Dialog, Divider, Stack, StackProps, TextField, Typography } from '@mui/material';
+import { Box, Button, ButtonProps, Dialog, Divider, Stack, TextField, Typography } from '@mui/material';
 import { Match, Prisma } from '@prisma/client';
 import axios from 'axios';
+import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import MatchEvents from 'components/MatchEvents';
 
-export type MatchModalProps = StackProps & {
+export type MatchModalProps = ButtonProps & {
   isAdmin?: boolean;
   event: Prisma.EventGetPayload<{
     include: {
@@ -20,7 +22,7 @@ export type MatchModalProps = StackProps & {
 
 type FormDataProps = Pick<Match, 'homeGoals' | 'awayGoals'>;
 
-const MatchModal = ({ event, isAdmin = false, ...props }: MatchModalProps) => {
+const MatchModal = ({ event, isAdmin = false, sx, ...props }: MatchModalProps) => {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -47,42 +49,33 @@ const MatchModal = ({ event, isAdmin = false, ...props }: MatchModalProps) => {
 
   return (
     <>
-      <Stack gap={1} {...props}>
-        {event.match?.result ? (
-          <>
-            <Typography sx={{ display: 'flex', gap: 1 }} variant='h2'>
-              <Box component='span' sx={{ flex: 1, textAlign: 'right' }}>
-                {event.match.homeGoals}
-              </Box>
-              -
-              <Box component='span' sx={{ flex: 1, textAlign: 'left' }}>
-                {event.match.awayGoals}
-              </Box>
-            </Typography>
-            <Typography sx={{ display: 'flex', gap: 1 }} variant='body2'>
-              <Box component='span' sx={{ flex: 1, textAlign: 'right' }}>
-                {event.team?.name}
-              </Box>
-              -
-              <Box component='span' sx={{ flex: 1, textAlign: 'left' }}>
-                {event.title}
-              </Box>
-            </Typography>
-          </>
-        ) : (
-          <Typography align='center' variant='body2'>
-            Denne kampen mangler registrering av resultat og hendelser
-          </Typography>
-        )}
-        {(event.match?.result || isAdmin) && (
-          <Button fullWidth onClick={() => setOpen(true)}>
-            {isAdmin ? 'Rediger kampdetaljer' : 'Se kampdetaljer'}
-          </Button>
-        )}
-      </Stack>
+      <Button fullWidth onClick={() => setOpen(true)} sx={{ color: 'inherit', textTransform: 'none', ...sx }} {...props}>
+        <Typography component='span' sx={{ width: '100%', display: 'flex', gap: 1, alignItems: 'center' }} variant='body1'>
+          <Box component='span' sx={{ flex: 1, py: 0.25, textAlign: 'right' }}>
+            {event.team?.name}
+          </Box>
+          <Box component='span' sx={{ display: 'flex', gap: 0.5, py: 0.25, px: 0.5, borderRadius: 0.5, bgcolor: '#ffffff44', fontWeight: 'bold' }}>
+            <Box component='span' sx={{ flex: 1, textAlign: 'right' }}>
+              {event.match?.homeGoals ?? '?'}
+            </Box>
+            -
+            <Box component='span' sx={{ flex: 1, textAlign: 'left' }}>
+              {event.match?.awayGoals ?? '?'}
+            </Box>
+          </Box>
+          <Box component='span' sx={{ flex: 1, py: 0.25, textAlign: 'left' }}>
+            {event.title}
+          </Box>
+        </Typography>
+      </Button>
       <Dialog onClose={handleClose} open={open}>
         <Stack gap={1}>
           <Typography variant='h2'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</Typography>
+          <Typography sx={{ textTransform: 'capitalize' }} variant='body2'>
+            {format(new Date(event.time), "EEEE dd. MMMM yyyy' 'HH:mm", {
+              locale: nb,
+            })}
+          </Typography>
           {isAdmin && (
             <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
               <Stack direction='row' gap={1} sx={{ mt: 1 }}>

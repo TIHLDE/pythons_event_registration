@@ -6,8 +6,9 @@ import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { ExtendedEvent, getEventsWithRegistrations } from 'queries';
+import { ExtendedEvent, getAllMatches, getEventsWithRegistrations } from 'queries';
 import safeJsonStringify from 'safe-json-stringify';
+import { compareTwoStrings } from 'string-similarity';
 
 import { ExtendedNotification } from 'components/AdminMessage';
 import AlertMessage from 'components/AlertMessage';
@@ -15,6 +16,7 @@ import { CalendarSubscription } from 'components/CalendarSubscription';
 import Event from 'components/Event';
 import { EventsFilters } from 'components/EventsFilters';
 import { MainLinkMenu } from 'components/LinkMenu';
+import { MatchModalProps } from 'components/MatchModal';
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const notificationsQuery = prisma.notification.findMany({
@@ -31,10 +33,19 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     },
   });
 
-  const [eventsWithRegistrations, notifications] = await Promise.all([getEventsWithRegistrations({ query }), notificationsQuery]);
+  const [eventsWithRegistrations, allMatches, notifications] = await Promise.all([getEventsWithRegistrations({ query }), getAllMatches(), notificationsQuery]);
+
+  const eventsRelatedMatches = eventsWithRegistrations
+    .filter((event) => event.eventTypeSlug === 'kamp')
+    .map((event) => {
+      const matches = allMatches.filter((match) => match.id !== event.id && compareTwoStrings(event.title || '', match.title || '') > 0.8);
+      return { eventId: event.id, matches };
+    })
+    .reduce<Record<number, MatchModalProps['event'][]>>((obj, item) => ((obj[item.eventId] = item.matches), obj), {});
 
   return {
     props: {
+      eventsRelatedMatches: JSON.parse(safeJsonStringify(eventsRelatedMatches)),
       events: JSON.parse(safeJsonStringify(eventsWithRegistrations)),
       notifications: JSON.parse(safeJsonStringify(notifications)),
     },
@@ -50,7 +61,7 @@ const getYearWeek = (time: Date) =>
     },
   )})`;
 
-const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Home: NextPage = ({ events, notifications, eventsRelatedMatches }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const groupedEvents = (events as ExtendedEvent[]).reduce((acc, event) => {
     const time = parseISO(event.time as unknown as string);
 
@@ -90,7 +101,7 @@ const Home: NextPage = ({ events, notifications }: InferGetServerSidePropsType<t
             <Grid container spacing={2}>
               {groupedEvents[group].map((event) => (
                 <Grid item key={event.id} md={4} sm={6} xs={12}>
-                  <Event eventDetails={event} />
+                  <Event eventDetails={event} relatedMatches={eventsRelatedMatches[event.id] || []} />
                 </Grid>
               ))}
             </Grid>

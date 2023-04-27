@@ -34,6 +34,14 @@ const Admin: NextPage = () => {
             title="🥸 Snitches don't get stitches"
           />
         </Grid>
+        <Grid item sm={6} xs={12}>
+          <AdminLink
+            description='Se statistikk for hvordan siden brukes'
+            openInNewTab
+            path='https://stats.olafros.com/public/tihlde-pythons/registrering'
+            title='📈 Stats'
+          />
+        </Grid>
       </Grid>
     </>
   );

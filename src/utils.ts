@@ -62,14 +62,21 @@ export const stripEmojis = (str: string) =>
     .trim();
 
 export const getEventTitle = (event: ExtendedEvent) => {
+  let icon = '❔';
+  let title = 'Ukjent type arrangement';
   switch (event.eventTypeSlug) {
     case 'trening':
-      return `💪 Trening`;
+      icon = '💪';
+      title = `Trening`;
+      break;
     case 'kamp':
-      return `⚽️ Kamp mot ${event.title || 'en motstander'}`;
+      icon = `⚽️`;
+      title = `Kamp mot ${event.title || 'en motstander'}`;
+      break;
     case 'sosialt':
-      return `🎉 ${event.title || 'Sosialt'}`;
-    default:
-      return `Ukjent arrangementtype`;
+      icon = `🎉`;
+      title = `${event.title || 'Sosialt'}`;
+      break;
   }
+  return { icon, title, fullTitle: `${icon} ${title}` };
 };
