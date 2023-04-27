@@ -56,8 +56,8 @@ export const EventsFilters = (props: StackProps) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<'all' | 'matches'>(typeof router.query.semester === 'string' ? 'matches' : 'all');
-  const { data: teams = [] } = useSWR<Team[]>(view === 'matches' ? '/api/teams' : null, fetcher);
-  const { data: eventTypes = [] } = useSWR<EventType[]>(view === 'matches' ? '/api/eventType' : null, fetcher);
+  const { data: teams = [] } = useSWR<Team[]>('/api/teams', fetcher);
+  const { data: eventTypes = [] } = useSWR<EventType[]>(view === 'all' ? '/api/eventType' : null, fetcher);
   const [matchesFilters, setMatchesFilters] = useState<MatchesFilters>({
     semester: typeof router.query.semester === 'string' ? router.query.semester : '',
     team: typeof router.query.team === 'string' ? router.query.team : '',
