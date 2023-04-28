@@ -11,23 +11,22 @@ export type AdminLinkProps = {
 
 const AdminLink = ({ path, title, description, openInNewTab }: AdminLinkProps) => {
   return (
-    <Link href={path} passHref>
-      <Stack
-        component='a'
-        spacing={1}
-        sx={{
-          textDecoration: 'none',
-          p: 2,
-          backgroundColor: '#532E7B',
-          cursor: 'pointer',
-          borderRadius: 1,
-          height: '100%',
-        }}
-        target={openInNewTab ? '_blank' : undefined}>
-        <Typography variant='h2'>{title}</Typography>
-        <Typography variant='body1'>{description}</Typography>
-      </Stack>
-    </Link>
+    <Stack
+      component={Link}
+      href={path}
+      spacing={1}
+      sx={{
+        textDecoration: 'none',
+        p: 2,
+        backgroundColor: '#532E7B',
+        cursor: 'pointer',
+        borderRadius: 1,
+        height: '100%',
+      }}
+      target={openInNewTab ? '_blank' : undefined}>
+      <Typography variant='h2'>{title}</Typography>
+      <Typography variant='body1'>{description}</Typography>
+    </Stack>
   );
 };
 

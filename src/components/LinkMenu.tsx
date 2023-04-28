@@ -18,17 +18,17 @@ export const LinkMenu = ({ routes, ...props }: LinkMenuProps) => {
   return (
     <Stack direction='row' gap={1} {...props}>
       {routes.map((route) => (
-        <Link href={route.href} key={route.href} passHref>
-          <Button
-            color='menu'
-            component='a'
-            fullWidth
-            size='large'
-            sx={{ fontWeight: isCurrentRoute(route.href) ? 'bold' : undefined }}
-            variant={isCurrentRoute(route.href) ? 'contained' : 'outlined'}>
-            {route.label}
-          </Button>
-        </Link>
+        <Button
+          color='menu'
+          component={Link}
+          fullWidth
+          href={route.href}
+          key={route.href}
+          size='large'
+          sx={{ fontWeight: isCurrentRoute(route.href) ? 'bold' : undefined }}
+          variant={isCurrentRoute(route.href) ? 'contained' : 'outlined'}>
+          {route.label}
+        </Button>
       ))}
     </Stack>
   );

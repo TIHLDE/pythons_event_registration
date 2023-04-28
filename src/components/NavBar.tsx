@@ -29,9 +29,7 @@ const NavBar = ({ user }: NavBarProps) => {
       </Stack>
       <Stack alignItems='center' direction='row' justifyContent={'center'}>
         <Link href='/'>
-          <a>
-            <Image alt='Logo' height={75.25} src='/pythons.png' width={50} />
-          </a>
+          <Image alt='Logo' height={75.25} src='/pythons.png' width={50} />
         </Link>
       </Stack>
     </Stack>

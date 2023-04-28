@@ -155,11 +155,9 @@ const Fines = ({ events }: { events: EventWithFines[] }) => {
       </Head>
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
         <Typography variant='h1'>Bøter 😈 👹</Typography>
-        <Link href='/admin' passHref>
-          <Button color='secondary' component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
-            Til admin
-          </Button>
-        </Link>
+        <Button color='secondary' component={Link} href='/admin' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+          Til admin
+        </Button>
       </Stack>
       <Typography sx={{ mb: 1 }}>
         Viser bøter for arrangementer 2 uker tilbake i tid. Bøtene er kalkulert på bakgrunn av{' '}

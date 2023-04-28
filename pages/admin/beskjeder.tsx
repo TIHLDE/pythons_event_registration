@@ -39,11 +39,9 @@ const Messages: NextPage = ({ messages }: InferGetServerSidePropsType<typeof get
     <Stack direction='column' gap={1}>
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
         <Typography variant='h1'>Beskjeder</Typography>
-        <Link href='/admin' passHref>
-          <Button color='secondary' component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
-            Til admin
-          </Button>
-        </Link>
+        <Button color='secondary' component={Link} href='/admin' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+          Til admin
+        </Button>
       </Stack>
       <Button disabled={newMessage} onClick={() => setNewMessage(true)} variant='contained'>
         Opprett ny beskjed

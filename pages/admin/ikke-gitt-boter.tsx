@@ -28,11 +28,9 @@ const PlayersWithNoCreatedFines = ({ players }: { players: Array<TIHLDEUser> }) 
       </Head>
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
         <Typography variant='h1'>Snitches don&apos;t get stitches</Typography>
-        <Link href='/admin' passHref>
-          <Button color='secondary' component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
-            Til admin
-          </Button>
-        </Link>
+        <Button color='secondary' component={Link} href='/admin' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+          Til admin
+        </Button>
       </Stack>
       <Typography sx={{ mb: 1 }}>
         Viser navn på spillere som skal motta bot for brudd på paragraf <i>§10 - Snitches don&apos;t get stitches</i> på bakgrunn av{' '}

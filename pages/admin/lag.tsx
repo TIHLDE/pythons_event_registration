@@ -18,9 +18,8 @@ type PositionWithPlayer = Prisma.PositionGetPayload<{
   select: {
     id: true;
     name: true;
-  };
-  include: {
     Player: true;
+    title: true;
   };
 }>;
 
@@ -103,11 +102,9 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
       </Head>
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
         <Typography variant='h1'>Lag</Typography>
-        <Link href='/admin' passHref>
-          <Button color='secondary' component='a' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
-            Til admin
-          </Button>
-        </Link>
+        <Button color='secondary' component={Link} href='/admin' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
+          Til admin
+        </Button>
       </Stack>
       {teams.map((team: Team & { positions: PositionWithPlayer[] }, index: number) => (
         <Stack gap={1} key={team.id}>
