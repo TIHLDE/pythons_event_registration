@@ -86,13 +86,13 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
     axios.post('/api/teams', { data }).then(() => {
       setOpenNewTeamField(false);
       reset();
-      router.replace(router.asPath);
+      router.replace(router.asPath, undefined, { scroll: false });
     });
   };
 
   const deleteTeam = (id: Team['id']) => {
     axios.delete(`/api/teams/${id}`).then(() => {
-      router.replace(router.asPath);
+      router.replace(router.asPath, undefined, { scroll: false });
     });
   };
 

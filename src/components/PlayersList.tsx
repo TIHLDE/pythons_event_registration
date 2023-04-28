@@ -42,10 +42,9 @@ const Player = ({ player }: { player: Player }) => {
 
   const removePlayer = async () => {
     const data = { active: false };
-    await axios.put(`/api/players/${player.id}}`, { data: data }).then(() => {
-      router.replace(router.asPath);
-      handleClose();
-    });
+    await axios.put(`/api/players/${player.id}}`, { data: data });
+    router.replace(router.asPath, undefined, { scroll: false });
+    handleClose();
   };
 
   const change = () => {
@@ -69,11 +68,10 @@ const Player = ({ player }: { player: Player }) => {
 
   const onSubmit = async (formData: FormDataProps) => {
     const data = { name: formData.name };
-    axios.put(`/api/players/${player.id}`, { data: data }).then(() => {
-      setEditPlayer(false);
-      reset();
-      router.replace(router.asPath);
-    });
+    await axios.put(`/api/players/${player.id}`, { data: data });
+    setEditPlayer(false);
+    reset();
+    router.replace(router.asPath, undefined, { scroll: false });
   };
 
   return (

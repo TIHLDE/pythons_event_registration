@@ -127,9 +127,8 @@ const Fines = ({ events }: { events: EventWithFines[] }) => {
 
   const setFinesGiven = useCallback(
     async (event: EventWithFines, finesGiven: boolean) => {
-      await axios.put(`/api/events/${event.id}`, { data: { finesGiven } }).then(() => {
-        router.replace(router.asPath);
-      });
+      await axios.put(`/api/events/${event.id}`, { data: { finesGiven } });
+      router.replace(router.asPath, undefined, { scroll: false });
     },
     [router],
   );
@@ -143,10 +142,8 @@ const Fines = ({ events }: { events: EventWithFines[] }) => {
         image: null,
         reason: `${getEventTitle(event)}: ${fine.reason} ${fine.time ? `(${formatTime(fine.time)})` : ''}`,
       }));
-      console.log(fines);
-      await axios.post(`/api/give-fines`, { data: { fines, eventId: event.id } }).then(() => {
-        router.replace(router.asPath);
-      });
+      await axios.post(`/api/give-fines`, { data: { fines, eventId: event.id } });
+      router.replace(router.asPath, undefined, { scroll: false });
     },
     [getEventTitle, router],
   );

@@ -7,6 +7,12 @@ declare module '@mui/material/styles' {
   interface PaletteOptions {
     menu: PaletteOptions['primary'];
   }
+
+  interface TypeBackground {
+    kamp: string;
+    trening: string;
+    sosialt: string;
+  }
 }
 
 declare module '@mui/material/Button' {
@@ -47,6 +53,9 @@ const theme = createTheme({
     background: {
       default: '#001328',
       paper: '#001731',
+      kamp: 'linear-gradient(to bottom, #6e2a70, #4c126b)',
+      trening: 'linear-gradient(to bottom, #3A2056, #0b0941)',
+      sosialt: 'linear-gradient(to bottom, #565220, #563A20)',
     },
     text: {
       primary: '#F2F2F2',
@@ -66,9 +75,9 @@ const theme = createTheme({
       styleOverrides: {
         paper: {
           backgroundImage: 'none',
-          border: '1px solid #424242',
-          width: 400,
-          padding: 3 * 10,
+          width: '100%',
+          padding: 30,
+          margin: 20,
         },
       },
     },

@@ -74,7 +74,7 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
           component='form'
           gap={1}
           onSubmit={handleSubmit(onSubmit)}
-          sx={{ border: (theme) => `1px solid ${theme.palette.divider}`, p: 2, borderRadius: 1 }}>
+          sx={{ border: (theme) => `1px solid ${theme.palette.divider}`, p: 2, borderRadius: 1, bgcolor: 'background.paper' }}>
           <Stack direction='row' gap={1}>
             <Controller
               control={control}

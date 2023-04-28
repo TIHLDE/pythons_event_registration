@@ -33,7 +33,7 @@ const AdminMessage = ({ notification }: AdminMessageProps) => {
 
   const deleteMessage = async () => {
     await axios.delete(`/api/notification/${notification.id}`).then(() => {
-      router.replace(router.asPath);
+      router.replace(router.asPath, undefined, { scroll: false });
     });
   };
 

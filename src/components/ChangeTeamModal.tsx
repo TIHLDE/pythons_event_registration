@@ -34,7 +34,7 @@ const ChangeTeamModal = ({ open, handleClose, title, player }: ChangeTeamModalPr
     const data = { teamId: formData.team };
     axios.put(`/api/players/${player.id}`, { data: data }).then(() => {
       handleClose();
-      router.replace(router.asPath);
+      router.replace(router.asPath, undefined, { scroll: false });
     });
   };
   const { data: teams } = useSWR<Team[]>('/api/teams', fetcher);

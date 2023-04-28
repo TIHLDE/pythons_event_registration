@@ -16,9 +16,9 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  styled,
   TextField,
   Tooltip,
+  TypeBackground,
   Typography,
 } from '@mui/material';
 import axios from 'axios';
@@ -33,18 +33,10 @@ import { rules } from 'rules';
 import { stats } from 'stats';
 import { getEventTitle } from 'utils';
 
-import { useModal } from 'hooks/useModal';
 import { useUser } from 'hooks/useUser';
 
 import MatchModal, { MatchModalProps } from 'components/MatchModal';
 import PlayersModal from 'components/PlayersModal';
-
-const DialogText = styled(Typography)(() => ({
-  cursor: 'pointer',
-  '&:hover': {
-    textDecoration: 'underline',
-  },
-}));
 
 export type EventProps = {
   eventDetails: ExtendedEvent;
@@ -57,23 +49,6 @@ type FormDataProps = {
 };
 
 const Event = ({ eventDetails, relatedMatches }: EventProps) => {
-  const {
-    modalOpen: openRegistratedPlayersModal,
-    handleOpenModal: handleOpenRegistratedPlayersModal,
-    handleCloseModal: handleCloseRegistratedPlayersModal,
-  } = useModal(false);
-
-  const {
-    modalOpen: openDeregistratedPlayersModal,
-    handleOpenModal: handleOpenDeregistratedPlayersModal,
-    handleCloseModal: handleCloseDeregistratedPlayersModal,
-  } = useModal(false);
-  const {
-    modalOpen: openHasNotAnsweredModal,
-    handleOpenModal: handleOpenHasNotAnsweredModal,
-    handleCloseModal: handleCloseHasNotAnsweredModal,
-  } = useModal(false);
-
   const { reward: willArriveConfetti } = useReward('confetti', 'confetti', { elementCount: 100, elementSize: 15 });
   const { reward: willNotArriveConfetti } = useReward('confetti', 'emoji', { emoji: ['😭', '😢', '💔'], elementCount: 40 });
 
@@ -99,61 +74,53 @@ const Event = ({ eventDetails, relatedMatches }: EventProps) => {
 
   const watchRegistration: number | string | undefined = watch('registration');
   const [openRegistration, setOpenRegistration] = useState(false);
-  const onSubmit = async (formData: FormDataProps) => {
-    const data = {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      playerId: user!.id,
-      eventId: eventDetails.id,
-      ...(formData.reason && {
-        reason: formData.reason,
-      }),
-    };
-    const willArrive = formData.registration === '1';
-    if (willArrive) {
-      willArriveConfetti();
-    } else {
-      willNotArriveConfetti();
-    }
-    if (userHasRegistrated) {
-      axios
-        .put(`/api/registration/${data.playerId}_${data.eventId}`, {
-          data,
-          willArrive,
-        })
-        .then(() => {
-          setOpenRegistration(false);
-          router.replace(router.asPath);
-        });
-    } else {
-      axios
-        .post('/api/registration', {
-          data: data,
-          willArrive,
-        })
-        .then(() => {
-          setOpenRegistration(false);
-          router.replace(router.asPath);
-        });
-    }
-  };
+  const onSubmit = useCallback(
+    async (formData: FormDataProps) => {
+      const data = {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        playerId: user!.id,
+        eventId: eventDetails.id,
+        ...(formData.reason && {
+          reason: formData.reason,
+        }),
+      };
+      const willArrive = formData.registration === '1';
+      if (willArrive) {
+        willArriveConfetti();
+      } else {
+        willNotArriveConfetti();
+      }
+      if (userHasRegistrated) {
+        await axios.put(`/api/registration/${data.playerId}_${data.eventId}`, { data, willArrive });
+      } else {
+        await axios.post('/api/registration', { data, willArrive });
+      }
+      setOpenRegistration(false);
+      router.replace(router.asPath, undefined, { scroll: false });
+    },
+    [eventDetails.id, router, user, userHasRegistrated, willArriveConfetti, willNotArriveConfetti],
+  );
 
   const registrationDeadline =
     eventDetails.eventTypeSlug in rules ? subHours(new Date(eventDetails.time), rules[eventDetails.eventTypeSlug].deadlines.signupBefore) : undefined;
 
-  const backgroundColor =
-    eventDetails.type.slug === 'trening'
-      ? 'linear-gradient(to bottom, #3A2056, #0b0941)'
-      : eventDetails.type.slug === 'kamp'
-      ? 'linear-gradient(to bottom, #6e2a70, #4c126b)'
-      : 'linear-gradient(to bottom, #565220, #563A20)';
-
   return (
-    <Stack gap={1} sx={{ background: backgroundColor, width: '100%', height: 'auto', p: 1, borderRadius: 1 }}>
+    <Stack
+      gap={1}
+      sx={{
+        background: ({ palette }) => palette.background[eventDetails.eventTypeSlug as keyof TypeBackground],
+        width: '100%',
+        height: 'auto',
+        p: 1,
+        borderRadius: 1,
+      }}>
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
         <Typography component='span' variant='h3'>
           {getEventTitle(eventDetails).icon}
         </Typography>
-        <Typography variant='h3'>{getEventTitle(eventDetails).title}</Typography>
+        <Typography fontWeight='bold' variant='h3'>
+          {getEventTitle(eventDetails).title}
+        </Typography>
 
         <Tooltip title='Tidspunkt'>
           <WatchLaterIcon />
@@ -176,50 +143,20 @@ const Event = ({ eventDetails, relatedMatches }: EventProps) => {
           </>
         )}
 
-        <Tooltip title='Påmeldte'>
+        <Tooltip title='Påmeldt'>
           <CheckRoundedIcon />
         </Tooltip>
-        <DialogText onClick={handleOpenRegistratedPlayersModal} role='button' tabIndex={0} variant='body1'>
-          {eventDetails.willArrive?.length} påmeldt
-        </DialogText>
-        <Tooltip title='Avmeldte'>
+        <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.willArrive || []} title='Påmeldt' />
+        <Tooltip title='Avmeldt'>
           <CancelIcon />
         </Tooltip>
-        <DialogText onClick={handleOpenDeregistratedPlayersModal} role='button' tabIndex={0} variant='body1'>
-          {eventDetails.willNotArrive?.length} avmeldt
-        </DialogText>
+        <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.willNotArrive || []} title='Avmeldt' />
         <Tooltip title='Ikke svart'>
           <QuestionMarkIcon />
         </Tooltip>
-        <DialogText onClick={handleOpenHasNotAnsweredModal} role='button' tabIndex={0} variant='body1'>
-          {eventDetails.hasNotResponded?.length} har ikke svart
-        </DialogText>
+        <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.hasNotResponded || []} title='Ikke svart' />
       </Box>
 
-      {openDeregistratedPlayersModal && (
-        <PlayersModal
-          handleClose={handleCloseDeregistratedPlayersModal}
-          open={openDeregistratedPlayersModal}
-          registrations={eventDetails?.willNotArrive || []}
-          title='Avmeldt'
-        />
-      )}
-      {openRegistratedPlayersModal && (
-        <PlayersModal
-          handleClose={handleCloseRegistratedPlayersModal}
-          open={openRegistratedPlayersModal}
-          registrations={eventDetails?.willArrive || []}
-          title='Påmeldt'
-        />
-      )}
-      {openHasNotAnsweredModal && (
-        <PlayersModal
-          handleClose={handleCloseHasNotAnsweredModal}
-          open={openHasNotAnsweredModal}
-          registrations={eventDetails?.hasNotResponded || []}
-          title='Ikke svart'
-        />
-      )}
       {((eventDetails.match && isPast(new Date(eventDetails.time))) || relatedMatches.length > 0) && <Divider sx={{ my: 0.5 }} />}
       {eventDetails.match && isPast(new Date(eventDetails.time)) && <MatchModal event={eventDetails} sx={{ my: -0.5 }} />}
       {relatedMatches.length > 0 && (

@@ -1,11 +1,21 @@
-import { Box, Dialog, Stack, Typography } from '@mui/material';
-import { Position, Prisma } from '@prisma/client';
+import { Box, Dialog, Stack, styled, TypeBackground, Typography } from '@mui/material';
+import { Event, Position, Prisma } from '@prisma/client';
 import filter from 'lodash/filter';
 import Image from 'next/image';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
 
+import { useModal } from 'hooks/useModal';
+
 import LoadingLogo from 'components/LoadingLogo';
+
+const DialogText = styled(Typography)(() => ({
+  cursor: 'pointer',
+  textTransform: 'lowercase',
+  '&:hover': {
+    textDecoration: 'underline',
+  },
+}));
 
 export type ExtendedRegistrations = Prisma.RegistrationsGetPayload<{
   include: {
@@ -15,13 +25,13 @@ export type ExtendedRegistrations = Prisma.RegistrationsGetPayload<{
 
 export type PlayersModalProps = {
   registrations: ExtendedRegistrations[];
-  open: boolean;
-  handleClose: () => void;
   title: string;
+  eventType: Event['eventTypeSlug'];
 };
 
-const PlayersModal = ({ registrations, open, handleClose, title }: PlayersModalProps) => {
+const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) => {
   const { data: positions = [] } = useSWR<Position[]>('/api/positions', fetcher);
+  const { modalOpen, handleOpenModal, handleCloseModal } = useModal(false);
 
   const groupedPlayers = positions.map((position) => ({
     ...position,
@@ -29,33 +39,43 @@ const PlayersModal = ({ registrations, open, handleClose, title }: PlayersModalP
   }));
 
   return (
-    <Dialog onClose={handleClose} open={open}>
-      {!positions.length ? (
-        <LoadingLogo />
-      ) : (
-        <Stack gap={2}>
-          <Stack direction='row' spacing={2}>
-            <Image alt='Logo' height={37.625} src='/pythons.png' width={25} />
-            <Typography variant='h2'>{title}</Typography>
-          </Stack>
-          {groupedPlayers.map((pos) => (
-            <Stack key={pos.id} spacing={1}>
-              <Typography sx={{ fontWeight: 'bold' }} variant='h3'>
-                {pos.title} ({pos.players.length})
-              </Typography>
-              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
-                {pos.players.map((registration: ExtendedRegistrations) => (
-                  <div key={registration.playerId}>
-                    <Typography variant='body2'>{registration.player.name}</Typography>
-                    {registration.reason && <Typography variant='body2'>- {registration.reason}</Typography>}
-                  </div>
-                ))}
-              </Box>
+    <>
+      <DialogText onClick={handleOpenModal} role='button' tabIndex={0} variant='body1'>
+        {`${registrations.length} ${title}`}
+      </DialogText>
+      <Dialog
+        onClose={handleCloseModal}
+        open={modalOpen}
+        sx={{ '& .MuiPaper-root': { background: ({ palette }) => palette.background[eventType as keyof TypeBackground] } }}>
+        {!positions.length ? (
+          <LoadingLogo />
+        ) : (
+          <Stack gap={1}>
+            <Stack direction='row' spacing={2}>
+              <Image alt='Logo' height={37.625} src='/pythons.png' width={25} />
+              <Typography variant='h2'>{title}</Typography>
             </Stack>
-          ))}
-        </Stack>
-      )}
-    </Dialog>
+            {groupedPlayers.map((pos) => (
+              <Stack key={pos.id} spacing={1}>
+                <Typography sx={{ fontWeight: 'bold' }} variant='h3'>
+                  {pos.title} ({pos.players.length})
+                </Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 1 }}>
+                  {pos.players.map((registration: ExtendedRegistrations) => (
+                    <div key={registration.playerId}>
+                      <Typography fontWeight='bold' variant='body2'>
+                        {registration.player.name}
+                      </Typography>
+                      {registration.reason && <Typography variant='body2'>- {registration.reason}</Typography>}
+                    </div>
+                  ))}
+                </Box>
+              </Stack>
+            ))}
+          </Stack>
+        )}
+      </Dialog>
+    </>
   );
 };
 

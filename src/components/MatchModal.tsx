@@ -1,4 +1,4 @@
-import { Box, Button, ButtonProps, Dialog, Divider, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, ButtonProps, Dialog, Stack, TextField, TypeBackground, Typography } from '@mui/material';
 import { Match, Prisma } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
@@ -39,7 +39,7 @@ const MatchModal = ({ event, isAdmin = false, sx, ...props }: MatchModalProps) =
 
   const handleClose = () => {
     if (shouldRefreshOnClose) {
-      router.replace(router.asPath);
+      router.replace(router.asPath, undefined, { scroll: false });
     }
     setOpen(false);
     setShouldRefreshOnClose(false);
@@ -68,7 +68,10 @@ const MatchModal = ({ event, isAdmin = false, sx, ...props }: MatchModalProps) =
           </Box>
         </Typography>
       </Button>
-      <Dialog onClose={handleClose} open={open}>
+      <Dialog
+        onClose={handleClose}
+        open={open}
+        sx={{ '& .MuiPaper-root': { background: ({ palette }) => palette.background[event.eventTypeSlug as keyof TypeBackground] } }}>
         <Stack gap={1}>
           <Typography variant='h2'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</Typography>
           <Typography sx={{ textTransform: 'capitalize' }} variant='body2'>
@@ -77,13 +80,18 @@ const MatchModal = ({ event, isAdmin = false, sx, ...props }: MatchModalProps) =
             })}
           </Typography>
           {isAdmin && (
-            <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
+            <Stack
+              component='form'
+              gap={1}
+              onSubmit={handleSubmit(onSubmit)}
+              sx={{ border: (theme) => `1px solid ${theme.palette.divider}`, p: 2, borderRadius: 1, bgcolor: 'background.paper' }}>
               <Stack direction='row' gap={1} sx={{ mt: 1 }}>
                 <Controller
                   control={control}
                   name='homeGoals'
                   render={({ field }) => (
                     <TextField
+                      fullWidth
                       inputMode='numeric'
                       label={`Mål av oss (${event.team?.name})`}
                       placeholder={`Mål av oss (${event.team?.name})`}
@@ -96,14 +104,13 @@ const MatchModal = ({ event, isAdmin = false, sx, ...props }: MatchModalProps) =
                   control={control}
                   name='awayGoals'
                   render={({ field }) => (
-                    <TextField inputMode='numeric' label={`Mål av ${event.title}`} placeholder={`Mål av ${event.title}`} required {...field} />
+                    <TextField fullWidth inputMode='numeric' label={`Mål av ${event.title}`} placeholder={`Mål av ${event.title}`} required {...field} />
                   )}
                 />
               </Stack>
               <Button type='submit' variant='contained'>
                 Lagre resultat
               </Button>
-              <Divider />
             </Stack>
           )}
           {isAdmin && <Typography variant='h3'>Hendelser</Typography>}

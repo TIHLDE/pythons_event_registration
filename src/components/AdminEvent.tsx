@@ -1,4 +1,4 @@
-import { Box, Button, Chip, Divider, Typography } from '@mui/material';
+import { Box, Button, Chip, Divider, Typography, useTheme } from '@mui/material';
 import axios from 'axios';
 import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
@@ -15,6 +15,7 @@ export type AdminEventProps = {
 };
 
 const AdminEvent = ({ event }: AdminEventProps) => {
+  const theme = useTheme();
   const [updateEventModal, setUpdateEventModal] = useState(false);
   const handleUpdateEventModal = () => setUpdateEventModal(true);
   const handleCloseUpdateEventModal = () => setUpdateEventModal(false);
@@ -23,16 +24,16 @@ const AdminEvent = ({ event }: AdminEventProps) => {
 
   const deleteEvent = () => {
     axios.delete(`/api/events/${event.id}`).then(() => {
-      router.replace(router.asPath);
+      router.replace(router.asPath, undefined, { scroll: false });
     });
   };
 
   const type =
     event.eventTypeSlug === 'trening'
-      ? { name: 'Trening', color: '#0094FF' }
+      ? { name: 'Trening', background: theme.palette.background.trening }
       : event.eventTypeSlug === 'kamp'
-      ? { name: 'Kamp', color: '#0FDC61' }
-      : { name: 'Sosialt', color: '#FF00C7' };
+      ? { name: 'Kamp', background: theme.palette.background.kamp }
+      : { name: 'Sosialt', background: theme.palette.background.sosialt };
 
   return (
     <Box
@@ -41,20 +42,20 @@ const AdminEvent = ({ event }: AdminEventProps) => {
         display: 'grid',
         gridTemplateColumns: 'auto 1fr',
         p: 2,
-        backgroundColor: '#3A2056',
+        background: type.background,
         border: (theme) => `1px solid ${theme.palette.divider}`,
         borderRadius: 1,
       }}>
       <Typography fontWeight={'bold'} variant='body1'>
         Type
       </Typography>
-      <Chip label={type.name} sx={{ backgroundColor: type.color }} />
-      {event.team && (
+      <Chip label={type.name} sx={{ bgcolor: 'background.paper' }} />
+      {(event.eventTypeSlug === 'kamp' || event.team) && (
         <>
           <Typography fontWeight={'bold'} variant='body1'>
             Lag
           </Typography>
-          <Typography variant='body1'>{event.team.name}</Typography>
+          <Typography variant='body1'>{event.team?.name ?? '⚠️ Mangler lag ⚠️'}</Typography>
         </>
       )}
       {event.title && (
@@ -68,7 +69,7 @@ const AdminEvent = ({ event }: AdminEventProps) => {
       <Typography fontWeight={'bold'} variant='body1'>
         Dato
       </Typography>
-      <Typography variant='body1'>
+      <Typography sx={{ textTransform: 'capitalize' }} variant='body1'>
         {format(new Date(event.time), 'EEEE - dd.MM', {
           locale: nb,
         })}

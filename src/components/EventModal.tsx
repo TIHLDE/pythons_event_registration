@@ -55,16 +55,12 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
       matchId: event?.match?.id,
     };
     if (event) {
-      await axios.put(`/api/events/${event.id}`, { data: data }).then(() => {
-        router.replace(router.asPath);
-        handleClose();
-      });
+      await axios.put(`/api/events/${event.id}`, { data: data });
     } else {
-      await axios.post('/api/events', { data: data }).then(() => {
-        router.replace(router.asPath);
-        handleClose();
-      });
+      await axios.post('/api/events', { data: data });
     }
+    router.replace(router.asPath, undefined, { scroll: false });
+    handleClose();
   };
 
   return (

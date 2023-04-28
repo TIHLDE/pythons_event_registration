@@ -143,7 +143,7 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
   });
 
   const onSubmit = async (query: FormData) => {
-    router.replace({ query: removeFalsyElementsFromObject(query) });
+    router.replace({ query: removeFalsyElementsFromObject(query) }, undefined, { scroll: false });
     setOpen(false);
   };
 

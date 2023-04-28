@@ -73,7 +73,7 @@ export const EventsFilters = (props: StackProps) => {
   });
 
   const onSubmit = async (query: Partial<AllEventsFilters>) => {
-    router.replace({ query: removeFalsyElementsFromObject(query) });
+    router.replace({ query: removeFalsyElementsFromObject(query) }, undefined, { scroll: false });
     setOpen(false);
   };
   const clearFilters = () => {
@@ -88,7 +88,7 @@ export const EventsFilters = (props: StackProps) => {
 
   const updateMatchesFilters = (newFilters: MatchesFilters) => {
     setMatchesFilters(newFilters);
-    router.replace({ query: removeFalsyElementsFromObject(newFilters) });
+    router.replace({ query: removeFalsyElementsFromObject(newFilters) }, undefined, { scroll: false });
   };
 
   const changeView = (newView: typeof view) => {

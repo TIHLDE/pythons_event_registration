@@ -42,18 +42,13 @@ const NewMessage = ({ handleClose, notification }: NewMessageProps) => {
     };
 
     if (notification) {
-      await axios.put(`/api/notification/${notification.id}`, { data: data }).then(() => {
-        router.replace(router.asPath);
-        reset();
-        handleClose();
-      });
+      await axios.put(`/api/notification/${notification.id}`, { data: data });
     } else {
-      await axios.post('/api/notification', { data: data }).then(() => {
-        router.replace(router.asPath);
-        reset();
-        handleClose();
-      });
+      await axios.post('/api/notification', { data: data });
     }
+    router.replace(router.asPath, undefined, { scroll: false });
+    reset();
+    handleClose();
   };
   return (
     <Stack component='form' direction='row' gap={1} onSubmit={handleSubmit(onSubmit)} sx={{ py: 1 }}>

@@ -34,7 +34,7 @@ const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositio
     const data = { positionId: formData.position };
     axios.put(`/api/players/${player.id}`, { data: data }).then(() => {
       handleClose();
-      router.replace(router.asPath);
+      router.replace(router.asPath, undefined, { scroll: false });
     });
   };
   const { data: positions } = useSWR('/api/positions', fetcher);
