@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         time: data.time,
         location: data.location,
         teamId: data.eventTypeSlug === 'kamp' && data.team ? data.team : undefined,
-        finesGiven: data.finesGiven || false,
+        finesGiven: data.finesGiven ?? undefined,
       },
     });
 
