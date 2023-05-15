@@ -88,7 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(HttpStatusCode.BAD_REQUEST).json({ detail: 'Could not find a user with the given user_id' });
     }
 
-    stats.event(`Retrieve ics-events for user: ${player.tihlde_user_id}`);
+    stats.event(`Load ics-events at /api/ics/<user_id>`);
 
     const icsEvents = await createIcsEvents(events.filter(removeNonRelevantEvents(player)).map(createIcsEvent(player)));
 
