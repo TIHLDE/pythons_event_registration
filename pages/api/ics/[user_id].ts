@@ -1,5 +1,5 @@
 import { Player } from '@prisma/client';
-import { format, getDate, getHours, getMinutes, getMonth, getYear, set } from 'date-fns';
+import { addYears, format, getDate, getHours, getMinutes, getMonth, getYear, set } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import HttpStatusCode from 'http-status-typed';
 import { createEvents, DateArray, EventAttributes } from 'ics';
@@ -81,14 +81,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
     const eventsQuery = getEventsWithRegistrations({
-      query: { from: set(new Date(), { year: 2022, month: 5 }).toISOString(), to: set(new Date(), { year: 2100 }).toISOString() },
+      query: { from: set(new Date(), { year: 2022, month: 5 }).toISOString(), to: addYears(new Date(), 2).toISOString() },
     });
     const [player, events] = await Promise.all([playerQuery, eventsQuery]);
     if (!player) {
       return res.status(HttpStatusCode.BAD_REQUEST).json({ detail: 'Could not find a user with the given user_id' });
     }
 
-    stats.event(`Load ics-events at /api/ics/<user_id>`);
+    await stats.event(`Load ics-events at /api/ics/<user_id>`);
 
     const icsEvents = await createIcsEvents(events.filter(removeNonRelevantEvents(player)).map(createIcsEvent(player)));
 
