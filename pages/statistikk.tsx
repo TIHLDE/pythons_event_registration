@@ -64,6 +64,7 @@ export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ 
         },
       },
     },
+    orderBy: { name: 'asc' },
   });
 
   const teamsQuery = prisma.team.findMany();

@@ -19,13 +19,14 @@ export type ChangePositionModalProps = {
   open: boolean;
   handleClose: () => void;
   title: string;
+  description: string;
 };
 
 export type FormDataProps = {
   position: number;
 };
 
-const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositionModalProps) => {
+const ChangePositionModal = ({ open, handleClose, title, description, player }: ChangePositionModalProps) => {
   const router = useRouter();
   const { control, handleSubmit } = useForm({
     defaultValues: { position: player.positionId },
@@ -42,6 +43,7 @@ const ChangePositionModal = ({ open, handleClose, title, player }: ChangePositio
     <Dialog onClose={handleClose} open={open}>
       <Stack gap={2}>
         <Typography variant='h5'>{title}</Typography>
+        <Typography variant='body1'>{description}</Typography>
         <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
           <FormControl fullWidth>
             <InputLabel id='demo-simple-select-label'>Posisjon</InputLabel>

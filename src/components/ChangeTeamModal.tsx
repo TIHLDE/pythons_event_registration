@@ -19,13 +19,14 @@ export type ChangeTeamModalProps = {
   open: boolean;
   handleClose: () => void;
   title: string;
+  description: string;
 };
 
 export type FormDataProps = {
   team: Team['id'] | null;
 };
 
-const ChangeTeamModal = ({ open, handleClose, title, player }: ChangeTeamModalProps) => {
+const ChangeTeamModal = ({ open, handleClose, title, description, player }: ChangeTeamModalProps) => {
   const router = useRouter();
   const { control, handleSubmit } = useForm<FormDataProps>({
     defaultValues: { team: player.teamId },
@@ -42,6 +43,7 @@ const ChangeTeamModal = ({ open, handleClose, title, player }: ChangeTeamModalPr
     <Dialog onClose={handleClose} open={open}>
       <Stack gap={2}>
         <Typography variant='h5'>{title}</Typography>
+        <Typography variant='body1'>{description}</Typography>
         <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
           <FormControl fullWidth>
             <InputLabel id='demo-simple-select-label'>Lag</InputLabel>

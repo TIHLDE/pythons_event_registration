@@ -12,7 +12,8 @@ export type Semester = {
 };
 
 export const getSemesters = (): Semester[] => {
-  const initialDate = set(startOfToday(), { year: 2022, month: 6, date: 1 });
+  const SEMESTERS_DIVIDER_MONTH = 6;
+  const initialDate = set(startOfToday(), { year: 2022, month: SEMESTERS_DIVIDER_MONTH, date: 1 });
   const semesters: Semester[] = [
     {
       id: 'H22',
@@ -24,13 +25,13 @@ export const getSemesters = (): Semester[] => {
 
   while (semesters[semesters.length - 1].to < new Date()) {
     const prevSemester = semesters[semesters.length - 1];
-    const newFromDate = addMonths(prevSemester.from, 6);
-    const newToDate = addMonths(prevSemester.to, 6);
+    const newFromDate = addMonths(prevSemester.from, SEMESTERS_DIVIDER_MONTH);
+    const newToDate = addMonths(prevSemester.to, SEMESTERS_DIVIDER_MONTH);
     semesters.push({
-      id: `${getMonth(newFromDate) < 7 ? 'V' : 'H'}${String(getYear(newFromDate)).substring(2, 4)}`,
+      id: `${getMonth(newFromDate) < SEMESTERS_DIVIDER_MONTH ? 'V' : 'H'}${String(getYear(newFromDate)).substring(2, 4)}`,
       from: newFromDate,
       to: newToDate,
-      label: `${getMonth(newFromDate) < 7 ? 'Vår' : 'Høst'} ${String(getYear(newFromDate)).substring(2, 4)}`,
+      label: `${getMonth(newFromDate) < SEMESTERS_DIVIDER_MONTH ? 'Vår' : 'Høst'} ${String(getYear(newFromDate)).substring(2, 4)}`,
     });
   }
 

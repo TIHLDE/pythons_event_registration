@@ -1,5 +1,5 @@
 import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
-import { Button, Stack, Typography } from '@mui/material';
+import { Button, Divider, Stack, Typography } from '@mui/material';
 import { prisma } from 'lib/prisma';
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next';
 import Link from 'next/link';
@@ -43,6 +43,11 @@ const Messages: NextPage = ({ messages }: InferGetServerSidePropsType<typeof get
           Til admin
         </Button>
       </Stack>
+      <Divider />
+      <Typography sx={{ whiteSpace: 'break-spaces' }} variant='body1'>
+        {`Beskjeder vises på forsiden frem til tidspunktet du angir. Det vil stå hvem som har skrevet beskjeden. Beskjeder kan både endres og slettes etter publisering.`}
+      </Typography>
+      <Divider />
       <Button disabled={newMessage} onClick={() => setNewMessage(true)} variant='contained'>
         Opprett ny beskjed
       </Button>
@@ -50,7 +55,7 @@ const Messages: NextPage = ({ messages }: InferGetServerSidePropsType<typeof get
       {messages.length ? (
         messages.map((notification: ExtendedNotification) => <AdminMessage key={notification.id} notification={notification} />)
       ) : (
-        <Typography>Ingen å vise</Typography>
+        <Typography>Ingen aktive beskjeder</Typography>
       )}
     </Stack>
   );

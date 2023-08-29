@@ -106,16 +106,26 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
           Til admin
         </Button>
       </Stack>
+      <Divider sx={{ my: 2 }} />
+      <Typography sx={{ my: 2, whiteSpace: 'break-spaces' }} variant='body1'>
+        {`Spillerne her synkroniseres automatisk med personene som er med i TIHLDE Pythons sin gruppe på TIHLDE.org. Det betyr at for å legge til en ny spiller her, så må du leder legge til personen på TIHLDE.org først, synkroniseringen skjer automatisk hver hele time. Eventuelle nye spillere uten lagtilhørighet vises nederst på siden.
+
+For å fjerne en (eller flere) spillere gjøres det samme: leder må gå inn på TIHLDE.org og fjerne personens medlemsskap til TIHLDE Pythons. Spilleren vil da forsvinne herfra ved neste synkronisering. Data om spilleren slettes ikke, tidligere spillere sin statistikk vil fremdeles være tilgjengelig på Statistikk-siden.`}
+      </Typography>
+      <Divider sx={{ my: 2 }} />
       {teams.map((team: Team & { positions: PositionWithPlayer[] }, index: number) => (
         <Stack gap={1} key={team.id}>
           <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
-            <Typography variant='h2'>{team.name}</Typography>
+            <Typography variant='h2'>
+              {team.name} ({team.positions.reduce((acc, curr) => acc + curr.Player.length, 0)})
+            </Typography>
             <ConfirmModal
               color='error'
               description='Er du helt sikker? Lagets spillere vil ikke berøres, men bli stående uten tilhørighet til et lag.'
               onConfirm={() => deleteTeam(team.id)}
               size='small'
-              title='Slett lag'>
+              title='Slett lag'
+              variant='outlined'>
               Slett
             </ConfirmModal>
           </Stack>
@@ -145,10 +155,6 @@ const Teams: NextPage = ({ players_with_no_team, teams }: InferGetServerSideProp
           Nytt lag
         </Button>
       )}
-      <Typography sx={{ my: 2 }}>
-        Ny spillere legges automatisk til her når de legges til i Pythons gruppe på TIHLDE.org. Om spillere fjernes fra Pythons gruppe på TIHLDE.org vil de også
-        fjernes her automatisk.
-      </Typography>
       {players_with_no_team.some((position: PositionWithPlayer) => position.Player.length) && (
         <>
           <Divider sx={{ my: 2 }} />

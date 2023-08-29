@@ -82,30 +82,33 @@ export const getEventsWithRegistrations = async ({ query }: Pick<NextApiRequest,
     ...(getEventsWhereFilter({ query }) as {}),
   });
 
-  const playersQuery = prisma.player.findMany({
+  const activePlayersQuery = prisma.player.findMany({
     where: {
       active: true,
     },
+    orderBy: { name: 'asc' },
   });
 
-  const [allFutureEvents, players] = await Promise.all([allFutureEventsQuery, playersQuery]);
+  const [allFutureEvents, activePlayers] = await Promise.all([allFutureEventsQuery, activePlayersQuery]);
 
   const eventsWithRegistrations = allFutureEvents.map((event) => {
-    const willArrive = event.registrations.filter((registration) => registration.willArrive);
-    const willNotArrive = event.registrations.filter((registration) => !registration.willArrive);
+    const willArrive = event.registrations.filter((registration) => registration.willArrive).sort((a, b) => a.player.name.localeCompare(b.player.name));
+    const willNotArrive = event.registrations.filter((registration) => !registration.willArrive).sort((a, b) => a.player.name.localeCompare(b.player.name));
 
-    const hasNotResponded = players
-      .filter((player) => !event.teamId || player.teamId === event.teamId)
-      .map((player) => {
-        const willArriveIds = willArrive.map((p) => p.playerId);
-        const willNotArriveIds = willNotArrive.map((p) => p.playerId);
-        const playerHasResponded = willArriveIds.includes(player.id) || willNotArriveIds.includes(player.id);
+    const hasNotResponded = (
+      activePlayers
+        .filter((player) => !event.teamId || player.teamId === event.teamId)
+        .map((player) => {
+          const willArriveIds = willArrive.map((p) => p.playerId);
+          const willNotArriveIds = willNotArrive.map((p) => p.playerId);
+          const playerHasResponded = willArriveIds.includes(player.id) || willNotArriveIds.includes(player.id);
 
-        if (!playerHasResponded) {
-          return { player: player, playerId: player.id, willArrive: true };
-        }
-      })
-      .filter(Boolean) as ExtendedEvent['hasNotResponded'];
+          if (!playerHasResponded) {
+            return { player: player, playerId: player.id, willArrive: true };
+          }
+        })
+        .filter(Boolean) as ExtendedEvent['hasNotResponded']
+    ).sort((a, b) => a.player.name.localeCompare(b.player.name));
 
     return {
       ...event,

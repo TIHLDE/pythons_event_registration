@@ -53,7 +53,7 @@ const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) =>
           <Stack gap={1}>
             <Stack direction='row' spacing={2}>
               <Image alt='Logo' height={37.625} src='/pythons.png' width={25} />
-              <Typography variant='h2'>{title}</Typography>
+              <Typography variant='h2'>{`${title} (${registrations.length})`}</Typography>
             </Stack>
             {groupedPlayers.map((pos) => (
               <Stack key={pos.id} spacing={1}>

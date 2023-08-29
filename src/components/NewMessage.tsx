@@ -23,15 +23,10 @@ const NewMessage = ({ handleClose, notification }: NewMessageProps) => {
 
   const dateTimeFormat = "yyyy-MM-dd'T'HH:mm";
   const { control, reset, handleSubmit } = useForm<FormDataProps>({
-    defaultValues: notification
-      ? {
-          expiringDate: format(new Date(notification.expiringDate), dateTimeFormat),
-          message: notification.message,
-        }
-      : {
-          expiringDate: format(new Date(), dateTimeFormat),
-          message: '',
-        },
+    defaultValues: {
+      expiringDate: format(notification ? new Date(notification.expiringDate) : new Date(), dateTimeFormat),
+      message: notification?.message ?? '',
+    },
   });
   const onSubmit = async (formData: FormDataProps) => {
     const data = {
@@ -51,7 +46,7 @@ const NewMessage = ({ handleClose, notification }: NewMessageProps) => {
     handleClose();
   };
   return (
-    <Stack component='form' direction='row' gap={1} onSubmit={handleSubmit(onSubmit)} sx={{ py: 1 }}>
+    <Stack component='form' direction={{ md: 'row' }} gap={1} onSubmit={handleSubmit(onSubmit)} sx={{ py: 1 }}>
       <Controller
         control={control}
         name='message'
@@ -62,12 +57,10 @@ const NewMessage = ({ handleClose, notification }: NewMessageProps) => {
         name='expiringDate'
         render={({ field }) => <TextField label={'Utløper'} placeholder='Utløper' required type='datetime-local' variant='outlined' {...field} />}
       />
-      <Button sx={{ marginLeft: 4 }} type='submit'>
+      <Button type='submit' variant='contained'>
         {notification ? 'Oppdater' : 'Opprett'}
       </Button>
-      <Button onClick={handleClose} sx={{ marginLeft: 2 }}>
-        Avbryt
-      </Button>
+      <Button onClick={handleClose}>Avbryt</Button>
     </Stack>
   );
 };

@@ -17,7 +17,7 @@ import { MainLinkMenu } from 'components/LinkMenu';
 const DEFAULT_TO_DATE = set(new Date(), { hours: 12, minutes: 0 });
 const DEFAULT_FROM_DATE = set(new Date(), { month: getMonth(new Date()) > 6 ? 6 : 0, date: 1, hours: 12, minutes: 0 });
 
-type StatisticsProps = {
+type AttendanceProps = {
   eventsAmount: number;
   players: {
     _count: {
@@ -30,7 +30,7 @@ type StatisticsProps = {
   eventTypes: EventType[];
 };
 
-export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps<AttendanceProps> = async ({ query }) => {
   const dateTo = typeof query.to === 'string' && query.to !== '' ? parseISO(query.to) : DEFAULT_TO_DATE;
   const dateFrom = typeof query.from === 'string' && query.from !== '' ? parseISO(query.from) : DEFAULT_FROM_DATE;
   const eventTypeFilter = typeof query.eventType === 'string' && query.eventType !== '' ? query.eventType : undefined;
@@ -92,6 +92,7 @@ export const getServerSideProps: GetServerSideProps<StatisticsProps> = async ({ 
         },
       },
     },
+    orderBy: { name: 'asc' },
   });
 
   const teamsQuery = prisma.team.findMany();
@@ -129,7 +130,7 @@ type FormData = {
   willArrive: string;
 };
 
-const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProps) => {
+const Attendance = ({ players, eventsAmount, teams, eventTypes }: AttendanceProps) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const { handleSubmit, control } = useForm<FormData>({
@@ -240,4 +241,4 @@ const Statistics = ({ players, eventsAmount, teams, eventTypes }: StatisticsProp
   );
 };
 
-export default Statistics;
+export default Attendance;

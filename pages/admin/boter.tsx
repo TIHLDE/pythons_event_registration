@@ -159,13 +159,15 @@ const Fines = ({ events }: { events: EventWithFines[] }) => {
           Til admin
         </Button>
       </Stack>
-      <Typography sx={{ mb: 1 }}>
+      <Divider sx={{ my: 1 }} />
+      <Typography>
         Viser bøter for arrangementer 2 uker tilbake i tid. Bøtene er kalkulert på bakgrunn av{' '}
         <MuiLink href='https://tihlde.org/grupper/pythons-gutter-a/lovverk/' rel='noreferrer' target='_blank'>
           lovverket
         </MuiLink>
         .
       </Typography>
+      <Divider sx={{ my: 1 }} />
       <div>
         {!events.length && <Typography>Ingen bøter å vise</Typography>}
         {events.map((event, idx: number) => (
