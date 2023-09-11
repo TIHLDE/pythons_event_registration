@@ -8,8 +8,6 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { useUser } from 'hooks/useUser';
-
 type FormDataProps = {
   message: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,7 +21,6 @@ export type NewMessageProps = {
 };
 
 const NewMessage = ({ alwaysShow, notification, handleClose }: NewMessageProps) => {
-  const { data: user } = useUser();
   const router = useRouter();
 
   const [showNewMessage, setShowNewMessage] = useState(false);
@@ -37,8 +34,6 @@ const NewMessage = ({ alwaysShow, notification, handleClose }: NewMessageProps) 
   });
   const onSubmit = async (formData: FormDataProps) => {
     const data = {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      authorId: user!.id,
       message: formData.message,
       expiringDate: formData.expiringDate,
     };

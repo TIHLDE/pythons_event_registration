@@ -1,42 +1,19 @@
-'use client';
-
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import {
-  Alert,
-  Box,
-  Button,
-  Collapse,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  NoSsr,
-  Radio,
-  RadioGroup,
-  Stack,
-  TextField,
-  Tooltip,
-  TypeBackground,
-  Typography,
-} from '@mui/material';
-import axios from 'axios';
-import { format, formatDistanceToNow, isFuture, isPast, subHours } from 'date-fns';
+import { Box, Divider, Tooltip, Typography } from '@mui/material';
+import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
-import { useRouter } from 'next/navigation';
-import { ExtendedEvent } from 'queries';
-import { useCallback, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { useReward } from 'react-rewards';
-import { rules } from 'rules';
-import { stats } from 'stats';
+import { ExtendedEvent } from 'functions/event';
+import { getSignedInUser } from 'functions/getUser';
 import { getEventTitle } from 'utils';
 
-import { useUser } from 'hooks/useUser';
-
+import EventCard from 'components/events/EventCard';
+import EventRegistration from 'components/events/EventRegistration';
+import EventRelatedMatches from 'components/events/EventRelatedMatches';
 import MatchModal, { MatchModalProps } from 'components/events/MatchModal';
 import PlayersModal from 'components/events/PlayersModal';
 
@@ -45,77 +22,12 @@ export type EventProps = {
   relatedMatches: MatchModalProps['event'][];
 };
 
-type FormDataProps = {
-  reason?: string;
-  registration?: string | number | undefined;
-};
-
-const Event = ({ eventDetails, relatedMatches }: EventProps) => {
-  const { reward: willArriveConfetti } = useReward('confetti', 'confetti', { elementCount: 100, elementSize: 15 });
-  const { reward: willNotArriveConfetti } = useReward('confetti', 'emoji', { emoji: ['😭', '😢', '💔'], elementCount: 40 });
-
-  const router = useRouter();
-
-  const [showPreviousMatches, setShowPreviousMatches] = useState(false);
-
-  const toggleShowPreviousMatches = useCallback(() => {
-    setShowPreviousMatches((prev) => !prev);
-    stats.event(`Show previous matches`);
-  }, []);
-
-  const { data: user } = useUser();
+const Event = async ({ eventDetails, relatedMatches }: EventProps) => {
+  const user = await getSignedInUser();
   const userRegistration = eventDetails.registrations.find((registration) => registration.playerId === user?.id);
 
-  const userHasRegistrated = Boolean(userRegistration);
-  const { handleSubmit, control, watch } = useForm<FormDataProps>({
-    defaultValues: {
-      registration: userRegistration ? (userRegistration.willArrive ? '1' : '0') : '1',
-      reason: userRegistration?.reason || '',
-    },
-  });
-
-  const watchRegistration: number | string | undefined = watch('registration');
-  const [openRegistration, setOpenRegistration] = useState(false);
-  const onSubmit = useCallback(
-    async (formData: FormDataProps) => {
-      const data = {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        playerId: user!.id,
-        eventId: eventDetails.id,
-        ...(formData.reason && {
-          reason: formData.reason,
-        }),
-      };
-      const willArrive = formData.registration === '1';
-      if (userHasRegistrated) {
-        await axios.put(`/api/registration/${data.playerId}_${data.eventId}`, { data, willArrive });
-      } else {
-        await axios.post('/api/registration', { data, willArrive });
-      }
-      if (willArrive) {
-        willArriveConfetti();
-      } else {
-        willNotArriveConfetti();
-      }
-      setOpenRegistration(false);
-      router.refresh();
-    },
-    [eventDetails.id, router, user, userHasRegistrated, willArriveConfetti, willNotArriveConfetti],
-  );
-
-  const registrationDeadline =
-    eventDetails.eventTypeSlug in rules ? subHours(new Date(eventDetails.time), rules[eventDetails.eventTypeSlug].deadlines.signupBefore) : undefined;
-
   return (
-    <Stack
-      gap={1}
-      sx={{
-        background: ({ palette }) => palette.background[eventDetails.eventTypeSlug as keyof TypeBackground],
-        width: '100%',
-        height: 'auto',
-        p: 1,
-        borderRadius: 1,
-      }}>
+    <EventCard eventDetails={eventDetails}>
       <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
         <Typography component='span' variant='h3'>
           {getEventTitle(eventDetails).icon}
@@ -161,87 +73,11 @@ const Event = ({ eventDetails, relatedMatches }: EventProps) => {
 
       {((eventDetails.match && isPast(new Date(eventDetails.time))) || relatedMatches.length > 0) && <Divider sx={{ my: 0.5 }} />}
       {eventDetails.match && isPast(new Date(eventDetails.time)) && <MatchModal event={eventDetails} sx={{ my: -0.5 }} />}
-      {relatedMatches.length > 0 && (
-        <Stack gap={0.5}>
-          <Button color='menu' onClick={toggleShowPreviousMatches}>
-            {showPreviousMatches ? 'Skjul' : 'Vis'} tidligere oppgjør
-          </Button>
-          <Collapse in={showPreviousMatches} mountOnEnter unmountOnExit>
-            {relatedMatches.map((relatedMatch) => (
-              <MatchModal event={relatedMatch} key={relatedMatch.id} />
-            ))}
-          </Collapse>
-        </Stack>
-      )}
+      <EventRelatedMatches relatedMatches={relatedMatches} />
       <Divider sx={{ mt: 0.5 }} />
-      <NoSsr>
-        {userRegistration && (
-          <Typography fontWeight='bold' sx={{ mb: -0.5 }} textAlign='center' variant='body1'>
-            {userRegistration.willArrive ? '🤝 Du er påmeldt' : `😥 Du er avmeldt: ${userRegistration.reason}`}
-          </Typography>
-        )}
-        <Box component='span' id='confetti' sx={{ position: 'fixed', bottom: 0, left: '50%', translate: '-50% 0' }} />
-        {!eventDetails.teamId || eventDetails.teamId === user?.teamId ? (
-          <>
-            {!openRegistration ? (
-              <>
-                {isFuture(new Date(eventDetails.time)) && (
-                  <Button disabled={!user} onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'text' : 'contained'}>
-                    {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
-                  </Button>
-                )}
-                {registrationDeadline !== undefined && (
-                  <Typography sx={{ mt: -0.5 }} textAlign='center' variant='body2'>
-                    {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
-                      locale: nb,
-                      addSuffix: true,
-                    })} - kl. ${format(registrationDeadline, 'HH:mm')}`}
-                  </Typography>
-                )}
-              </>
-            ) : (
-              <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
-                {registrationDeadline !== undefined && isPast(registrationDeadline) && (
-                  <Alert severity='warning' variant='outlined'>
-                    Du vil få bot om du registrerer eller endrer registreringsstatus etter fristen. Oppdatering av grunn gir deg ikke bot.
-                  </Alert>
-                )}
-                <FormControl>
-                  <Controller
-                    control={control}
-                    name='registration'
-                    render={({ field: { value, onChange } }) => (
-                      <RadioGroup onChange={onChange} row value={value}>
-                        <FormControlLabel control={<Radio />} label='Kommer' value={1} />
-                        <FormControlLabel control={<Radio />} label='Kommer ikke' value={0} />
-                      </RadioGroup>
-                    )}
-                  />
-                </FormControl>
-                {watchRegistration === '0' && (
-                  <Controller
-                    control={control}
-                    name={'reason'}
-                    render={({ field: { onChange, value } }) => <TextField autoFocus label={'Grunn'} onChange={onChange} required value={value} />}
-                    rules={{ required: 'Du må oppgi en grunn' }}
-                  />
-                )}
-                <Button type='submit' variant='contained'>
-                  Bekreft
-                </Button>
-                <Button onClick={() => setOpenRegistration(false)} variant='text'>
-                  Avbryt
-                </Button>
-              </Stack>
-            )}
-          </>
-        ) : (
-          <Typography textAlign='center' variant='body2'>
-            Du er ikke en del av {eventDetails.team?.name} og kan dermed ikke registrere oppmøte. Kom og se på! 🏟️
-          </Typography>
-        )}
-      </NoSsr>
-    </Stack>
+
+      <EventRegistration eventDetails={eventDetails} player={user!} registration={userRegistration} />
+    </EventCard>
   );
 };
 

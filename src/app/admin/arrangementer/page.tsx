@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
+import { type ExtendedEvent, getEventsWhereFilter } from 'functions/event';
 import { prisma } from 'lib/prisma';
-import { type ExtendedEvent, getEventsWhereFilter } from 'queries';
 
 import { PageProps } from 'types';
 

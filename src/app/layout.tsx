@@ -1,8 +1,6 @@
 import { Container } from '@mui/material';
-import { Player } from '@prisma/client';
+import { getSignedInUser } from 'functions/getUser';
 import { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { AUTH_TOKEN_COOKIE_KEY, USER_STORAGE_KEY } from 'values';
 
 import { AdminHotKeys } from 'components/AdminHotKeys';
 import { Analytics } from 'components/Analytics';
@@ -17,26 +15,18 @@ export const metadata: Metadata = {
   viewport: { width: 'device-width', initialScale: 1 },
 };
 
-export const getUser = async () => {
-  const cookieStore = cookies();
-  const user = cookieStore.get(USER_STORAGE_KEY);
-  const authToken = cookieStore.get(AUTH_TOKEN_COOKIE_KEY);
-
-  return user && authToken ? (JSON.parse(user.value) as Player) : undefined;
-};
-
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const user = await getUser();
+  const user = await getSignedInUser();
   return (
     <html lang='en'>
       <body>
         <Analytics />
         <ThemeRegistry>
           <Container maxWidth='lg' sx={{ padding: 2 }}>
-            <NavBar user={user} />
-            <AdminHotKeys />
+            <NavBar />
+            {Boolean(user) && <AdminHotKeys />}
             {user ? children : <SignIn />}
-            <Footer user={user} />
+            <Footer />
           </Container>
         </ThemeRegistry>
       </body>

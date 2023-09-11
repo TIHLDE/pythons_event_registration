@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { Prisma } from '@prisma/client';
 import { addMonths, isFuture, parseISO, startOfToday } from 'date-fns';
 import { prisma } from 'lib/prisma';

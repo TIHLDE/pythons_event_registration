@@ -1,12 +1,9 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { OptionsType } from 'cookies-next/lib/types';
 import { hoursToSeconds } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import { cookies } from 'next/headers';
 import { isMemberOfPythonsGroup } from 'tihlde/memberships';
 import { AUTH_TOKEN_COOKIE_KEY, TIHLDE_API_URL, USER_STORAGE_KEY } from 'values';
-
-export type NextResponseRequest = Required<Pick<OptionsType, 'req' | 'res'>>;
 
 export const getAuthToken = (): string | undefined => {
   const token = cookies().get(AUTH_TOKEN_COOKIE_KEY);

@@ -5,8 +5,8 @@ declare global {
   function sum(a: number, b: number): number;
 }
 
-export interface PageProps {
-  params: { slug: string };
+export interface PageProps<Params extends Record<string, string> = Record<string, never>> {
+  params: Params;
   searchParams: { [key: string]: string | string[] | undefined };
 }
 

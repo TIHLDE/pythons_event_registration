@@ -1,6 +1,6 @@
 import { MatchEventType } from '@prisma/client';
 import { addMonths, endOfToday, getMonth, getYear, set, startOfToday } from 'date-fns';
-import { ExtendedEvent } from 'queries';
+import { ExtendedEvent } from 'functions/event';
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 

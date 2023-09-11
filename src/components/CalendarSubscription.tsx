@@ -1,23 +1,12 @@
-'use client';
-
 import CloudSyncIcon from '@mui/icons-material/CloudSyncRounded';
-import { NoSsr, styled, Typography } from '@mui/material';
-
-import { useUser } from 'hooks/useUser';
+import { Typography } from '@mui/material';
+import { getSignedInUser } from 'functions/getUser';
 
 import { StandaloneExpand, StandaloneExpandProps } from 'components/Expand';
+import { Pre } from 'components/Pre';
 
-export const Pre = styled('pre')(({ theme }) => ({
-  color: theme.palette.text.primary,
-  background: theme.palette.action.selected,
-  borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(2),
-  overflowX: 'auto',
-  userSelect: 'all',
-}));
-
-export const CalendarSubscription = (props: Partial<StandaloneExpandProps>) => {
-  const { data: user } = useUser();
+export const CalendarSubscription = async (props: Partial<StandaloneExpandProps>) => {
+  const user = await getSignedInUser();
 
   return (
     <StandaloneExpand icon={<CloudSyncIcon />} primary='Kalender-abonnement' secondary='Treninger, kamper og sosialt i din kalender' {...props}>
@@ -38,9 +27,7 @@ export const CalendarSubscription = (props: Partial<StandaloneExpandProps>) => {
         eller en annen kalender for å begynne å abonnere på arrangement-kalenderen din. Hvis arrangementer ikke oppdateres i kalenderen din umiddelbart, så kan
         det være fordi kalenderen sjelden ser etter oppdateringer. Oppdaterings-frekvensen varierer fra kalender til kalender, enkelte oppdateres kun daglig.
       </Typography>
-      <NoSsr>
-        <Pre>{`${typeof window !== 'undefined' ? window.location.origin : ''}/api/ics/${user?.tihlde_user_id}`}</Pre>
-      </NoSsr>
+      <Pre>{`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/api/ics/${user?.tihlde_user_id}`}</Pre>
     </StandaloneExpand>
   );
 };

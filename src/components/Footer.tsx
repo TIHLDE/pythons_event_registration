@@ -1,19 +1,8 @@
-'use client';
-
 import { Divider, Link, Stack, Typography } from '@mui/material';
-import { Player } from '@prisma/client';
-import { deleteCookie } from 'cookies-next';
-import { stats } from 'stats';
-import { AUTH_TOKEN_COOKIE_KEY, USER_STORAGE_KEY } from 'values';
+import { getSignedInUser } from 'functions/getUser';
 
-export type FooterProps = { user: Player | undefined };
-
-export const Footer = ({ user }: FooterProps) => {
-  const logout = () => {
-    deleteCookie(USER_STORAGE_KEY);
-    deleteCookie(AUTH_TOKEN_COOKIE_KEY);
-    stats.event('logout');
-  };
+export const Footer = async () => {
+  const user = await getSignedInUser();
   return (
     <Stack gap={2} sx={{ mx: 0, mt: 4 }}>
       <Divider />
@@ -28,7 +17,7 @@ export const Footer = ({ user }: FooterProps) => {
         {user && (
           <>
             {`  •  `}
-            <Link color='secondary' href='/' onClick={logout}>
+            <Link color='secondary' href='/api/auth/logout'>
               Logg ut
             </Link>
           </>

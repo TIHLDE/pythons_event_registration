@@ -2,9 +2,9 @@ import { Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { addWeeks, endOfWeek, format, getWeek, startOfWeek } from 'date-fns';
 import nb from 'date-fns/locale/nb';
+import { ExtendedEvent, getAllMatches, getEventsWithRegistrations } from 'functions/event';
 import { prisma } from 'lib/prisma';
 import type { Metadata } from 'next';
-import { ExtendedEvent, getAllMatches, getEventsWithRegistrations } from 'queries';
 import { compareTwoStrings } from 'string-similarity';
 
 import { PageProps } from 'types';

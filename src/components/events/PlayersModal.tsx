@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, Dialog, Stack, styled, TypeBackground, Typography } from '@mui/material';
 import { Event, Position, Prisma } from '@prisma/client';
 import Image from 'next/image';

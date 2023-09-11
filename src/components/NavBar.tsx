@@ -1,15 +1,12 @@
 import OpenInNewRounded from '@mui/icons-material/OpenInNewRounded';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Player } from '@prisma/client';
+import { getSignedInUser } from 'functions/getUser';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export type NavBarProps = {
-  user: Player | undefined;
-};
-
-const NavBar = ({ user }: NavBarProps) => {
+const NavBar = async () => {
+  const user = await getSignedInUser();
   return (
     <Stack gap={2} sx={{ mb: 2 }}>
       <Stack direction='row' gap={2} justifyContent='space-between'>

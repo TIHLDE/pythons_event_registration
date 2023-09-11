@@ -4,8 +4,8 @@ import { Box, Button, Chip, Divider, Typography, useTheme } from '@mui/material'
 import axios from 'axios';
 import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
+import { ExtendedEvent } from 'functions/event';
 import { useRouter } from 'next/navigation';
-import { ExtendedEvent } from 'queries';
 import { useState } from 'react';
 
 import ConfirmModal from 'components/ConfirmModal';
