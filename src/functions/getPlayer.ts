@@ -2,6 +2,7 @@ import 'server-only';
 
 import { Player } from '@prisma/client';
 import { minutesToSeconds } from 'date-fns';
+import { prisma } from 'lib/prisma';
 import { cache } from 'react';
 
 export const revalidate = minutesToSeconds(10);
