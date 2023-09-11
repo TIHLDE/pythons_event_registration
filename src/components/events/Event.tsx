@@ -5,8 +5,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { Box, Divider, Tooltip, Typography } from '@mui/material';
-import { format, isPast } from 'date-fns';
-import { nb } from 'date-fns/locale';
+import { isPast } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
 import { getSignedInUser } from 'functions/getUser';
 import { getEventTitle } from 'utils';
@@ -16,6 +15,7 @@ import EventRegistration from 'components/events/EventRegistration';
 import EventRelatedMatches from 'components/events/EventRelatedMatches';
 import MatchModal, { MatchModalProps } from 'components/events/MatchModal';
 import PlayersModal from 'components/events/PlayersModal';
+import { FormatDate } from 'components/FormatDate';
 
 export type EventProps = {
   eventDetails: ExtendedEvent;
@@ -40,9 +40,7 @@ const Event = async ({ eventDetails, relatedMatches }: EventProps) => {
           <WatchLaterIcon />
         </Tooltip>
         <Typography sx={{ textTransform: 'capitalize' }} variant='body1'>
-          {format(new Date(eventDetails.time), "EEEE dd. MMMM' 'HH:mm", {
-            locale: nb,
-          })}
+          <FormatDate time={eventDetails.time.toJSON()} />
         </Typography>
         <Tooltip title='Sted'>
           <LocationOnIcon />
