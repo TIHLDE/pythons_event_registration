@@ -1,10 +1,12 @@
+'use client';
+
 import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -22,7 +24,7 @@ const SignIn = () => {
     setError(undefined);
     try {
       await axios.post(`/api/auth`, data);
-      router.reload();
+      router.refresh();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setError(e.response?.data?.error || (e as Error).message);

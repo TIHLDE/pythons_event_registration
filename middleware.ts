@@ -4,9 +4,8 @@ import { AUTH_TOKEN_COOKIE_KEY } from 'values';
 
 export const middleware = (request: NextRequest) => {
   const hasAuthToken = request.cookies.get(AUTH_TOKEN_COOKIE_KEY) !== undefined;
-  const visitAdminButNotAdmin = false; // TODO: check if is admin before allowing access to /admin
 
-  if (!hasAuthToken || visitAdminButNotAdmin) {
+  if (!hasAuthToken) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 

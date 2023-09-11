@@ -1,7 +1,10 @@
 {
   "name": "tihlde-pythons",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "yarn generate && next build",
@@ -30,7 +33,6 @@
     "date-fns": "^2.30.0",
     "http-status-typed": "^1.0.1",
     "ics": "^3.4.0",
-    "lodash": "^4.17.21",
     "next": "^13.4.19",
     "prisma": "^5.2.0",
     "react": "18.2.0",
@@ -38,17 +40,13 @@
     "react-hook-form": "^7.43.9",
     "react-hotkeys-hook": "^3.4.6",
     "react-rewards": "^2.0.4",
-    "safe-json-stringify": "^1.2.0",
     "string-similarity": "^4.0.4",
-    "swr": "^2.1.5",
-    "ts-node": "^10.9.1"
+    "swr": "^2.1.5"
   },
   "devDependencies": {
     "@getbigger-io/prisma-fixtures-cli": "^2.0.1",
-    "@types/lodash": "^4.14.194",
     "@types/node": "^20.5.7",
     "@types/react": "^18.2.21",
-    "@types/safe-json-stringify": "^1.1.2",
     "@types/string-similarity": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",

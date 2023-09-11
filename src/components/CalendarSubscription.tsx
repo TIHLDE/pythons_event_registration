@@ -1,3 +1,5 @@
+'use client';
+
 import CloudSyncIcon from '@mui/icons-material/CloudSyncRounded';
 import { NoSsr, styled, Typography } from '@mui/material';
 
