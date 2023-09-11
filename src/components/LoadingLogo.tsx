@@ -12,9 +12,11 @@ const pulsate = keyframes({
     transform: 'scale(1)',
   },
 });
+
 const LoadingLogo = () => (
-  <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <Box alt='Logo' component={Image} height={75.25} src='/pythons.png' sx={{ animation: `${pulsate} 2s infinite` }} width={50} />
+  <Box
+    sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', '& img': { animation: `${pulsate} 2s infinite` } }}>
+    <Image alt='Logo' height={75.25} src='/pythons.png' width={50} />
   </Box>
 );
 

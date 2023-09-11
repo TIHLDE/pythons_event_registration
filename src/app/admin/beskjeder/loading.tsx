@@ -1,12 +1,3 @@
-import { CircularProgress, Stack, Typography } from '@mui/material';
+import PageLoader from 'components/PageLoader';
 
-const AdminLoading = async () => {
-  return (
-    <Stack gap={1} sx={{ alignItems: 'center' }}>
-      <CircularProgress />
-      <Typography sx={{ fontStyle: 'italic' }}>Laster inn beskjeder</Typography>
-    </Stack>
-  );
-};
-
-export default AdminLoading;
+export default PageLoader('beskjeder');

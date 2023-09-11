@@ -30,10 +30,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang='en'>
       <body>
+        <Analytics />
         <ThemeRegistry>
           <Container maxWidth='lg' sx={{ padding: 2 }}>
             <NavBar user={user} />
-            <Analytics />
             <AdminHotKeys />
             {user ? children : <SignIn />}
             <Footer user={user} />
