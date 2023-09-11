@@ -1,8 +1,9 @@
 import { Prisma } from '@prisma/client';
+import { addMonths, isFuture, parseISO, startOfToday } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import { NextApiRequest } from 'next';
-
-import { getEventsWhereFilter } from 'components/EventsFilters';
+import { ParsedUrlQuery } from 'querystring';
+import { getSemesters } from 'utils';
 
 export type ExtendedEvent = Prisma.EventGetPayload<{
   include: {
@@ -47,6 +48,34 @@ export type ExtendedEvent = Prisma.EventGetPayload<{
       };
     };
   }>[];
+};
+
+const DEFAULT_FROM_DATE = startOfToday();
+const DEFAULT_TO_DATE = addMonths(DEFAULT_FROM_DATE, 4);
+
+export const getEventsWhereFilter = ({ query }: { query: ParsedUrlQuery }): Prisma.EventFindManyArgs => {
+  const semesters = getSemesters();
+  const semester = typeof query.semester === 'string' && query.semester !== '' ? semesters.find((semester) => semester.id === query.semester) : undefined;
+  const dateFrom = semester ? semester.from : typeof query.from === 'string' && query.from !== '' ? parseISO(query.from) : DEFAULT_FROM_DATE;
+  const dateTo = semester ? semester.to : typeof query.to === 'string' && query.to !== '' ? parseISO(query.to) : DEFAULT_TO_DATE;
+  const eventTypeFilter = semester ? 'kamp' : typeof query.eventType === 'string' && query.eventType !== '' ? query.eventType : undefined;
+  const teamFilter = typeof query.team === 'string' && query.team !== '' ? query.team : undefined;
+
+  return {
+    where: {
+      AND: {
+        time: {
+          gte: dateFrom,
+          lte: dateTo,
+        },
+        eventTypeSlug: eventTypeFilter ? { in: eventTypeFilter.split(',') } : undefined,
+      },
+      ...(teamFilter ? { OR: [{ teamId: null }, { teamId: Number(teamFilter) }] } : {}),
+    },
+    orderBy: {
+      time: isFuture(dateTo) ? 'asc' : 'desc',
+    },
+  };
 };
 
 export const getAllMatches = async (): Promise<Prisma.EventGetPayload<{ include: { type: true; team: true; match: true } }>[]> => {

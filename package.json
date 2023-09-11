@@ -38,7 +38,6 @@
     "react-hook-form": "^7.43.9",
     "react-hotkeys-hook": "^3.4.6",
     "react-rewards": "^2.0.4",
-    "safe-json-stringify": "^1.2.0",
     "string-similarity": "^4.0.4",
     "swr": "^2.1.5",
     "ts-node": "^10.9.1"
@@ -48,7 +47,6 @@
     "@types/lodash": "^4.14.194",
     "@types/node": "^20.5.7",
     "@types/react": "^18.2.21",
-    "@types/safe-json-stringify": "^1.1.2",
     "@types/string-similarity": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",

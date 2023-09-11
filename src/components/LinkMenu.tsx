@@ -1,6 +1,8 @@
+'use client';
+
 import { Button, Stack, StackProps } from '@mui/material';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { useCallback } from 'react';
 
 export type LinkMenuProps = StackProps & {
@@ -11,9 +13,9 @@ export type LinkMenuProps = StackProps & {
 };
 
 export const LinkMenu = ({ routes, ...props }: LinkMenuProps) => {
-  const router = useRouter();
+  const pathname = usePathname();
 
-  const isCurrentRoute = useCallback((href: string) => href === router.pathname, [router]);
+  const isCurrentRoute = useCallback((href: string) => href === pathname, [pathname]);
 
   return (
     <Stack direction='row' gap={1} {...props}>
