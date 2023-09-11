@@ -1,6 +1,5 @@
 import { Box, Dialog, Stack, styled, TypeBackground, Typography } from '@mui/material';
 import { Event, Position, Prisma } from '@prisma/client';
-import filter from 'lodash/filter';
 import Image from 'next/image';
 import useSWR from 'swr';
 import { fetcher } from 'utils';
@@ -35,7 +34,7 @@ const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) =>
 
   const groupedPlayers = positions.map((position) => ({
     ...position,
-    players: filter(registrations, ['player.positionId', position.id]),
+    players: registrations.filter((registration) => registration.player.positionId === position.id),
   }));
 
   return (

@@ -10,8 +10,8 @@ import { compareTwoStrings } from 'string-similarity';
 import { PageProps } from 'types';
 
 import { CalendarSubscription } from 'components/CalendarSubscription';
-import Event from 'components/Event';
-import { EventsFilters } from 'components/EventsFilters';
+import Event from 'components/events/Event';
+import { EventsFilters } from 'components/events/EventsFilters';
 import { MatchModalProps } from 'components/events/MatchModal';
 import { ExtendedNotification } from 'components/messages/AdminMessage';
 import AlertMessage from 'components/messages/AlertMessage';

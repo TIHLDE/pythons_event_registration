@@ -5,8 +5,8 @@ import { type ExtendedEvent, getEventsWhereFilter } from 'queries';
 import { PageProps } from 'types';
 
 import AdminEvent from 'components/events/AdminEvent';
+import { EventsFilters } from 'components/events/EventsFilters';
 import { NewEventModal } from 'components/events/NewEventModal';
-import { EventsFilters } from 'components/EventsFilters';
 
 const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
   const events = (await prisma.event.findMany({
