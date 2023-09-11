@@ -1,7 +1,10 @@
 {
   "name": "tihlde-pythons",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "yarn generate && next build",
