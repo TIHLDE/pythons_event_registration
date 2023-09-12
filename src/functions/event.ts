@@ -2,6 +2,7 @@ import 'server-only';
 
 import { Prisma } from '@prisma/client';
 import { addMonths, isFuture, parseISO, startOfToday } from 'date-fns';
+import { getPlayers } from 'functions/getPlayers';
 import { prisma } from 'lib/prisma';
 import { NextApiRequest } from 'next';
 import { ParsedUrlQuery } from 'querystring';
@@ -11,11 +12,7 @@ export type ExtendedEvent = Prisma.EventGetPayload<{
   include: {
     registrations: {
       include: {
-        player: {
-          include: {
-            position: true;
-          };
-        };
+        player: true;
       };
     };
     type: true;
@@ -25,29 +22,17 @@ export type ExtendedEvent = Prisma.EventGetPayload<{
 }> & {
   willArrive: Prisma.RegistrationsGetPayload<{
     include: {
-      player: {
-        include: {
-          position: true;
-        };
-      };
+      player: true;
     };
   }>[];
   willNotArrive: Prisma.RegistrationsGetPayload<{
     include: {
-      player: {
-        include: {
-          position: true;
-        };
-      };
+      player: true;
     };
   }>[];
   hasNotResponded: Prisma.RegistrationsGetPayload<{
     include: {
-      player: {
-        include: {
-          position: true;
-        };
-      };
+      player: true;
     };
   }>[];
 };
@@ -80,19 +65,6 @@ export const getEventsWhereFilter = ({ query }: { query: ParsedUrlQuery }): Pris
   };
 };
 
-export const getAllMatches = async (): Promise<Prisma.EventGetPayload<{ include: { type: true; team: true; match: true } }>[]> => {
-  return prisma.event.findMany({
-    include: {
-      match: true,
-      team: true,
-      type: true,
-    },
-    where: {
-      eventTypeSlug: 'kamp',
-    },
-  });
-};
-
 export const getEventsWithRegistrations = async ({ query }: Pick<NextApiRequest, 'query'>): Promise<ExtendedEvent[]> => {
   const allFutureEventsQuery = prisma.event.findMany({
     include: {
@@ -101,11 +73,7 @@ export const getEventsWithRegistrations = async ({ query }: Pick<NextApiRequest,
       type: true,
       registrations: {
         include: {
-          player: {
-            include: {
-              position: true,
-            },
-          },
+          player: true,
         },
       },
     },
@@ -113,14 +81,7 @@ export const getEventsWithRegistrations = async ({ query }: Pick<NextApiRequest,
     ...(getEventsWhereFilter({ query }) as {}),
   });
 
-  const activePlayersQuery = prisma.player.findMany({
-    where: {
-      active: true,
-    },
-    orderBy: { name: 'asc' },
-  });
-
-  const [allFutureEvents, activePlayers] = await Promise.all([allFutureEventsQuery, activePlayersQuery]);
+  const [allFutureEvents, activePlayers] = await Promise.all([allFutureEventsQuery, getPlayers()]);
 
   const eventsWithRegistrations = allFutureEvents.map((event) => {
     const willArrive = event.registrations.filter((registration) => registration.willArrive).sort((a, b) => a.player.name.localeCompare(b.player.name));

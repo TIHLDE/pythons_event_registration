@@ -43,7 +43,7 @@ export const StandaloneExpand = ({
 
   return (
     <Paper sx={{ p: 0, overflow: 'hidden', ...sx }} {...props}>
-      <ListItem disablePadding {...listItemProps}>
+      <ListItem component='div' disablePadding {...listItemProps}>
         <ListItemButton onClick={() => (onExpand ? onExpand(!(expanded !== undefined ? expanded : isExpanded)) : setExpanded((prev) => !prev))}>
           <ListItemIcon sx={{ minWidth: 35 }}>{icon}</ListItemIcon>
           <ListItemText primary={primary} secondary={secondary} />

@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { Player } from '@prisma/client';
-import { getPlayer } from 'functions/getPlayer';
+import { getPlayer } from 'functions/getPlayers';
 import { cookies } from 'next/headers';
 import { AUTH_TOKEN_COOKIE_KEY, USER_STORAGE_KEY } from 'values';
 

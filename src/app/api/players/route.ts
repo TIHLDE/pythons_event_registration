@@ -1,9 +1,9 @@
-import { prisma } from 'lib/prisma';
+import { getPlayers } from 'functions/getPlayers';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async () => {
-  const players = await prisma.player.findMany({ where: { active: true } });
+  const players = await getPlayers();
   return NextResponse.json(players);
 };
