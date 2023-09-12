@@ -15,9 +15,8 @@
     "generate": "npx prisma generate",
     "push": "npx prisma db push",
     "migrate": "npx prisma migrate dev --name",
-    "fixtures": "npx fixtures ./src/fixtures",
     "createdb": "docker run --name event_registration -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres",
-    "fresh": "docker rm -f -v event_registration && yarn createdb && sleep 1 && yarn push && yarn generate && yarn fixtures"
+    "fresh": "docker rm -f -v event_registration && yarn createdb && sleep 1 && yarn push && yarn generate"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
@@ -44,7 +43,6 @@
     "string-similarity": "^4.0.4"
   },
   "devDependencies": {
-    "@getbigger-io/prisma-fixtures-cli": "^2.0.1",
     "@types/node": "^20.5.7",
     "@types/react": "^18.2.21",
     "@types/string-similarity": "^4.0.0",

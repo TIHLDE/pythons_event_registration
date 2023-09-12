@@ -8,7 +8,7 @@ Add the following .env-variables:
 DATABASE_URL=postgresql://postgres:docker@localhost:5432/event_registration
 ```
 
-Run `yarn` to install packages, `yarn fresh` to setup the databse and load fixtures. Finally run `yarn dev` to run the project.
+Run `yarn` to install packages, `yarn fresh` to setup the databse, and finally run `yarn dev` to run the project.
 
 ## Migrations
 
