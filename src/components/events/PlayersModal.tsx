@@ -1,12 +1,11 @@
 'use client';
 
 import { Box, Dialog, Stack, styled, TypeBackground, Typography } from '@mui/material';
-import { Event, Position, Prisma } from '@prisma/client';
+import { Event, Prisma } from '@prisma/client';
 import Image from 'next/image';
-import useSWR from 'swr';
-import { fetcher } from 'utils';
 
 import { useModal } from 'hooks/useModal';
+import { usePositions } from 'hooks/useQuery';
 
 import LoadingLogo from 'components/LoadingLogo';
 
@@ -31,7 +30,7 @@ export type PlayersModalProps = {
 };
 
 const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) => {
-  const { data: positions = [] } = useSWR<Position[]>('/api/positions', fetcher);
+  const { data: positions = [] } = usePositions();
   const { modalOpen, handleOpenModal, handleCloseModal } = useModal(false);
 
   const groupedPlayers = positions.map((position) => ({

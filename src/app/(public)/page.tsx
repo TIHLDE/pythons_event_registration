@@ -31,17 +31,9 @@ const getYearWeek = (time: Date) =>
 
 const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
   const notificationsQuery = prisma.notification.findMany({
-    where: {
-      expiringDate: {
-        gt: new Date(),
-      },
-    },
-    orderBy: {
-      expiringDate: 'asc',
-    },
-    include: {
-      author: true,
-    },
+    where: { expiringDate: { gt: new Date() } },
+    orderBy: { expiringDate: 'asc' },
+    include: { author: true },
   });
 
   const [eventsWithRegistrations, allMatches, notifications] = await Promise.all([
@@ -58,38 +50,30 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
     })
     .reduce<Record<number, MatchModalProps['event'][]>>((obj, item) => ((obj[item.eventId] = item.matches), obj), {});
 
-  const groupedEvents = eventsWithRegistrations.reduce(
-    (acc, event) => {
-      const thisYearWeek = getYearWeek(new Date());
-      const nextYearWeek = getYearWeek(addWeeks(new Date(), 1));
-      let yearWeek = getYearWeek(event.time);
-      if (thisYearWeek === yearWeek) {
-        yearWeek = 'Denne uken';
-      }
-      if (nextYearWeek === yearWeek) {
-        yearWeek = 'Neste uke';
-      }
+  const groupedEvents = eventsWithRegistrations.reduce<Record<string, Array<ExtendedEvent>>>((acc, event) => {
+    const thisYearWeek = getYearWeek(new Date());
+    const nextYearWeek = getYearWeek(addWeeks(new Date(), 1));
+    let yearWeek = getYearWeek(event.time);
+    if (thisYearWeek === yearWeek) {
+      yearWeek = 'Denne uken';
+    }
+    if (nextYearWeek === yearWeek) {
+      yearWeek = 'Neste uke';
+    }
 
-      if (!acc[yearWeek]) {
-        acc[yearWeek] = [];
-      }
+    if (!acc[yearWeek]) {
+      acc[yearWeek] = [];
+    }
 
-      acc[yearWeek].push(event);
-      return acc;
-    },
-    {} as Record<string, Array<ExtendedEvent>>,
-  );
+    acc[yearWeek].push(event);
+    return acc;
+  }, {});
 
-  return {
-    eventsRelatedMatches,
-    events: eventsWithRegistrations,
-    groupedEvents,
-    notifications,
-  };
+  return { eventsRelatedMatches, groupedEvents, notifications };
 };
 
 const Home = async ({ searchParams }: PageProps) => {
-  const { events, eventsRelatedMatches, groupedEvents, notifications } = await getData({ searchParams });
+  const { eventsRelatedMatches, groupedEvents, notifications } = await getData({ searchParams });
 
   return (
     <Stack gap={2}>
@@ -97,7 +81,7 @@ const Home = async ({ searchParams }: PageProps) => {
         <AlertMessage key={notification.id} notification={notification} />
       ))}
       <EventsFilters />
-      {!events.length && <Typography>Ingen kommende arrangementer</Typography>}
+      {!Object.keys(groupedEvents).length && <Typography>Ingen kommende arrangementer</Typography>}
       {Object.keys(groupedEvents).map((group) => (
         <Stack gap={1} key={group}>
           <Typography variant='h3'>{group}</Typography>

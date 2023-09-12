@@ -13,8 +13,8 @@ import { Player, Position } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
-import useSWR from 'swr';
-import { fetcher } from 'utils';
+
+import { usePositions } from 'hooks/useQuery';
 
 export type ChangePositionModalProps = {
   player: Pick<Player, 'id' | 'positionId'>;
@@ -41,7 +41,7 @@ const ChangePositionModal = ({ open, handleClose, title, description, player }: 
     router.refresh();
   };
 
-  const { data: positions } = useSWR('/api/positions', fetcher);
+  const { data: positions = [] } = usePositions();
   return (
     <Dialog onClose={handleClose} open={open}>
       <Stack gap={2}>
@@ -55,7 +55,7 @@ const ChangePositionModal = ({ open, handleClose, title, description, player }: 
               name='position'
               render={({ field: { onChange, value } }) => (
                 <Select label='Posisjon' onChange={onChange} value={value}>
-                  {positions?.map((position: Position) => (
+                  {positions.map((position: Position) => (
                     <MenuItem key={position.id} value={position.id}>
                       {position.title}
                     </MenuItem>

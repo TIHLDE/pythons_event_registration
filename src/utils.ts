@@ -2,7 +2,7 @@ import { MatchEventType } from '@prisma/client';
 import { addMonths, endOfToday, getMonth, getYear, set, startOfToday } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
 
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+export const fetcher = <Type = unknown>(url: string) => fetch(url).then((res) => res.json()) as Promise<Type>;
 
 export type Semester = {
   id: string;

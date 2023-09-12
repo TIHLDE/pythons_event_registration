@@ -1,20 +1,12 @@
 'use client';
 
-// eslint-disable-no-explicit-any
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import { Button, Dialog, FormControl, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material';
 import { Player, Team } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
-import useSWR from 'swr';
-import { fetcher } from 'utils';
+
+import { useTeams } from 'hooks/useQuery';
 
 export type ChangeTeamModalProps = {
   player: Pick<Player, 'id' | 'teamId'>;
@@ -39,7 +31,7 @@ const ChangeTeamModal = ({ open, handleClose, title, description, player }: Chan
     handleClose();
     router.refresh();
   };
-  const { data: teams } = useSWR<Team[]>('/api/teams', fetcher);
+  const { data: teams = [] } = useTeams();
   return (
     <Dialog onClose={handleClose} open={open}>
       <Stack gap={2}>
@@ -53,7 +45,7 @@ const ChangeTeamModal = ({ open, handleClose, title, description, player }: Chan
               name='team'
               render={({ field: { onChange, value } }) => (
                 <Select label='Lag' onChange={onChange} value={value}>
-                  {teams?.map((team) => (
+                  {teams.map((team) => (
                     <MenuItem key={team.id} value={team.id}>
                       {team.name}
                     </MenuItem>

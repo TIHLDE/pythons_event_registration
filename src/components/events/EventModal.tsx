@@ -1,15 +1,14 @@
 'use client';
 
 import { Button, Dialog, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
-import { EventType, Team } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { setMinutes } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
-import useSWR from 'swr';
-import { fetcher } from 'utils';
+
+import { useEventType, useTeams } from 'hooks/useQuery';
 
 export type EventModalProps = {
   event?: ExtendedEvent;
@@ -38,8 +37,8 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
       team: event?.teamId || null,
     },
   });
-  const { data: eventTypes } = useSWR('/api/eventType', fetcher);
-  const { data: teams } = useSWR<Team[]>('/api/teams', fetcher);
+  const { data: eventTypes = [] } = useEventType();
+  const { data: teams = [] } = useTeams();
   const watchEventType = watch('eventTypeSlug');
   const router = useRouter();
 
@@ -70,7 +69,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
               <FormControl disabled={Boolean(event)} fullWidth>
                 <InputLabel id='selectType-label'>Type</InputLabel>
                 <Select id='selectType' labelId='selectType-label' required {...field} label='Type'>
-                  {eventTypes?.map((eventType: EventType) => (
+                  {eventTypes.map((eventType) => (
                     <MenuItem key={eventType.slug} value={eventType.slug}>
                       {eventType.name}
                     </MenuItem>

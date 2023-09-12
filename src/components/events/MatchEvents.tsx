@@ -1,11 +1,13 @@
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
-import { MatchEvent, MatchEventType, Player, Position, Prisma } from '@prisma/client';
+import { MatchEvent, MatchEventType, Player, Prisma } from '@prisma/client';
 import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
-import useSWR from 'swr';
-import { fetcher, MATCH_EVENT_TYPES } from 'utils';
+import { MATCH_EVENT_TYPES } from 'utils';
+
+import { useMatchEvents, usePlayers, usePositions } from 'hooks/useQuery';
 
 import ConfirmModal from 'components/ConfirmModal';
+import LoadingLogo from 'components/LoadingLogo';
 
 export type MatchEventsProps = {
   isAdmin?: boolean;
@@ -32,42 +34,42 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
 
   const selectedPlayer = watch('player');
 
-  const { data: matchEvents, mutate } = useSWR<Prisma.MatchEventGetPayload<{ include: { player: true } }>[], FormData>(
-    `/api/matches/${event.match?.id}/events`,
-    fetcher,
-  );
-  const { data: teamPlayers = [], isValidating: isPlayersLoading } = useSWR<Player[]>(`/api/players`, fetcher);
-  const { data: positions = [], isValidating: isPositionsLoading } = useSWR<Position[]>('/api/positions', fetcher);
+  const { data: matchEvents, refetch } = useMatchEvents(event.match?.id ?? -1, { enabled: Boolean(event.match?.id) });
+  const { data: players = [], isLoading: isPlayersLoading } = usePlayers({ enabled: isAdmin });
+  const { data: positions = [], isLoading: isPositionsLoading } = usePositions();
 
   const onSubmit = async (data: FormData) => {
     if (!data.player) {
       return;
     }
-    return axios.post(`/api/matches/${event.match?.id}/events`, { data: { type: data.type, playerId: data.player.id } }).then(() => {
-      mutate();
-      setValue('player', null);
-    });
+    await axios.post(`/api/matches/${event.match?.id}/events`, { data: { type: data.type, playerId: data.player.id } });
+    refetch();
+    setValue('player', null);
   };
-  const deleteMatchEvent = async (id: MatchEvent['id']) =>
-    axios.delete(`/api/matches/${event.match?.id}/events/${id}`).then(() => {
-      mutate();
-    });
+  const deleteMatchEvent = async (id: MatchEvent['id']) => {
+    await axios.delete(`/api/matches/${event.match?.id}/events/${id}`);
+    refetch();
+  };
 
   return (
     <Stack gap={1}>
-      {matchEvents && matchEvents.length ? (
-        matchEvents.map((matchEvent) => (
-          <Typography key={matchEvent.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <span>{`${MATCH_EVENT_TYPES[matchEvent.type]} - ${matchEvent.player.name}`}</span>
-            {isAdmin && (
-              <ConfirmModal color='error' onConfirm={() => deleteMatchEvent(matchEvent.id)} size='small' title='Slett hendelse' variant='outlined'>
-                Slett
-              </ConfirmModal>
-            )}
-          </Typography>
-        ))
+      {matchEvents ? (
+        matchEvents.length ? (
+          matchEvents.map((matchEvent) => (
+            <Typography key={matchEvent.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <span>{`${MATCH_EVENT_TYPES[matchEvent.type]} - ${matchEvent.player.name}`}</span>
+              {isAdmin && (
+                <ConfirmModal color='error' onConfirm={() => deleteMatchEvent(matchEvent.id)} size='small' title='Slett hendelse' variant='outlined'>
+                  Slett
+                </ConfirmModal>
+              )}
+            </Typography>
+          ))
+        ) : (
+          <Typography>Ingen hendelser er registrert</Typography>
+        )
       ) : (
-        <Typography>Ingen hendelser er registrert</Typography>
+        <LoadingLogo />
       )}
       {isAdmin && (
         <Stack
@@ -107,7 +109,7 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
                   isOptionEqualToValue={(option, value) => option.id === value?.id}
                   noOptionsText='Fant ingen spillere med dette navnet'
                   onChange={(_, value) => onChange(value)}
-                  options={teamPlayers
+                  options={players
                     .sort((a, b) => a.positionId - b.positionId)
                     .map((player) => ({ ...player, position: positions.find((pos) => pos.id === player.positionId)?.title || 'Annet' }))}
                   renderInput={(params) => (

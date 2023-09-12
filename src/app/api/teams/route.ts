@@ -1,10 +1,11 @@
+import { getTeams } from 'functions/getTeams';
 import { prisma } from 'lib/prisma';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async () => {
-  const teams = await prisma.team.findMany();
+  const teams = await getTeams();
   return NextResponse.json(teams);
 };
 

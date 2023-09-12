@@ -2,13 +2,13 @@
 
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, StackProps, TextField } from '@mui/material';
-import { EventType, Team } from '@prisma/client';
 import { addMonths, startOfToday } from 'date-fns';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import useSWR from 'swr';
-import { fetcher, getSemesters, removeFalsyElementsFromObject } from 'utils';
+import { getSemesters, removeFalsyElementsFromObject } from 'utils';
+
+import { useEventType, useTeams } from 'hooks/useQuery';
 
 import { StandaloneExpand } from 'components/Expand';
 
@@ -35,8 +35,8 @@ export const EventsFilters = (props: StackProps) => {
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<'all' | 'matches'>(typeof searchParams.get('semester') === 'string' ? 'matches' : 'all');
-  const { data: teams = [] } = useSWR<Team[]>('/api/teams', fetcher);
-  const { data: eventTypes = [] } = useSWR<EventType[]>(view === 'all' ? '/api/eventType' : null, fetcher);
+  const { data: eventTypes = [] } = useEventType();
+  const { data: teams = [] } = useTeams();
   const [matchesFilters, setMatchesFilters] = useState<MatchesFilters>({
     semester: typeof searchParams.get('semester') === 'string' ? searchParams.get('semester')! : '',
     team: typeof searchParams.get('team') === 'string' ? searchParams.get('team')! : '',
