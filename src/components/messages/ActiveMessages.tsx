@@ -1,5 +1,7 @@
 import { Alert } from '@mui/material';
 import Typography from '@mui/material/Typography';
+import { getActiveNotifications } from 'functions/getActiveNotifications';
+import { Suspense } from 'react';
 
 import { ExtendedNotification } from 'components/messages/AdminMessage';
 
@@ -17,4 +19,14 @@ const AlertMessage = ({ notification }: AlertMessageProps) => {
     </Alert>
   );
 };
-export default AlertMessage;
+
+export const ActiveMessages = async () => {
+  const notifications = await getActiveNotifications();
+  return (
+    <Suspense fallback={null}>
+      {notifications.map((notification: ExtendedNotification) => (
+        <AlertMessage key={notification.id} notification={notification} />
+      ))}
+    </Suspense>
+  );
+};

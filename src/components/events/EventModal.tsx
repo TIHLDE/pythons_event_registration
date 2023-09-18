@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Dialog, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Close } from '@mui/icons-material';
+import { Button, Dialog, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { setMinutes } from 'date-fns';
@@ -61,7 +62,12 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
     <Dialog onClose={handleClose} open={open}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
-          <Typography variant='h2'>{title}</Typography>
+          <Stack direction='row' justifyContent='space-between' spacing={2} sx={{ alignItems: 'center' }}>
+            <Typography variant='h2'>{title}</Typography>
+            <IconButton onClick={handleClose}>
+              <Close />
+            </IconButton>
+          </Stack>
           <Controller
             control={control}
             name='eventTypeSlug'

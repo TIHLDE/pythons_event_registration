@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Button, ButtonProps, Dialog, Stack, TextField, TypeBackground, Typography } from '@mui/material';
+import { Close } from '@mui/icons-material';
+import { Box, Button, ButtonProps, Dialog, IconButton, Stack, TextField, TypeBackground, Typography } from '@mui/material';
 import { Match, Prisma } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
@@ -75,7 +76,12 @@ const MatchModal = ({ event, isAdmin = false, sx, ...props }: MatchModalProps) =
         open={open}
         sx={{ '& .MuiPaper-root': { background: ({ palette }) => palette.background[event.eventTypeSlug as keyof TypeBackground] } }}>
         <Stack gap={1}>
-          <Typography variant='h2'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</Typography>
+          <Stack direction='row' justifyContent='space-between' spacing={2} sx={{ alignItems: 'center' }}>
+            <Typography variant='h2'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</Typography>
+            <IconButton onClick={handleClose}>
+              <Close />
+            </IconButton>
+          </Stack>
           <Typography sx={{ textTransform: 'capitalize' }} variant='body2'>
             {format(new Date(event.time), "EEEE dd. MMMM yyyy' 'HH:mm", {
               locale: nb,

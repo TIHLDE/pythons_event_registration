@@ -1,5 +1,5 @@
 import { Tooltip, Typography } from '@mui/material';
-import { hoursToSeconds, isAfter, parseJSON, subMinutes } from 'date-fns';
+import { endOfDay, hoursToSeconds, isAfter, isPast, parseJSON, subMinutes } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
 import Image from 'next/image';
 
@@ -18,6 +18,9 @@ const getCoordinates = (eventTypeSlug: ExtendedEvent['eventTypeSlug']) => {
 };
 
 const getData = async (eventDetails: ExtendedEvent) => {
+  if (isPast(endOfDay(eventDetails.time))) {
+    return null;
+  }
   const coordinates = getCoordinates(eventDetails.eventTypeSlug);
   const response = await fetch(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${coordinates.lat}&lon=${coordinates.lon}`, {
     headers: {
@@ -51,7 +54,9 @@ export type EventWeatherProps = {
 
 const EventWeather = async ({ eventDetails }: EventWeatherProps) => {
   const data = await getData(eventDetails);
-  if (!data) return null;
+  if (!data) {
+    return null;
+  }
 
   return (
     <>

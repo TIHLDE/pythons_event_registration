@@ -4,7 +4,6 @@ import { addWeeks, endOfWeek, format, getWeek, startOfWeek } from 'date-fns';
 import nb from 'date-fns/locale/nb';
 import { ExtendedEvent, getEventsWithRegistrations } from 'functions/event';
 import { getAllMatches } from 'functions/getAllMatches';
-import { prisma } from 'lib/prisma';
 import type { Metadata } from 'next';
 import { compareTwoStrings } from 'string-similarity';
 
@@ -14,8 +13,7 @@ import { CalendarSubscription } from 'components/CalendarSubscription';
 import Event from 'components/events/Event';
 import { EventsFilters } from 'components/events/EventsFilters';
 import { MatchModalProps } from 'components/events/MatchModal';
-import { ExtendedNotification } from 'components/messages/AdminMessage';
-import AlertMessage from 'components/messages/AlertMessage';
+import { ActiveMessages } from 'components/messages/ActiveMessages';
 
 export const metadata: Metadata = {
   title: 'Kalender - TIHLDE Pythons',
@@ -31,17 +29,7 @@ const getYearWeek = (time: Date) =>
   )})`;
 
 const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
-  const notificationsQuery = prisma.notification.findMany({
-    where: { expiringDate: { gt: new Date() } },
-    orderBy: { expiringDate: 'asc' },
-    include: { author: true },
-  });
-
-  const [eventsWithRegistrations, allMatches, notifications] = await Promise.all([
-    getEventsWithRegistrations({ query: searchParams }),
-    getAllMatches(),
-    notificationsQuery,
-  ]);
+  const [eventsWithRegistrations, allMatches] = await Promise.all([getEventsWithRegistrations({ query: searchParams }), getAllMatches()]);
 
   const eventsRelatedMatches = eventsWithRegistrations
     .filter((event) => event.eventTypeSlug === 'kamp')
@@ -70,19 +58,17 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
     return acc;
   }, {});
 
-  return { eventsRelatedMatches, groupedEvents, notifications };
+  return { eventsRelatedMatches, groupedEvents };
 };
 
 const Home = async ({ searchParams }: PageProps) => {
-  const { eventsRelatedMatches, groupedEvents, notifications } = await getData({ searchParams });
+  const { eventsRelatedMatches, groupedEvents } = await getData({ searchParams });
 
   return (
     <Stack gap={2}>
-      {notifications.map((notification: ExtendedNotification) => (
-        <AlertMessage key={notification.id} notification={notification} />
-      ))}
+      <ActiveMessages />
       <EventsFilters />
-      {!Object.keys(groupedEvents).length && <Typography>Ingen kommende arrangementer</Typography>}
+      {!Object.keys(groupedEvents).length && <Typography>Fant ingen arrangementer med denne filtrering</Typography>}
       {Object.keys(groupedEvents).map((group) => (
         <Stack gap={1} key={group}>
           <Typography variant='h3'>{group}</Typography>

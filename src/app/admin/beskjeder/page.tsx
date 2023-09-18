@@ -1,34 +1,17 @@
 import { Divider, Stack, Typography } from '@mui/material';
-import { prisma } from 'lib/prisma';
+import { getActiveNotifications } from 'functions/getActiveNotifications';
 
 import AdminMessage from 'components/messages/AdminMessage';
 import NewMessage from 'components/messages/NewMessage';
 
-const getData = async () => {
-  const messages = await prisma.notification.findMany({
-    where: {
-      expiringDate: {
-        gt: new Date(),
-      },
-    },
-    include: {
-      author: true,
-    },
-    orderBy: {
-      expiringDate: 'asc',
-    },
-  });
-
-  return { messages };
-};
-
 const Messages = async () => {
-  const { messages } = await getData();
+  const messages = await getActiveNotifications();
   return (
     <Stack direction='column' gap={1}>
       <Divider />
       <Typography sx={{ whiteSpace: 'break-spaces' }} variant='body1'>
-        {`Beskjeder vises på forsiden frem til tidspunktet du angir. Det vil stå hvem som har skrevet beskjeden. Beskjeder kan både endres og slettes etter publisering.`}
+        Beskjeder vises på forsiden frem til tidspunktet du angir. Det vil stå hvem som har skrevet beskjeden. Beskjeder kan både endres og slettes etter
+        publisering.
       </Typography>
       <Divider />
       <NewMessage />
