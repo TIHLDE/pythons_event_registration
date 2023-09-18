@@ -1,18 +1,17 @@
-import CancelIcon from '@mui/icons-material/Cancel';
-import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import { Box, Divider, Tooltip, Typography } from '@mui/material';
+import { Box, Divider, Stack, Tooltip, Typography } from '@mui/material';
 import { isPast } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
 import { getSignedInUser } from 'functions/getUser';
+import { Suspense } from 'react';
 import { getEventTitle } from 'utils';
 
 import EventCard from 'components/events/EventCard';
 import EventRegistration from 'components/events/EventRegistration';
 import EventRelatedMatches from 'components/events/EventRelatedMatches';
+import EventWeather from 'components/events/EventWeather';
 import MatchModal, { MatchModalProps } from 'components/events/MatchModal';
 import PlayersModal from 'components/events/PlayersModal';
 import { FormatDate } from 'components/FormatDate';
@@ -28,13 +27,15 @@ const Event = async ({ eventDetails, relatedMatches }: EventProps) => {
 
   return (
     <EventCard eventDetails={eventDetails}>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 1.5 }}>
         <Typography component='span' variant='h3'>
           {getEventTitle(eventDetails).icon}
         </Typography>
-        <Typography fontWeight='bold' variant='h3'>
-          {getEventTitle(eventDetails).title}
-        </Typography>
+        <Stack direction='row' justifyContent='space-between'>
+          <Typography fontWeight='bold' variant='h3'>
+            {getEventTitle(eventDetails).title}
+          </Typography>
+        </Stack>
 
         <Tooltip title='Tidspunkt'>
           <WatchLaterIcon />
@@ -55,18 +56,15 @@ const Event = async ({ eventDetails, relatedMatches }: EventProps) => {
           </>
         )}
 
-        <Tooltip title='Påmeldt'>
-          <CheckRoundedIcon />
-        </Tooltip>
-        <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.willArrive || []} title='Påmeldt' />
-        <Tooltip title='Avmeldt'>
-          <CancelIcon />
-        </Tooltip>
-        <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.willNotArrive || []} title='Avmeldt' />
-        <Tooltip title='Ikke svart'>
-          <QuestionMarkIcon />
-        </Tooltip>
-        <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.hasNotResponded || []} title='Ikke svart' />
+        <Suspense fallback={null}>
+          <EventWeather eventDetails={eventDetails} />
+        </Suspense>
+
+        <Stack direction='row' gap={1} sx={{ gridColumn: 'span 2' }}>
+          <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.willArrive || []} title='Påmeldt' />
+          <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.willNotArrive || []} title='Avmeldt' />
+          <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.hasNotResponded || []} title='Ikke svart' />
+        </Stack>
       </Box>
 
       {((eventDetails.match && isPast(new Date(eventDetails.time))) || relatedMatches.length > 0) && <Divider sx={{ my: 0.5 }} />}

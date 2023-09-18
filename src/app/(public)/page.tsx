@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 const getYearWeek = (time: Date) =>
-  `Uke ${getWeek(time, { weekStartsOn: 1 })} (${format(startOfWeek(time, { weekStartsOn: 1 }), 'dd.MM', { locale: nb })}-${format(
+  `Uke ${getWeek(time, { weekStartsOn: 1, firstWeekContainsDate: 4 })} (${format(startOfWeek(time, { weekStartsOn: 1 }), 'dd.MM', { locale: nb })}-${format(
     endOfWeek(time, { weekStartsOn: 1 }),
     'dd.MM',
     {
