@@ -1,5 +1,4 @@
-import { Alert } from '@mui/material';
-import Typography from '@mui/material/Typography';
+import { Alert, Typography } from '@mui/material';
 import { getActiveNotifications } from 'functions/getActiveNotifications';
 import { Suspense } from 'react';
 

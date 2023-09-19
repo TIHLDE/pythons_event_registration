@@ -1,8 +1,7 @@
+'use client';
+
 // eslint-disable-no-explicit-any
-import { Dialog } from '@mui/material';
-import Button, { ButtonProps } from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import { Button, ButtonProps, Dialog, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
 
 export type EventModalProps = {

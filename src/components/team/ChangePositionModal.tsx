@@ -1,14 +1,6 @@
 'use client';
 
-// eslint-disable-no-explicit-any
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import { Button, Dialog, FormControl, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material';
 import { Player, Position } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';

@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import { Grid } from '@mui/material';
 import { addWeeks, endOfWeek, format, getWeek, startOfWeek } from 'date-fns';
 import nb from 'date-fns/locale/nb';
 import { ExtendedEvent, getEventsWithRegistrations } from 'functions/event';

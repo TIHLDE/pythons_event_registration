@@ -1,6 +1,5 @@
 import OpenInNewRounded from '@mui/icons-material/OpenInNewRounded';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import { Stack, Typography } from '@mui/material';
 import { getSignedInUser } from 'functions/getUser';
 import Image from 'next/image';
 import Link from 'next/link';

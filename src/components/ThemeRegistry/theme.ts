@@ -1,8 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import { Cabin, Inter, Oswald } from 'next/font/google';
 
-// <link href='https://fonts.googleapis.com/css2?family=Cabin&family=Oswald:wght@500;700&family=Inter:wght@300;700;900&&display=swap' rel='stylesheet' />
-
 declare module '@mui/material/styles' {
   interface Palette {
     menu: Palette['primary'];

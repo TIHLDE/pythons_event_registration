@@ -1,6 +1,5 @@
 'use client';
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline, ThemeProvider } from '@mui/material';
 
 import NextAppDirEmotionCacheProvider from 'components/ThemeRegistry/EmotionCache';
 import theme from 'components/ThemeRegistry/theme';
