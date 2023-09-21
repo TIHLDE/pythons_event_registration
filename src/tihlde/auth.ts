@@ -3,23 +3,27 @@ import { hoursToSeconds } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import { cookies } from 'next/headers';
 import { isMemberOfPythonsGroup } from 'tihlde/memberships';
-import { AUTH_TOKEN_COOKIE_KEY, TIHLDE_API_URL, USER_STORAGE_KEY } from 'values';
-
-export const getAuthToken = (): string | undefined => {
-  const token = cookies().get(AUTH_TOKEN_COOKIE_KEY);
-  return token?.value;
-};
+import { AUTH_TOKEN_COOKIE_KEY, MOCK_TIHLDE_USER_ID, SHOULD_MOCK_TIHLDE_API, TIHLDE_API_URL, USER_STORAGE_KEY } from 'values';
 
 export const getAuthHeaders = (): Pick<AxiosRequestConfig<unknown>, 'headers'> => {
-  const token = getAuthToken();
-
-  return { headers: { 'x-csrf-token': token } };
+  const token = cookies().get(AUTH_TOKEN_COOKIE_KEY);
+  return { headers: { 'x-csrf-token': token?.value } };
 };
 
-export const authenticate = async ({ user_id, password }: { user_id: string; password: string }) => {
+const loginToTIHLDE = async ({ user_id, password }: AuthenticateParams): Promise<{ token: string }> => {
+  if (SHOULD_MOCK_TIHLDE_API) {
+    return { token: `-random-tihlde-auth-token-${MOCK_TIHLDE_USER_ID}-` };
+  }
+
+  const response = await axios.post<{ token: string }>(`${TIHLDE_API_URL}auth/login/`, { user_id, password });
+  return response.data;
+};
+
+export type AuthenticateParams = { user_id: string; password: string };
+
+export const authenticate = async ({ user_id, password }: AuthenticateParams) => {
   try {
-    const response = await axios.post<{ token: string }>(`${TIHLDE_API_URL}auth/login/`, { user_id, password });
-    const token = response.data.token;
+    const { token } = await loginToTIHLDE({ user_id, password });
     cookies().set(AUTH_TOKEN_COOKIE_KEY, token, { maxAge: hoursToSeconds(24) * 180 });
     const playerQuery = prisma.player.findFirst({
       where: {

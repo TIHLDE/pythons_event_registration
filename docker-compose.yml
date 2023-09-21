@@ -1,0 +1,15 @@
+version: '3'
+services:
+  postgres:
+    container_name: event_registration_db
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: event_registration_db
+      POSTGRES_HOST: postgres
+    ports:
+      - '5432:5432'
+volumes:
+  pgadmin:

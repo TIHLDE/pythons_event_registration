@@ -1,21 +1,19 @@
 import { List, ListItem, ListItemText, Link as MuiLink, Typography } from '@mui/material';
 import type { TIHLDEUser } from 'tihlde';
-// import { getAllnotPayedFines } from 'tihlde/fines';
-// import { getAllPythonsMemberships } from 'tihlde/memberships';
+import { getAllnotPayedFines } from 'tihlde/fines';
+import { getAllPythonsMemberships } from 'tihlde/memberships';
 
 const getData = async () => {
-  // const [{ results: memberships }, { results: notPayedFines }] = await Promise.all([getAllPythonsMemberships({ req, res }), getAllnotPayedFines({ req, res })]);
-  // const users = memberships.map((membership) => membership.user);
+  const [{ results: memberships }, { results: notPayedFines }] = await Promise.all([getAllPythonsMemberships(), getAllnotPayedFines()]);
+  const users = memberships.map((membership) => membership.user);
 
-  // const usersWithNoCreatedFines = users.filter((user) => !notPayedFines.some((fine) => fine.created_by.user_id === user.user_id));
-  // const players: Array<TIHLDEUser> = usersWithNoCreatedFines.map((user) => ({
-  //   user_id: user.user_id,
-  //   first_name: user.first_name,
-  //   last_name: user.last_name,
-  // }));
-  // TODO: fix
-  await new Promise((r) => setTimeout(r, 2000));
-  return { players: [] as Array<TIHLDEUser> };
+  const usersWithNoCreatedFines = users.filter((user) => !notPayedFines.some((fine) => fine.created_by.user_id === user.user_id));
+  const players: Array<TIHLDEUser> = usersWithNoCreatedFines.map((user) => ({
+    user_id: user.user_id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+  }));
+  return { players };
 };
 
 const PlayersWithNoCreatedFines = async () => {
