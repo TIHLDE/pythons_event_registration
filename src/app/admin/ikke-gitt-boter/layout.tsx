@@ -12,7 +12,7 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <>
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
-        <Typography variant='h1'>{`Admin Snitches don't get stitches`}</Typography>
+        <Typography variant='h1'>{`Snitches don't get stitches`}</Typography>
         <Button color='secondary' component={Link} href='/admin' startIcon={<AdminPanelSettingsRoundedIcon />} variant='outlined'>
           Til admin
         </Button>

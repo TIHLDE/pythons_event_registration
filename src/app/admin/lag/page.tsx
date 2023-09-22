@@ -19,12 +19,6 @@ const getData = async () => {
               active: true,
               teamId: team.id,
             },
-            select: {
-              id: true,
-              name: true,
-              positionId: true,
-              teamId: true,
-            },
             orderBy: { name: 'asc' },
           },
         },
@@ -40,12 +34,6 @@ const getData = async () => {
         where: {
           active: true,
           teamId: null,
-        },
-        select: {
-          id: true,
-          name: true,
-          positionId: true,
-          teamId: true,
         },
         orderBy: {
           name: 'asc',
