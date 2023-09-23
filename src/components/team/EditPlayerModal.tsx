@@ -1,8 +1,22 @@
 'use client';
 
 import EditRounded from '@mui/icons-material/EditRounded';
-import { Button, Dialog, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material';
-import { Player, Team } from '@prisma/client';
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormHelperText,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { Player } from '@prisma/client';
 import axios from 'axios';
 import { format, parseJSON } from 'date-fns';
 import { useRouter } from 'next/navigation';
@@ -17,8 +31,9 @@ export type EditPlayerModalProps = {
 };
 
 type FormDataProps = {
-  team: Team['id'] | '' | null;
-  position: number;
+  teamId: Player['teamId'] | '';
+  positionId: Player['positionId'];
+  disableRegistrations: Player['disableRegistrations'];
 };
 
 const EditPlayerModal = ({ player }: EditPlayerModalProps) => {
@@ -27,11 +42,11 @@ const EditPlayerModal = ({ player }: EditPlayerModalProps) => {
   const { data: positions = [] } = usePositions();
   const router = useRouter();
   const { control, handleSubmit } = useForm<FormDataProps>({
-    defaultValues: { team: player.teamId || '', position: player.positionId },
+    defaultValues: { teamId: player.teamId || '', positionId: player.positionId, disableRegistrations: player.disableRegistrations },
   });
   const onSubmit = useCallback(
     async (formData: FormDataProps) => {
-      const data = { teamId: formData.team === '' ? null : formData.team, positionId: formData.position };
+      const data: Pick<Player, 'teamId' | 'positionId' | 'disableRegistrations'> = { ...formData, teamId: formData.teamId === '' ? null : formData.teamId };
       await axios.put(`/api/players/${player.id}`, { data: data });
       handleCloseModal();
       router.refresh();
@@ -50,12 +65,12 @@ const EditPlayerModal = ({ player }: EditPlayerModalProps) => {
 TIHLDE-id: ${player.tihlde_user_id}
 Opprettet: ${format(parseJSON(player.createdAt), 'dd-MM-yyyy')}
 `}</Typography>
-          <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
+          <Stack component='form' gap={2} onSubmit={handleSubmit(onSubmit)}>
             <FormControl fullWidth>
               <InputLabel>Lag</InputLabel>
               <Controller
                 control={control}
-                name='team'
+                name='teamId'
                 render={({ field: { onChange, value } }) => (
                   <Select label='Lag' onChange={onChange} value={value}>
                     <MenuItem value=''>Ikke noe lag</MenuItem>
@@ -72,7 +87,7 @@ Opprettet: ${format(parseJSON(player.createdAt), 'dd-MM-yyyy')}
               <InputLabel>Posisjon</InputLabel>
               <Controller
                 control={control}
-                name='position'
+                name='positionId'
                 render={({ field: { onChange, value } }) => (
                   <Select label='Posisjon' onChange={onChange} value={value}>
                     {positions.map((position) => (
@@ -84,7 +99,25 @@ Opprettet: ${format(parseJSON(player.createdAt), 'dd-MM-yyyy')}
                 )}
               />
             </FormControl>
-            <Stack direction='row' gap={1} justifyContent='space-between' sx={{ mt: 1 }}>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Controller
+                    control={control}
+                    name='disableRegistrations'
+                    render={({ field: { onChange, value } }) => <Checkbox checked={value} onChange={onChange} />}
+                  />
+                }
+                label='Deaktiver påmelding'
+              />
+              <FormHelperText>
+                {`Ved å deaktivere påmelding til arrangementer vil spilleren heller ikke motta bøter for manglende påmelding. Spilleren vil fremdeles kunne melde
+                seg på sosiale arrangementer, men vil ikke vises i listen over "Ikke svart" før den eventuelt har meldt seg på/av. Passende for spillere som midlertidig
+                ikke trener og spiller kamper, for eksempel på grunn av langtidsskade eller utveksling. Om spilleren allerede har meldt seg på fremtidige arrangementer
+                vil den fremdeles kunne endre påmelding på disse etter at "Deaktiver påmelding" skrus på.`}
+              </FormHelperText>
+            </FormGroup>
+            <Stack direction='row' gap={1} justifyContent='space-between'>
               <Button color='error' onClick={handleCloseModal} variant='text'>
                 Avbryt
               </Button>

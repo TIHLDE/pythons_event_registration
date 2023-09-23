@@ -39,7 +39,7 @@ MOCK_TIHLDE_USER_ID=user_id
 ```
 
 Since signin is connected to actual users at api.tihlde.org, you must activate mocking of TIHLDE-signin if you don't want to login with an actual user. To do this, simply add `MOCK_TIHLDE_USER_ID=<user_id>` in the `.env`-file. When present, you can log in to the application with the given user id and any password you want. **All** calls to api.tihlde.org will also be mocked.
-Also, if `MOCK_TIHLDE_USER_ID` is present when running `yarn db:seed`, a player will be created with connection to the given TIHLDE user-id.
+Also, if `MOCK_TIHLDE_USER_ID` is present when running `yarn docker:seed`, a player will be created with connection to the given TIHLDE user-id.
 
 ### First setup
 
@@ -48,26 +48,26 @@ Alternatively, you can run a PostgreSQL-instance yourself and provide a connecti
 
 1. Run `yarn` to install packages
 2. Setup database and types:
-   - With Docker-Compose: Run `yarn db:fresh` to create a Docker-container with a PostgreSQL-instance, create tables in it and generate Prisma-types
-   - With other PostgreSQL-instance: Run `yarn prisma:generate` to generate Prisma-types
+   - With Docker-Compose: Run `yarn docker:fresh` to create a Docker-container with a PostgreSQL-instance, create tables in it and generate Prisma-types
+   - With other PostgreSQL-instance: Run `yarn db:generate` to generate Prisma-types
 3. _Optional_:
-   - Run `yarn db:seed` to load fixtures to the connected database to get started with local development faster
+   - Run `yarn docker:seed` to load fixtures to the connected database to get started with local development faster
 4. Finally run `yarn dev` to run the project at http://localhost:3000
 
 ### Subsequent starts
 
-If you've already set up the local development environment, you can start the PostgreSQL-instance in Docker with `yarn db:start` and then start the project with `yarn dev`
+If you've already set up the local development environment, you can start the PostgreSQL-instance in Docker with `yarn docker:start` and then start the project with `yarn dev`
 
 ### Useful commands
 
-- View the contents of the database using Prisma Studio. Run `yarn prisma:studio` to run it at http://localhost:5555
-- Run `yarn db:fresh` to tear down the Docker container/database and start it again without any previously existing content, the tables will be recreated, but empty.
-- Run `yarn db:down` to tear down the Docker container/database and remove all data.
+- View the contents of the database using Prisma Studio. Run `yarn db:studio` to run it at http://localhost:5555
+- Run `yarn docker:fresh` to tear down the Docker container/database and start it again without any previously existing content, the tables will be recreated, but empty.
+- Run `yarn docker:down` to tear down the Docker container/database and remove all data.
 
 ## Database migrations
 
-The project uses Prisma for ORM. This includes database-migrations. When you're done with editing the `schema.prisma`-file, run `yarn prisma:migrate <migration-name>` to add a migration and update your local database.
+The project uses Prisma for ORM. This includes database-migrations. When you're done with editing the `schema.prisma`-file, run `yarn db:migrate <migration-name>` to add a migration and update your local database.
 
-During development and before you're ready to create a migration, you can also you `yarn prisma:push` to push the changes in the `schema.prisma`-file to the database without creating a migration. You'll still need to run `yarn prisma:migrate <migration-name>` and create a migration before pushing to production.
+During development and before you're ready to create a migration, you can also you `yarn db:push` to push the changes in the `schema.prisma`-file to the database without creating a migration. You'll still need to run `yarn db:migrate <migration-name>` and create a migration before pushing to production.
 
 New migrations will automatically be applied in production with the Github Action which runs on push to the `main`-branch.

@@ -7,7 +7,7 @@ import { format, formatDistanceToNow, isFuture, isPast, subHours } from 'date-fn
 import { nb } from 'date-fns/locale';
 import { ExtendedEvent } from 'functions/event';
 import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useReward } from 'react-rewards';
 import { rules } from 'rules';
@@ -42,8 +42,7 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
   const onSubmit = useCallback(
     async (formData: FormDataProps) => {
       const data = {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        playerId: player!.id,
+        playerId: player.id,
         eventId: eventDetails.id,
         ...(formData.reason && {
           reason: formData.reason,
@@ -69,6 +68,22 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
   const registrationDeadline =
     eventDetails.eventTypeSlug in rules ? subHours(new Date(eventDetails.time), rules[eventDetails.eventTypeSlug].deadlines.signupBefore) : undefined;
 
+  const notAllowedRegisterError = useMemo(() => {
+    // Everyone can sign up for social events
+    if (eventDetails.eventTypeSlug === 'sosialt') {
+      return undefined;
+    }
+    // You cannot sign up for events if registrations is deactivated for your player. But existing registrations can be edited
+    if (player.disableRegistrations && !registration) {
+      return `Påmeldinger er deaktivert for deg. Du vil ikke motta bøter for manglende påmeldinger 🍻`;
+    }
+    // You can only sign up for events for a specific team if you're part of it
+    if (eventDetails.team?.id && eventDetails.team?.id !== player.teamId) {
+      return `Du er ikke en del av ${eventDetails.team?.name}-laget og kan dermed ikke registrere oppmøte. Kom og se på! 🏟️`;
+    }
+    return undefined;
+  }, [eventDetails.eventTypeSlug, eventDetails.team, player.disableRegistrations, player.teamId, registration]);
+
   return (
     <>
       {registration && (
@@ -77,25 +92,13 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
         </Typography>
       )}
       <Box component='span' id='confetti' sx={{ position: 'fixed', bottom: 0, left: '50%', translate: '-50% 0' }} />
-      {!eventDetails.teamId || eventDetails.teamId === player?.teamId ? (
+      {notAllowedRegisterError ? (
+        <Typography textAlign='center' variant='body2'>
+          {notAllowedRegisterError}
+        </Typography>
+      ) : (
         <>
-          {!openRegistration ? (
-            <>
-              {isFuture(new Date(eventDetails.time)) && (
-                <Button onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'text' : 'contained'}>
-                  {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
-                </Button>
-              )}
-              {registrationDeadline !== undefined && (
-                <Typography sx={{ mt: -0.5 }} textAlign='center' variant='body2'>
-                  {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
-                    locale: nb,
-                    addSuffix: true,
-                  })} - kl. ${format(registrationDeadline, 'HH:mm')}`}
-                </Typography>
-              )}
-            </>
-          ) : (
+          {openRegistration ? (
             <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
               {registrationDeadline !== undefined && isPast(registrationDeadline) && (
                 <Alert severity='warning' variant='outlined'>
@@ -129,12 +132,24 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
                 Avbryt
               </Button>
             </Stack>
+          ) : (
+            <>
+              {isFuture(new Date(eventDetails.time)) && (
+                <Button onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'text' : 'contained'}>
+                  {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
+                </Button>
+              )}
+              {registrationDeadline !== undefined && (
+                <Typography sx={{ mt: -0.5 }} textAlign='center' variant='body2'>
+                  {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
+                    locale: nb,
+                    addSuffix: true,
+                  })} - kl. ${format(registrationDeadline, 'HH:mm')}`}
+                </Typography>
+              )}
+            </>
           )}
         </>
-      ) : (
-        <Typography textAlign='center' variant='body2'>
-          Du er ikke en del av {eventDetails.team?.name} og kan dermed ikke registrere oppmøte. Kom og se på! 🏟️
-        </Typography>
       )}
     </>
   );

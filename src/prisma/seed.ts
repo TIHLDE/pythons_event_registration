@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { addDays, set } from 'date-fns';
+import { addDays, set, subDays } from 'date-fns';
 
 import { prisma } from '../lib/prisma';
 import { IS_PRODUCTION, MOCK_TIHLDE_USER_ID } from '../values';
@@ -58,24 +58,36 @@ async function seed() {
         tihlde_user_id: MOCK_TIHLDE_USER_ID ?? 'tihlde_user_id',
         positionId: 1,
         teamId: 1,
+        createdAt: subDays(new Date(), 14),
       },
       {
         name: 'Per Person',
         tihlde_user_id: 'per_user_id',
         positionId: 2,
         teamId: 1,
+        createdAt: subDays(new Date(), 15),
       },
       {
         name: 'Trond Trondsen',
         tihlde_user_id: 'trond_user_id',
         positionId: 3,
         teamId: 1,
+        createdAt: subDays(new Date(), 16),
       },
       {
         name: 'Jon Johnsen',
         tihlde_user_id: 'jon_user_id',
         positionId: 4,
         teamId: 2,
+        createdAt: subDays(new Date(), 17),
+      },
+      {
+        name: 'Arne Arne',
+        tihlde_user_id: 'arne_user_id',
+        positionId: 5,
+        teamId: 2,
+        disableRegistrations: true,
+        createdAt: subDays(new Date(), 18),
       },
     ],
   });

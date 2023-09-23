@@ -1,6 +1,7 @@
 'use client';
 
-import { Stack, Typography } from '@mui/material';
+import PersonAddDisabledRoundedIcon from '@mui/icons-material/PersonAddDisabledRounded';
+import { Stack, Tooltip, Typography } from '@mui/material';
 import { Player } from '@prisma/client';
 
 import EditPlayerModal from 'components/team/EditPlayerModal';
@@ -20,7 +21,14 @@ const PlayersList = ({ title, players }: PlayersListProps) => {
         {players.map((player) => (
           <Stack direction='row' gap={1} key={player.id}>
             <EditPlayerModal player={player} />
-            <Typography variant='body1'>{player.name}</Typography>
+            <Typography sx={{ flex: 1 }} variant='body1'>
+              {player.name}
+            </Typography>
+            {player.disableRegistrations && (
+              <Tooltip title='Deaktivert påmelding'>
+                <PersonAddDisabledRoundedIcon />
+              </Tooltip>
+            )}
           </Stack>
         ))}
       </Stack>

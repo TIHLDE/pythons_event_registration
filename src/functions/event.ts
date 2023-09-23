@@ -87,9 +87,15 @@ export const getEventsWithRegistrations = async ({ query }: Pick<NextApiRequest,
     const willArrive = event.registrations.filter((registration) => registration.willArrive).sort((a, b) => a.player.name.localeCompare(b.player.name));
     const willNotArrive = event.registrations.filter((registration) => !registration.willArrive).sort((a, b) => a.player.name.localeCompare(b.player.name));
 
+    const playersEligibleForResponding = activePlayers.filter(
+      (player) =>
+        // You can only sign up for events for a specific team if you're part of it
+        (!event.teamId || player.teamId === event.teamId) &&
+        // Players with deactivated registrations doesn't need to sign up
+        !player.disableRegistrations,
+    );
     const hasNotResponded = (
-      activePlayers
-        .filter((player) => !event.teamId || player.teamId === event.teamId)
+      playersEligibleForResponding
         .map((player) => {
           const willArriveIds = willArrive.map((p) => p.playerId);
           const willNotArriveIds = willNotArrive.map((p) => p.playerId);

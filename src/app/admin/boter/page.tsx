@@ -1,6 +1,6 @@
 import { Divider, Link as MuiLink, Typography } from '@mui/material';
 import { Event, Player, Registrations } from '@prisma/client';
-import { subDays, subHours } from 'date-fns';
+import { subHours, subWeeks } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import { rules } from 'rules';
 import { FineCreate } from 'tihlde/fines';
@@ -9,30 +9,30 @@ import { FineAccordion } from 'components/fines/FineAccordion';
 
 const getData = async () => {
   const today = new Date();
-  const twoWeeksBack = subDays(new Date(), 14);
-  const eventsQuery = await prisma.event.findMany({
+  const twoWeeksBack = subWeeks(new Date(), 2);
+  const eventsQuery = prisma.event.findMany({
     where: {
       time: {
         gte: twoWeeksBack,
         lte: today,
       },
     },
-    include: {
-      registrations: true,
-    },
-    orderBy: {
-      time: 'desc',
-    },
+    include: { registrations: true },
+    orderBy: { time: 'desc' },
   });
 
-  const players = await prisma.player.findMany({
+  const playersQuery = prisma.player.findMany({
     where: {
       active: true,
+      disableRegistrations: false,
     },
+    orderBy: { name: 'asc' },
   });
 
+  const [events, players] = await Promise.all([eventsQuery, playersQuery]);
+
   // Need to insert every player if either late registration or no registration
-  const eventsWithFines = eventsQuery
+  const eventsWithFines = events
     .filter((event) => event.eventTypeSlug === 'trening' || event.eventTypeSlug === 'kamp')
     .map<EventWithFines>((event) => {
       const playersWithoutRegistration = players

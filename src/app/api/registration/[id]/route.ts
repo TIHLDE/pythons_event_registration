@@ -1,3 +1,4 @@
+import { getSignedInUserOrThrow } from 'functions/getUser';
 import HttpStatusCode from 'http-status-typed';
 import { prisma } from 'lib/prisma';
 import { NextResponse } from 'next/server';
@@ -10,13 +11,20 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
     const playerId = parseInt(ids[0]);
     const eventId = parseInt(ids[1]);
 
-    const existingRegistration = await prisma.registrations.findFirstOrThrow({
-      where: { playerId, eventId },
-      include: { event: { select: { time: true } } },
-    });
+    const [user, existingRegistration] = await Promise.all([
+      getSignedInUserOrThrow(),
+      prisma.registrations.findFirstOrThrow({
+        where: { playerId, eventId },
+        include: { event: { select: { time: true } } },
+      }),
+    ]);
+
+    if (user.id !== playerId) {
+      return NextResponse.json({ message: `Du kan ikke endre andre spillere sine registreringer` }), { status: HttpStatusCode.FORBIDDEN };
+    }
 
     if (existingRegistration.event.time < new Date()) {
-      return NextResponse.json({ message: `You can't edit a registration after the event has started` }), { status: HttpStatusCode.FORBIDDEN };
+      return NextResponse.json({ message: `Det er ikke lov å endre en registrering etter at arrangementet har startet` }), { status: HttpStatusCode.FORBIDDEN };
     }
 
     const registration = await prisma.registrations.update({

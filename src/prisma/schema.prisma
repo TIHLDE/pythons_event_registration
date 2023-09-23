@@ -17,18 +17,19 @@ model Team {
 }
 
 model Player {
-  id             Int             @id @default(autoincrement())
-  tihlde_user_id String
-  createdAt      DateTime        @default(now())
-  name           String          @db.VarChar(60)
-  positionId     Int
-  active         Boolean         @default(true)
-  teamId         Int?
-  position       Position        @relation(fields: [positionId], references: [id])
-  team           Team?           @relation(fields: [teamId], references: [id])
-  notifications  Notification[]
-  registrations  Registrations[]
-  matchEvents    MatchEvent[]
+  id                   Int             @id @default(autoincrement())
+  tihlde_user_id       String
+  createdAt            DateTime        @default(now())
+  name                 String          @db.VarChar(60)
+  positionId           Int
+  active               Boolean         @default(true)
+  disableRegistrations Boolean         @default(false)
+  teamId               Int?
+  position             Position        @relation(fields: [positionId], references: [id])
+  team                 Team?           @relation(fields: [teamId], references: [id])
+  notifications        Notification[]
+  registrations        Registrations[]
+  matchEvents          MatchEvent[]
 }
 
 model Event {
