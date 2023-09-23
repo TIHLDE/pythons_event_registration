@@ -32,7 +32,11 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
       : undefined;
 
   if (!searchParams.to && !searchParams.from && !searchParams.eventType && !searchParams.team && !searchParams.willArrive) {
-    redirect(`/oppmote?to=${DEFAULT_TO_DATE.toJSON().substring(0, 10)}&from=${DEFAULT_FROM_DATE.toJSON().substring(0, 10)}&eventType=trening&willArrive=yes`);
+    redirect(
+      `/oppmote?to=${DEFAULT_TO_DATE.toJSON().substring(0, 10)}&from=${DEFAULT_FROM_DATE.toJSON().substring(0, 10)}&eventType=${
+        EventType.TRAINING
+      }&willArrive=yes`,
+    );
   }
 
   const eventsAmountQuery = prisma.event.aggregate({
