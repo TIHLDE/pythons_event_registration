@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  db_migrate:
     runs-on: ubuntu-latest
 
     strategy:
