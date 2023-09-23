@@ -1,3 +1,4 @@
+import { EventType } from '@prisma/client';
 import { prisma } from 'lib/prisma';
 import { NextResponse } from 'next/server';
 
@@ -10,11 +11,11 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
       id: parsedId,
     },
     data: {
-      eventTypeSlug: data.eventTypeSlug,
-      title: data.eventTypeSlug === 'trening' ? '' : data.title,
+      eventType: data.eventType,
+      title: data.eventType === EventType.TRAINING ? '' : data.title,
       time: data.time,
       location: data.location,
-      teamId: data.eventTypeSlug === 'kamp' && data.team ? data.team : undefined,
+      teamId: data.eventType === EventType.MATCH && data.team ? data.team : undefined,
       finesGiven: data.finesGiven ?? undefined,
     },
   });

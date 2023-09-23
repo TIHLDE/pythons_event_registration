@@ -1,52 +1,52 @@
 import { Divider, Stack, Typography } from '@mui/material';
 import { prisma } from 'lib/prisma';
+import { positionsList } from 'utils';
 
 import { NewTeam } from 'components/team/NewTeam';
 import TeamOverview from 'components/team/TeamOverview';
 
 const getData = async () => {
-  const teams_list = await prisma.team.findMany();
-
-  const teams = await Promise.all(
-    teams_list.map(async (team) => ({
-      ...team,
-      positions: await prisma.position.findMany({
-        select: {
-          id: true,
-          title: true,
-          Player: {
-            where: {
-              active: true,
-              teamId: team.id,
-            },
-            orderBy: { name: 'asc' },
-          },
-        },
-      }),
-    })),
-  );
-
-  const players_with_no_team = await prisma.position.findMany({
-    select: {
-      id: true,
-      title: true,
-      Player: {
+  const teamsQuery = prisma.team.findMany({
+    include: {
+      players: {
         where: {
           active: true,
-          teamId: null,
         },
-        orderBy: {
-          name: 'asc',
-        },
+        orderBy: { name: 'asc' },
       },
     },
   });
 
-  return { players_with_no_team, teams };
+  const playersWithNoTeamQuery = prisma.player.findMany({
+    where: {
+      teamId: null,
+    },
+    orderBy: { name: 'asc' },
+  });
+
+  const [teams, playersWithNoTeam] = await Promise.all([teamsQuery, playersWithNoTeamQuery]);
+
+  const teamsWithPosition = teams.map((team) => ({
+    id: team.id,
+    name: team.name,
+    positions: positionsList.map((position) => ({
+      type: position.type,
+      label: position.label,
+      players: team.players.filter((player) => player.position === position.type),
+    })),
+  }));
+
+  const noTeamPlayersWithPosition = positionsList.map((position) => ({
+    type: position.type,
+    label: position.label,
+    players: playersWithNoTeam.filter((player) => player.position === position.type),
+  }));
+
+  return { noTeamPlayersWithPosition, teamsWithPosition };
 };
 
 const Teams = async () => {
-  const { players_with_no_team, teams } = await getData();
+  const { noTeamPlayersWithPosition, teamsWithPosition } = await getData();
   return (
     <>
       <Divider sx={{ my: 2 }} />
@@ -58,18 +58,18 @@ For å fjerne en (eller flere) spillere gjøres det samme: leder må gå inn på
 Kun spillere som er lagt til i et lag kan melde seg på lagets kamper. Spillere som kun skal være med på treninger/sosialt kan stå oppført uten lagtilknytning. Påmeldinger kan deaktiveres for enkeltspillere som midlertidig ikke skal behøve å melde seg på/av arrangementer, for eksempel på grunn av utveksling eller langtidsskade.`}
       </Typography>
       <Divider sx={{ my: 2 }} />
-      {teams.map((team, index) => (
+      {teamsWithPosition.map((team, index) => (
         <Stack gap={1} key={team.id}>
           <TeamOverview positions={team.positions} team={team} />
-          {index !== teams.length - 1 && <Divider sx={{ mb: 2, mt: 1 }} />}
+          {index !== teamsWithPosition.length - 1 && <Divider sx={{ mb: 2, mt: 1 }} />}
         </Stack>
       ))}
       <Divider sx={{ my: 2 }} />
       <NewTeam />
-      {players_with_no_team.some((position) => position.Player.length) && (
+      {noTeamPlayersWithPosition.some((position) => position.players.length) && (
         <>
           <Divider sx={{ my: 2 }} />
-          <TeamOverview positions={players_with_no_team} team='Spillere uten lagtilknytning' />
+          <TeamOverview positions={noTeamPlayersWithPosition} team='Spillere uten lagtilknytning' />
         </>
       )}
     </>

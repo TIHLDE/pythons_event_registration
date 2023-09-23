@@ -1,4 +1,4 @@
-import { Player } from '@prisma/client';
+import { EventType, Player } from '@prisma/client';
 import { addYears, format, getDate, getHours, getMinutes, getMonth, getYear, set } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { ExtendedEvent, getEventsWithRegistrations } from 'functions/event';
@@ -19,7 +19,7 @@ const PRODUCT_ID = 'pythons/ics';
  */
 const removeNonRelevantEvents = (player: Player) => (event: ExtendedEvent) =>
   !event.willNotArrive.some((registration) => registration.player.tihlde_user_id === player.tihlde_user_id) &&
-  (event.eventTypeSlug !== 'kamp' || event.teamId === player.teamId);
+  (event.eventType !== EventType.MATCH || event.teamId === player.teamId);
 
 const willUserAttendEvent = (player: Player) => (event: ExtendedEvent) =>
   event.willArrive.some((registration) => registration.player.tihlde_user_id === player.tihlde_user_id);
@@ -50,7 +50,7 @@ const createIcsEvent =
       title: `${userWillAttend ? '' : '[Mangler registrering] '}${getEventTitle(event).fullTitle}`,
       start: dateToIcsDate(event.time),
       startInputType: 'utc',
-      duration: event.eventTypeSlug === 'trening' ? { hours: 1, minutes: 30 } : { hours: 2 },
+      duration: event.eventType === EventType.TRAINING ? { hours: 1, minutes: 30 } : { hours: 2 },
       location: event.location,
       created: dateToIcsDate(event.createdAt),
       organizer: { name: 'TIHLDE Pythons', email: 'pythons@tihlde.org', dir: 'https://pythons.tihlde.org' },

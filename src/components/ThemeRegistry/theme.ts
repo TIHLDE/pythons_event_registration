@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material/styles';
+import { EventType } from '@prisma/client';
 import { Cabin, Inter, Oswald } from 'next/font/google';
 
 declare module '@mui/material/styles' {
@@ -10,9 +11,9 @@ declare module '@mui/material/styles' {
   }
 
   interface TypeBackground {
-    kamp: string;
-    trening: string;
-    sosialt: string;
+    [EventType.MATCH]: string;
+    [EventType.TRAINING]: string;
+    [EventType.SOCIAL]: string;
   }
 }
 
@@ -69,9 +70,9 @@ const theme = createTheme({
     background: {
       default: '#001328',
       paper: '#001731',
-      kamp: 'linear-gradient(to bottom, #6e2a70, #4c126b)',
-      trening: 'linear-gradient(to bottom, #3A2056, #0b0941)',
-      sosialt: 'linear-gradient(to bottom, #565220, #563A20)',
+      [EventType.MATCH]: 'linear-gradient(to bottom, #6e2a70, #4c126b)',
+      [EventType.TRAINING]: 'linear-gradient(to bottom, #3A2056, #0b0941)',
+      [EventType.SOCIAL]: 'linear-gradient(to bottom, #565220, #563A20)',
     },
     text: {
       primary: '#F2F2F2',

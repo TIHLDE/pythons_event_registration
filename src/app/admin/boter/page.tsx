@@ -1,5 +1,5 @@
 import { Divider, Link as MuiLink, Typography } from '@mui/material';
-import { Event, Player, Registrations } from '@prisma/client';
+import { Event, EventType, Player, Registrations } from '@prisma/client';
 import { subHours, subWeeks } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import { rules } from 'rules';
@@ -33,8 +33,12 @@ const getData = async () => {
 
   // Need to insert every player if either late registration or no registration
   const eventsWithFines = events
-    .filter((event) => event.eventTypeSlug === 'trening' || event.eventTypeSlug === 'kamp')
-    .map<EventWithFines>((event) => {
+    .filter((event) => event.eventType === EventType.TRAINING || event.eventType === EventType.MATCH)
+    .map<EventWithFines | undefined>((event) => {
+      const rule = rules[event.eventType];
+      if (!rule) {
+        return;
+      }
       const playersWithoutRegistration = players
         .map<ProposedFineWithDate | undefined>((player) => {
           if (event.teamId && player.teamId !== event.teamId) {
@@ -44,12 +48,12 @@ const getData = async () => {
           if (player.createdAt > event.time) {
             return;
           }
-          const rule = rules[event.eventTypeSlug];
+
           const paragraph = rule.paragraph;
 
           const registration = event.registrations.find((registration) => registration.playerId === player.id);
           if (!registration) {
-            const finesAmount = rules[event.eventTypeSlug].fines.noRegistration;
+            const finesAmount = rule.fines.noRegistration;
             return { player: player, reason: 'Ikke registrert seg', amount: finesAmount, description: paragraph };
           }
 
@@ -80,7 +84,8 @@ const getData = async () => {
         ...event,
         fines: playersWithoutRegistration as unknown as ProposedFine[],
       };
-    });
+    })
+    .filter(Boolean) as EventWithFines[];
   return { events: eventsWithFines };
 };
 

@@ -1,4 +1,5 @@
 import { Box, Divider, Typography, TypographyProps } from '@mui/material';
+import { EventType } from '@prisma/client';
 import { getMonth, parseISO, set } from 'date-fns';
 import { prisma } from 'lib/prisma';
 import type { Metadata } from 'next';
@@ -42,7 +43,7 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
           gte: dateFrom,
           lte: dateTo,
         },
-        eventTypeSlug: eventTypeFilter ? { in: eventTypeFilter.split(',') } : undefined,
+        eventType: eventTypeFilter ? { in: eventTypeFilter.split(',') as EventType[] } : undefined,
       },
       ...(teamFilter ? { OR: [{ teamId: null }, { teamId: Number(teamFilter) }] } : {}),
     },
@@ -67,7 +68,7 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
                     gte: dateFrom,
                     lt: dateTo,
                   },
-                  eventTypeSlug: eventTypeFilter ? { in: eventTypeFilter.split(',') } : undefined,
+                  eventType: eventTypeFilter ? { in: eventTypeFilter.split(',') as EventType[] } : undefined,
                 },
                 ...(teamFilter ? { OR: [{ teamId: null }, { teamId: Number(teamFilter) }] } : {}),
               },
@@ -80,9 +81,8 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
   });
 
   const teamsQuery = prisma.team.findMany();
-  const eventTypesQuery = prisma.eventType.findMany();
 
-  const [eventsAmount, players, teams, eventTypes] = await Promise.all([eventsAmountQuery, playersQuery, teamsQuery, eventTypesQuery]);
+  const [eventsAmount, players, teams] = await Promise.all([eventsAmountQuery, playersQuery, teamsQuery]);
   const sortedPlayers = players
     .map((player) => ({
       ...player,
@@ -94,7 +94,6 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
     eventsAmount: eventsAmount._count,
     players: sortedPlayers,
     teams: teams,
-    eventTypes: eventTypes,
   };
 };
 
@@ -105,11 +104,11 @@ const TableText = ({ children, sx }: Pick<TypographyProps, 'children' | 'sx'>) =
 );
 
 const Attendance = async ({ searchParams }: PageProps) => {
-  const { eventTypes, eventsAmount, players, teams } = await getData({ searchParams });
+  const { eventsAmount, players, teams } = await getData({ searchParams });
 
   return (
     <>
-      <AttendanceFilters defaultFromDate={DEFAULT_FROM_DATE} defaultToDate={DEFAULT_TO_DATE} eventTypes={eventTypes} teams={teams} />
+      <AttendanceFilters defaultFromDate={DEFAULT_FROM_DATE} defaultToDate={DEFAULT_TO_DATE} teams={teams} />
       <Typography gutterBottom>
         Med nåværende filtrering finnes det totalt <b>{eventsAmount}</b> arrangementer.
       </Typography>

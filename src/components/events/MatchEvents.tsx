@@ -4,9 +4,9 @@ import { Autocomplete, Button, FormControl, InputLabel, MenuItem, Select, Stack,
 import { MatchEvent, MatchEventType, Player, Prisma } from '@prisma/client';
 import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
-import { MATCH_EVENT_TYPES } from 'utils';
+import { MATCH_EVENT_TYPES, positionsMap } from 'utils';
 
-import { useMatchEvents, usePlayers, usePositions } from 'hooks/useQuery';
+import { useMatchEvents, usePlayers } from 'hooks/useQuery';
 
 import ConfirmModal from 'components/ConfirmModal';
 import LoadingLogo from 'components/LoadingLogo';
@@ -15,7 +15,6 @@ export type MatchEventsProps = {
   isAdmin?: boolean;
   event: Prisma.EventGetPayload<{
     include: {
-      type: true;
       team: true;
       match: true;
     };
@@ -38,7 +37,6 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
 
   const { data: matchEvents, refetch } = useMatchEvents(event.match?.id ?? -1, { enabled: Boolean(event.match?.id) });
   const { data: players = [], isLoading: isPlayersLoading } = usePlayers({ enabled: isAdmin });
-  const { data: positions = [], isLoading: isPositionsLoading } = usePositions();
 
   const onSubmit = async (data: FormData) => {
     if (!data.player) {
@@ -101,7 +99,7 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
               name='player'
               render={({ field: { onChange, value } }) => (
                 <Autocomplete
-                  disabled={isPlayersLoading || isPositionsLoading}
+                  disabled={isPlayersLoading}
                   disablePortal
                   fullWidth
                   getOptionLabel={(option) => option.name}
@@ -112,8 +110,8 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
                   noOptionsText='Fant ingen spillere med dette navnet'
                   onChange={(_, value) => onChange(value)}
                   options={players
-                    .sort((a, b) => a.positionId - b.positionId)
-                    .map((player) => ({ ...player, position: positions.find((pos) => pos.id === player.positionId)?.title || 'Annet' }))}
+                    .sort((a, b) => positionsMap[a.position].order - positionsMap[b.position].order)
+                    .map((player) => ({ ...player, position: positionsMap[player.position].label }))}
                   renderInput={(params) => (
                     <TextField
                       sx={{ background: 'transparent', color: 'white' }}

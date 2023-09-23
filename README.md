@@ -68,6 +68,8 @@ If you've already set up the local development environment, you can start the Po
 
 The project uses Prisma for ORM. This includes database-migrations. When you're done with editing the `schema.prisma`-file, run `yarn db:migrate <migration-name>` to add a migration and update your local database.
 
-During development and before you're ready to create a migration, you can also you `yarn db:push` to push the changes in the `schema.prisma`-file to the database without creating a migration. You'll still need to run `yarn db:migrate <migration-name>` and create a migration before pushing to production.
+During development and before you're ready to create a migration, you can also you `yarn db:push` to push the changes in the `schema.prisma`-file to the database without creating a migration. You'll still need to run `yarn db:new-migration <migration-name>` and create a migration before pushing to production.
+
+When there's new migrations from other developer, you can run `yarn db:migrate` to apply these locally.
 
 New migrations will automatically be applied in production with the Github Action which runs on push to the `main`-branch.

@@ -2,6 +2,7 @@
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Checkbox, Divider, FormControlLabel, Stack, Typography } from '@mui/material';
+import { EventType } from '@prisma/client';
 import { EventWithFines } from 'app/admin/boter/page';
 import axios from 'axios';
 import { format } from 'date-fns';
@@ -9,6 +10,7 @@ import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import { Fragment, useCallback } from 'react';
 import { FineCreate } from 'tihlde/fines';
+import { eventTypesMap } from 'utils';
 
 const formatTime = (time: string) =>
   format(new Date(time), "EEEE dd. MMMM' 'HH:mm", {
@@ -22,7 +24,10 @@ export type FineAccordionProps = {
 export const FineAccordion = ({ event }: FineAccordionProps) => {
   const router = useRouter();
 
-  const getEventTitle = useCallback((event: EventWithFines) => `${event.title || 'Trening'} ${formatTime(event.time as unknown as string)}`, []);
+  const getEventTitle = useCallback(
+    (event: EventWithFines) => `${event.title || eventTypesMap[EventType.TRAINING].label} ${formatTime(event.time as unknown as string)}`,
+    [],
+  );
 
   const setFinesGiven = useCallback(
     async (event: EventWithFines, finesGiven: boolean) => {

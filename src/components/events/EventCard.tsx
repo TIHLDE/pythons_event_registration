@@ -1,6 +1,6 @@
 'use client';
 
-import { Stack, TypeBackground } from '@mui/material';
+import { Stack } from '@mui/material';
 import { ExtendedEvent } from 'functions/event';
 import { ReactNode } from 'react';
 
@@ -14,7 +14,7 @@ const EventCard = ({ eventDetails, children }: EventCardProps) => {
     <Stack
       gap={1}
       sx={{
-        background: ({ palette }) => palette.background[eventDetails.eventTypeSlug as keyof TypeBackground],
+        background: ({ palette }) => palette.background[eventDetails.eventType],
         width: '100%',
         height: 'auto',
         p: 1,

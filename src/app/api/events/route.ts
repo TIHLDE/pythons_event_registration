@@ -1,3 +1,4 @@
+import { EventType } from '@prisma/client';
 import { prisma } from 'lib/prisma';
 import { NextResponse } from 'next/server';
 
@@ -14,13 +15,13 @@ export const POST = async (request: Request) => {
     data: {
       location: data.location,
       time: new Date(data.time),
-      eventTypeSlug: data.eventTypeSlug,
+      eventType: data.eventType,
       ...(data.title &&
-        data.eventTypeSlug !== 'trening' && {
+        data.eventType !== EventType.TRAINING && {
           title: data.title,
         }),
       ...(data.team &&
-        data.eventTypeSlug === 'kamp' && {
+        data.eventType === EventType.MATCH && {
           teamId: Number(data.team),
           match: {
             create: {

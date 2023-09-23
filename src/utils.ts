@@ -1,8 +1,38 @@
-import { MatchEventType } from '@prisma/client';
+import { EventType, MatchEventType, Position } from '@prisma/client';
 import { addMonths, endOfToday, getMonth, getYear, set, startOfToday } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
 
 export const fetcher = <Type = unknown>(url: string) => fetch(url).then((res) => res.json()) as Promise<Type>;
+
+export const eventTypesMap = {
+  [EventType.MATCH]: { label: 'Kamp' },
+  [EventType.SOCIAL]: { label: 'Sosialt' },
+  [EventType.TRAINING]: { label: 'Trening' },
+} satisfies Record<EventType, { label: string }>;
+
+export const eventTypesList = [
+  { type: EventType.MATCH, ...eventTypesMap[EventType.MATCH] },
+  { type: EventType.SOCIAL, ...eventTypesMap[EventType.SOCIAL] },
+  { type: EventType.TRAINING, ...eventTypesMap[EventType.TRAINING] },
+] satisfies { type: EventType; label: string }[];
+
+export const positionsMap = {
+  [Position.KEEPER]: { label: 'Keeper', order: 1 },
+  [Position.BACK]: { label: 'Back', order: 2 },
+  [Position.CENTER_BACK]: { label: 'Midtstopper', order: 3 },
+  [Position.MIDTFIELDER]: { label: 'Midtbane', order: 4 },
+  [Position.WINGER]: { label: 'Ving', order: 5 },
+  [Position.STRIKER]: { label: 'Spiss', order: 6 },
+} satisfies Record<Position, { label: string; order: number }>;
+
+export const positionsList = [
+  { type: Position.KEEPER, ...positionsMap[Position.KEEPER] },
+  { type: Position.BACK, ...positionsMap[Position.BACK] },
+  { type: Position.CENTER_BACK, ...positionsMap[Position.CENTER_BACK] },
+  { type: Position.MIDTFIELDER, ...positionsMap[Position.MIDTFIELDER] },
+  { type: Position.WINGER, ...positionsMap[Position.WINGER] },
+  { type: Position.STRIKER, ...positionsMap[Position.STRIKER] },
+] satisfies { type: Position; label: string; order: number }[];
 
 export type Semester = {
   id: string;
@@ -65,16 +95,16 @@ export const stripEmojis = (str: string) =>
 export const getEventTitle = (event: ExtendedEvent) => {
   let icon = '❔';
   let title = 'Ukjent type arrangement';
-  switch (event.eventTypeSlug) {
-    case 'trening':
+  switch (event.eventType) {
+    case EventType.TRAINING:
       icon = '💪';
       title = `Trening`;
       break;
-    case 'kamp':
+    case EventType.MATCH:
       icon = `⚽️`;
       title = `Kamp mot ${event.title || 'en motstander'}`;
       break;
-    case 'sosialt':
+    case EventType.SOCIAL:
       icon = `🎉`;
       title = `${event.title || 'Sosialt'}`;
       break;

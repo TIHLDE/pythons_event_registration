@@ -1,7 +1,7 @@
 'use client';
 
 import { Alert, Box, Button, FormControl, FormControlLabel, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
-import { Player, Registrations } from '@prisma/client';
+import { EventType, Player, Registrations } from '@prisma/client';
 import axios from 'axios';
 import { format, formatDistanceToNow, isFuture, isPast, subHours } from 'date-fns';
 import { nb } from 'date-fns/locale';
@@ -65,12 +65,12 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
     [eventDetails.id, router, player, userHasRegistrated, willArriveConfetti, willNotArriveConfetti],
   );
 
-  const registrationDeadline =
-    eventDetails.eventTypeSlug in rules ? subHours(new Date(eventDetails.time), rules[eventDetails.eventTypeSlug].deadlines.signupBefore) : undefined;
+  const eventRule = rules[eventDetails.eventType];
+  const registrationDeadline = eventRule ? subHours(new Date(eventDetails.time), eventRule.deadlines.signupBefore) : undefined;
 
   const notAllowedRegisterError = useMemo(() => {
     // Everyone can sign up for social events
-    if (eventDetails.eventTypeSlug === 'sosialt') {
+    if (eventDetails.eventType === EventType.SOCIAL) {
       return undefined;
     }
     // You cannot sign up for events if registrations is deactivated for your player. But existing registrations can be edited
@@ -82,7 +82,7 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
       return `Du er ikke en del av ${eventDetails.team?.name}-laget og kan dermed ikke registrere oppmøte. Kom og se på! 🏟️`;
     }
     return undefined;
-  }, [eventDetails.eventTypeSlug, eventDetails.team, player.disableRegistrations, player.teamId, registration]);
+  }, [eventDetails.eventType, eventDetails.team, player.disableRegistrations, player.teamId, registration]);
 
   return (
     <>

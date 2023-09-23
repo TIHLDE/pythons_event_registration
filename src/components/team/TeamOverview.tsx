@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Stack, Typography } from '@mui/material';
-import { Team } from '@prisma/client';
+import { Position, Team } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -11,9 +11,9 @@ import PlayersList, { PlayersListProps } from 'components/team/PlayersList';
 export type TeamOverviewProps = {
   team: Team | string;
   positions: {
-    id: number;
-    title: string;
-    Player: PlayersListProps['players'];
+    type: Position;
+    label: string;
+    players: PlayersListProps['players'];
   }[];
 };
 
@@ -27,7 +27,7 @@ const TeamOverview = ({ team, positions }: TeamOverviewProps) => {
     <>
       <Stack direction='row' justifyContent='space-between' sx={{ mb: 1 }}>
         <Typography variant='h2'>
-          {typeof team === 'string' ? team : `${team.name} (${positions.reduce((acc, curr) => acc + curr.Player.length, 0)})`}
+          {typeof team === 'string' ? team : `${team.name} (${positions.reduce((acc, curr) => acc + curr.players.length, 0)})`}
         </Typography>
         {typeof team !== 'string' && (
           <ConfirmModal
@@ -43,7 +43,7 @@ const TeamOverview = ({ team, positions }: TeamOverviewProps) => {
       </Stack>
       <Box gap={1} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' } }}>
         {positions.map((position) => (
-          <PlayersList key={position.id} players={position.Player} title={position.title} />
+          <PlayersList key={position.type} players={position.players} title={position.label} />
         ))}
       </Box>
     </>
