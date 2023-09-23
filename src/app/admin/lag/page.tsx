@@ -20,6 +20,7 @@ const getData = async () => {
   const playersWithNoTeamQuery = prisma.player.findMany({
     where: {
       teamId: null,
+      active: true,
     },
     orderBy: { name: 'asc' },
   });
