@@ -1,7 +1,7 @@
 'use client';
 
 import { Close } from '@mui/icons-material';
-import { Box, Button, ButtonProps, Dialog, IconButton, Stack, TextField, TypeBackground, Typography } from '@mui/material';
+import { Box, Button, ButtonProps, Dialog, IconButton, Stack, TextField, Typography } from '@mui/material';
 import { Match, Prisma } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
@@ -16,7 +16,6 @@ export type MatchModalProps = ButtonProps & {
   isAdmin?: boolean;
   event: Prisma.EventGetPayload<{
     include: {
-      type: true;
       team: true;
       match: true;
     };
@@ -71,10 +70,7 @@ const MatchModal = ({ event, isAdmin = false, sx, ...props }: MatchModalProps) =
           </Box>
         </Typography>
       </Button>
-      <Dialog
-        onClose={handleClose}
-        open={open}
-        sx={{ '& .MuiPaper-root': { background: ({ palette }) => palette.background[event.eventTypeSlug as keyof TypeBackground] } }}>
+      <Dialog onClose={handleClose} open={open} sx={{ '& .MuiPaper-root': { background: ({ palette }) => palette.background[event.eventType] } }}>
         <Stack gap={1}>
           <Stack direction='row' justifyContent='space-between' spacing={2} sx={{ alignItems: 'center' }}>
             <Typography variant='h2'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</Typography>

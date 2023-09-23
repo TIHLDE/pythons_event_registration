@@ -6,9 +6,9 @@ import { addMonths, startOfToday } from 'date-fns';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { getSemesters, removeFalsyElementsFromObject } from 'utils';
+import { eventTypesList, getSemesters, removeFalsyElementsFromObject } from 'utils';
 
-import { useEventType, useTeams } from 'hooks/useQuery';
+import { useTeams } from 'hooks/useQuery';
 
 import { StandaloneExpand } from 'components/Expand';
 
@@ -35,7 +35,6 @@ export const EventsFilters = (props: StackProps) => {
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<'all' | 'matches'>(typeof searchParams.get('semester') === 'string' ? 'matches' : 'all');
-  const { data: eventTypes = [] } = useEventType();
   const { data: teams = [] } = useTeams();
   const [matchesFilters, setMatchesFilters] = useState<MatchesFilters>({
     semester: typeof searchParams.get('semester') === 'string' ? searchParams.get('semester')! : '',
@@ -119,9 +118,9 @@ export const EventsFilters = (props: StackProps) => {
                 render={({ field }) => (
                   <Select id='type' label='Type' labelId='selectType-type' {...field}>
                     <MenuItem value=''>Alle</MenuItem>
-                    {eventTypes.map((eventType) => (
-                      <MenuItem key={eventType.slug} value={eventType.slug}>
-                        {eventType.name}
+                    {eventTypesList.map((eventType) => (
+                      <MenuItem key={eventType.type} value={eventType.type}>
+                        {eventType.label}
                       </MenuItem>
                     ))}
                   </Select>

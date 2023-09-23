@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { Prisma } from '@prisma/client';
+import { EventType, Prisma } from '@prisma/client';
 import { addMonths, isFuture, parseISO, startOfToday } from 'date-fns';
 import { getPlayers } from 'functions/getPlayers';
 import { prisma } from 'lib/prisma';
@@ -15,7 +15,6 @@ export type ExtendedEvent = Prisma.EventGetPayload<{
         player: true;
       };
     };
-    type: true;
     team: true;
     match: true;
   };
@@ -45,7 +44,7 @@ export const getEventsWhereFilter = ({ query }: { query: ParsedUrlQuery }): Pris
   const semester = typeof query.semester === 'string' && query.semester !== '' ? semesters.find((semester) => semester.id === query.semester) : undefined;
   const dateFrom = semester ? semester.from : typeof query.from === 'string' && query.from !== '' ? parseISO(query.from) : DEFAULT_FROM_DATE;
   const dateTo = semester ? semester.to : typeof query.to === 'string' && query.to !== '' ? parseISO(query.to) : DEFAULT_TO_DATE;
-  const eventTypeFilter = semester ? 'kamp' : typeof query.eventType === 'string' && query.eventType !== '' ? query.eventType : undefined;
+  const eventTypeFilter = semester ? `${EventType.MATCH}` : typeof query.eventType === 'string' && query.eventType !== '' ? query.eventType : undefined;
   const teamFilter = typeof query.team === 'string' && query.team !== '' ? query.team : undefined;
 
   return {
@@ -55,7 +54,7 @@ export const getEventsWhereFilter = ({ query }: { query: ParsedUrlQuery }): Pris
           gte: dateFrom,
           lte: dateTo,
         },
-        eventTypeSlug: eventTypeFilter ? { in: eventTypeFilter.split(',') } : undefined,
+        eventType: eventTypeFilter ? { in: eventTypeFilter.split(',') as EventType[] } : undefined,
       },
       ...(teamFilter ? { OR: [{ teamId: null }, { teamId: Number(teamFilter) }] } : {}),
     },
@@ -70,7 +69,6 @@ export const getEventsWithRegistrations = async ({ query }: Pick<NextApiRequest,
     include: {
       team: true,
       match: true,
-      type: true,
       registrations: {
         include: {
           player: true,

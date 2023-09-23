@@ -12,12 +12,13 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint --fix src",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev --skip-seed --name",
+    "db:migrate": "prisma migrate dev --skip-seed",
+    "db:new-migration": "prisma migrate dev --skip-seed --name",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "docker:down": "docker-compose down",
-    "docker:fresh": "yarn docker:down && yarn docker:start && sleep 1 && yarn db:push && yarn db:generate",
+    "docker:fresh": "yarn docker:down && yarn docker:start && sleep 1 && yarn db:migrate && yarn db:generate",
     "docker:start": "docker-compose up -d"
   },
   "dependencies": {

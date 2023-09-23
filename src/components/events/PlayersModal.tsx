@@ -1,13 +1,13 @@
 'use client';
 
 import { Close } from '@mui/icons-material';
-import { Box, Button, Dialog, IconButton, Stack, TypeBackground, Typography } from '@mui/material';
+import { Box, Button, Dialog, IconButton, Stack, Typography } from '@mui/material';
 import { Event, Prisma } from '@prisma/client';
 import Image from 'next/image';
 import { useMemo } from 'react';
+import { positionsList } from 'utils';
 
 import { useModal } from 'hooks/useModal';
-import { usePositions } from 'hooks/useQuery';
 
 export type ExtendedRegistrations = Prisma.RegistrationsGetPayload<{
   include: {
@@ -18,20 +18,19 @@ export type ExtendedRegistrations = Prisma.RegistrationsGetPayload<{
 export type PlayersModalProps = {
   registrations: ExtendedRegistrations[];
   title: string;
-  eventType: Event['eventTypeSlug'];
+  eventType: Event['eventType'];
 };
 
 const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) => {
-  const { data: positions = [] } = usePositions();
   const { modalOpen, handleOpenModal, handleCloseModal } = useModal(false);
 
   const groupedPlayers = useMemo(
     () =>
-      positions.map((position) => ({
+      positionsList.map((position) => ({
         ...position,
-        players: registrations.filter((registration) => registration.player.positionId === position.id),
+        players: registrations.filter((registration) => registration.player.position === position.type),
       })),
-    [positions, registrations],
+    [registrations],
   );
 
   return (
@@ -44,10 +43,7 @@ const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) =>
           {title}
         </Typography>
       </Button>
-      <Dialog
-        onClose={handleCloseModal}
-        open={modalOpen}
-        sx={{ '& .MuiPaper-root': { background: ({ palette }) => palette.background[eventType as keyof TypeBackground] } }}>
+      <Dialog onClose={handleCloseModal} open={modalOpen} sx={{ '& .MuiPaper-root': { background: ({ palette }) => palette.background[eventType] } }}>
         <Stack gap={1}>
           <Stack direction='row' spacing={2} sx={{ alignItems: 'center' }}>
             <Image alt='Logo' height={37.625} src='/pythons.png' width={25} />
@@ -56,13 +52,13 @@ const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) =>
               <Close />
             </IconButton>
           </Stack>
-          {groupedPlayers.map((pos) => (
-            <Stack key={pos.id} spacing={1}>
+          {groupedPlayers.map((position) => (
+            <Stack key={position.type} spacing={1}>
               <Typography sx={{ fontWeight: 'bold' }} variant='h3'>
-                {pos.title} ({pos.players.length})
+                {position.label} ({position.players.length})
               </Typography>
               <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 1 }}>
-                {pos.players.map((registration: ExtendedRegistrations) => (
+                {position.players.map((registration: ExtendedRegistrations) => (
                   <div key={registration.playerId}>
                     <Typography fontWeight='bold' variant='body2'>
                       {registration.player.name}

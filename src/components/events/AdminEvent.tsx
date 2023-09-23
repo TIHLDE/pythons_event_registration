@@ -1,12 +1,14 @@
 'use client';
 
 import { Box, Button, Chip, Divider, Typography, useTheme } from '@mui/material';
+import { EventType } from '@prisma/client';
 import axios from 'axios';
 import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { ExtendedEvent } from 'functions/event';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { eventTypesMap } from 'utils';
 
 import ConfirmModal from 'components/ConfirmModal';
 import EventModal from 'components/events/EventModal';
@@ -30,12 +32,7 @@ const AdminEvent = ({ event }: AdminEventProps) => {
     });
   };
 
-  const type =
-    event.eventTypeSlug === 'trening'
-      ? { name: 'Trening', background: theme.palette.background.trening }
-      : event.eventTypeSlug === 'kamp'
-      ? { name: 'Kamp', background: theme.palette.background.kamp }
-      : { name: 'Sosialt', background: theme.palette.background.sosialt };
+  const type = { name: eventTypesMap[event.eventType].label, background: theme.palette.background[event.eventType] };
 
   return (
     <Box
@@ -52,7 +49,7 @@ const AdminEvent = ({ event }: AdminEventProps) => {
         Type
       </Typography>
       <Chip label={type.name} sx={{ bgcolor: 'background.paper' }} />
-      {(event.eventTypeSlug === 'kamp' || event.team) && (
+      {(event.eventType === EventType.MATCH || event.team) && (
         <>
           <Typography fontWeight={'bold'} variant='body1'>
             Lag
@@ -63,7 +60,7 @@ const AdminEvent = ({ event }: AdminEventProps) => {
       {event.title && (
         <>
           <Typography fontWeight='bold' variant='body1'>
-            {event.eventTypeSlug === 'kamp' ? 'Mot' : 'Tittel'}
+            {event.eventType === EventType.MATCH ? 'Mot' : 'Tittel'}
           </Typography>
           <Typography variant='body1'>{event.title}</Typography>
         </>

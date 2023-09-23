@@ -1,7 +1,5 @@
 import { Container } from '@mui/material';
 import { dehydrate } from '@tanstack/react-query';
-import { getEventTypes } from 'functions/getEventTypes';
-import { getPositions } from 'functions/getPositions';
 import { getTeams } from 'functions/getTeams';
 import { getSignedInUser } from 'functions/getUser';
 import { getQueryClient } from 'getQueryClient';
@@ -27,11 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = await getSignedInUser();
   const queryClient = getQueryClient();
   if (user) {
-    await Promise.all([
-      queryClient.prefetchQuery(QUERY_CONFIG.UsePositions().queryKey, getPositions, {}),
-      queryClient.prefetchQuery(QUERY_CONFIG.UseTeams().queryKey, getTeams, {}),
-      queryClient.prefetchQuery(QUERY_CONFIG.UseEventType().queryKey, getEventTypes, {}),
-    ]);
+    await Promise.all([queryClient.prefetchQuery(QUERY_CONFIG.UseTeams().queryKey, getTeams, {})]);
   }
   const dehydratedState = dehydrate(queryClient);
   return (

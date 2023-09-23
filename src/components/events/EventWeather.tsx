@@ -1,17 +1,18 @@
 import { Tooltip, Typography } from '@mui/material';
+import { EventType } from '@prisma/client';
 import { endOfDay, hoursToSeconds, isAfter, isPast, parseJSON, subMinutes } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
 import Image from 'next/image';
 
 import { LocationForecast } from 'types/MetApi';
 
-const getCoordinates = (eventTypeSlug: ExtendedEvent['eventTypeSlug']) => {
-  switch (eventTypeSlug) {
-    case 'kamp':
+const getCoordinates = (eventType: ExtendedEvent['eventType']) => {
+  switch (eventType) {
+    case EventType.MATCH:
       return { lat: 63.4053, lon: 10.3902 };
-    case 'trening':
+    case EventType.TRAINING:
       return { lat: 63.4166, lon: 10.434 };
-    case 'sosialt':
+    case EventType.SOCIAL:
     default:
       return { lat: 63.4343, lon: 10.3974 };
   }
@@ -21,7 +22,7 @@ const getData = async (eventDetails: ExtendedEvent) => {
   if (isPast(endOfDay(eventDetails.time))) {
     return null;
   }
-  const coordinates = getCoordinates(eventDetails.eventTypeSlug);
+  const coordinates = getCoordinates(eventDetails.eventType);
   const response = await fetch(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${coordinates.lat}&lon=${coordinates.lon}`, {
     headers: {
       'User-Agent': 'https://pythons.tihlde.org, https://github.com/TIHLDE/pythons_event_registration',

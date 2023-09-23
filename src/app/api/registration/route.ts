@@ -1,3 +1,4 @@
+import { EventType } from '@prisma/client';
 import { getSignedInUserOrThrow } from 'functions/getUser';
 import HttpStatusCode from 'http-status-typed';
 import { prisma } from 'lib/prisma';
@@ -7,14 +8,14 @@ export const POST = async (request: Request) => {
   const { data, willArrive } = await request.json();
   const [user, event] = await Promise.all([
     getSignedInUserOrThrow(),
-    prisma.event.findFirstOrThrow({ where: { id: data.eventId }, select: { eventTypeSlug: true, time: true, id: true } }),
+    prisma.event.findFirstOrThrow({ where: { id: data.eventId }, select: { eventType: true, time: true, id: true } }),
   ]);
 
   if (event.time < new Date()) {
     return NextResponse.json({ message: `Det er ikke lov å lage en registrering etter at arrangementet har startet` }, { status: HttpStatusCode.FORBIDDEN });
   }
 
-  if (user.disableRegistrations && event.eventTypeSlug !== 'sosialt') {
+  if (user.disableRegistrations && event.eventType !== EventType.SOCIAL) {
     return NextResponse.json({ message: `En administrator har deaktivert påmelding for deg` }, { status: HttpStatusCode.FORBIDDEN });
   }
 

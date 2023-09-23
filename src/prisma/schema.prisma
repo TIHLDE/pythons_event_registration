@@ -8,6 +8,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum MatchEventType {
+  GOAL
+  ASSIST
+  YELLOW_CARD
+  RED_CARD
+  MOTM
+}
+
+enum Result {
+  WIN
+  LOSE
+  DRAW
+}
+
+enum Position {
+  KEEPER
+  BACK
+  CENTER_BACK
+  MIDTFIELDER
+  WINGER
+  STRIKER
+}
+
+enum EventType {
+  TRAINING
+  MATCH
+  SOCIAL
+}
+
 model Team {
   id      Int      @id @default(autoincrement())
   name    String   @db.VarChar(60)
@@ -21,11 +50,10 @@ model Player {
   tihlde_user_id       String
   createdAt            DateTime        @default(now())
   name                 String          @db.VarChar(60)
-  positionId           Int
   active               Boolean         @default(true)
   disableRegistrations Boolean         @default(false)
   teamId               Int?
-  position             Position        @relation(fields: [positionId], references: [id])
+  position             Position        @default(KEEPER)
   team                 Team?           @relation(fields: [teamId], references: [id])
   notifications        Notification[]
   registrations        Registrations[]
@@ -39,19 +67,12 @@ model Event {
   time          DateTime
   location      String
   finesGiven    Boolean         @default(false)
-  eventTypeSlug String
+  eventType     EventType       @default(SOCIAL)
   teamId        Int?
-  type          EventType       @relation(fields: [eventTypeSlug], references: [slug])
   team          Team?           @relation(fields: [teamId], references: [id])
   registrations Registrations[]
   matchId       Int?
   match         Match?
-}
-
-model EventType {
-  slug  String  @id
-  name  String
-  event Event[]
 }
 
 model Registrations {
@@ -65,12 +86,6 @@ model Registrations {
   player     Player    @relation(fields: [playerId], references: [id])
 
   @@id([playerId, eventId])
-}
-
-model Position {
-  id     Int      @id @default(autoincrement())
-  title  String   @unique
-  Player Player[]
 }
 
 model Notification {
@@ -100,18 +115,4 @@ model MatchEvent {
   playerId Int
   match    Match          @relation(fields: [matchId], references: [id], onDelete: Cascade)
   player   Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
-}
-
-enum MatchEventType {
-  GOAL
-  ASSIST
-  YELLOW_CARD
-  RED_CARD
-  MOTM
-}
-
-enum Result {
-  WIN
-  LOSE
-  DRAW
 }

@@ -61,9 +61,9 @@ const Event = async ({ eventDetails, relatedMatches }: EventProps) => {
         </Suspense>
 
         <Stack direction='row' gap={1} sx={{ gridColumn: 'span 2' }}>
-          <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.willArrive || []} title='Påmeldt' />
-          <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.willNotArrive || []} title='Avmeldt' />
-          <PlayersModal eventType={eventDetails.eventTypeSlug} registrations={eventDetails?.hasNotResponded || []} title='Ikke svart' />
+          <PlayersModal eventType={eventDetails.eventType} registrations={eventDetails?.willArrive || []} title='Påmeldt' />
+          <PlayersModal eventType={eventDetails.eventType} registrations={eventDetails?.willNotArrive || []} title='Avmeldt' />
+          <PlayersModal eventType={eventDetails.eventType} registrations={eventDetails?.hasNotResponded || []} title='Ikke svart' />
         </Stack>
       </Box>
 

@@ -1,3 +1,5 @@
+import { EventType } from '@prisma/client';
+
 export type Deadlines = {
   signupBefore: number;
 };
@@ -13,10 +15,10 @@ export type Rule = {
   fines: Fines;
 };
 
-export type Rules = Record<string, Rule>;
+export type Rules = Partial<Record<EventType, Rule>>;
 
 export const rules: Rules = {
-  trening: {
+  [EventType.TRAINING]: {
     paragraph: '§1.01 - Treningsregistrering',
     deadlines: {
       signupBefore: 4,
@@ -26,7 +28,7 @@ export const rules: Rules = {
       tooLateRegistration: 1,
     },
   },
-  kamp: {
+  [EventType.MATCH]: {
     paragraph: '§2.01 - Kampregistrering',
     deadlines: {
       signupBefore: 48,

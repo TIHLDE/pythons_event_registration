@@ -22,9 +22,10 @@ import { format, parseJSON } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { positionsList } from 'utils';
 
 import { useModal } from 'hooks/useModal';
-import { usePositions, useTeams } from 'hooks/useQuery';
+import { useTeams } from 'hooks/useQuery';
 
 export type EditPlayerModalProps = {
   player: Player;
@@ -32,21 +33,20 @@ export type EditPlayerModalProps = {
 
 type FormDataProps = {
   teamId: Player['teamId'] | '';
-  positionId: Player['positionId'];
+  position: Player['position'];
   disableRegistrations: Player['disableRegistrations'];
 };
 
 const EditPlayerModal = ({ player }: EditPlayerModalProps) => {
   const { modalOpen, handleOpenModal, handleCloseModal } = useModal(false);
   const { data: teams = [] } = useTeams();
-  const { data: positions = [] } = usePositions();
   const router = useRouter();
   const { control, handleSubmit } = useForm<FormDataProps>({
-    defaultValues: { teamId: player.teamId || '', positionId: player.positionId, disableRegistrations: player.disableRegistrations },
+    defaultValues: { teamId: player.teamId || '', position: player.position, disableRegistrations: player.disableRegistrations },
   });
   const onSubmit = useCallback(
     async (formData: FormDataProps) => {
-      const data: Pick<Player, 'teamId' | 'positionId' | 'disableRegistrations'> = { ...formData, teamId: formData.teamId === '' ? null : formData.teamId };
+      const data: Pick<Player, 'teamId' | 'position' | 'disableRegistrations'> = { ...formData, teamId: formData.teamId === '' ? null : formData.teamId };
       await axios.put(`/api/players/${player.id}`, { data: data });
       handleCloseModal();
       router.refresh();
@@ -87,12 +87,12 @@ Opprettet: ${format(parseJSON(player.createdAt), 'dd-MM-yyyy')}
               <InputLabel>Posisjon</InputLabel>
               <Controller
                 control={control}
-                name='positionId'
+                name='position'
                 render={({ field: { onChange, value } }) => (
                   <Select label='Posisjon' onChange={onChange} value={value}>
-                    {positions.map((position) => (
-                      <MenuItem key={position.id} value={position.id}>
-                        {position.title}
+                    {positionsList.map((position) => (
+                      <MenuItem key={position.type} value={position.type}>
+                        {position.label}
                       </MenuItem>
                     ))}
                   </Select>

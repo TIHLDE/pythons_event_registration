@@ -1,5 +1,6 @@
 import { Stack, Typography } from '@mui/material';
 import { Grid } from '@mui/material';
+import { EventType } from '@prisma/client';
 import { addWeeks, endOfWeek, format, getWeek, startOfWeek } from 'date-fns';
 import nb from 'date-fns/locale/nb';
 import { ExtendedEvent, getEventsWithRegistrations } from 'functions/event';
@@ -32,7 +33,7 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
   const [eventsWithRegistrations, allMatches] = await Promise.all([getEventsWithRegistrations({ query: searchParams }), getAllMatches()]);
 
   const eventsRelatedMatches = eventsWithRegistrations
-    .filter((event) => event.eventTypeSlug === 'kamp')
+    .filter((event) => event.eventType === EventType.MATCH)
     .map((event) => {
       const matches = allMatches.filter((match) => match.id !== event.id && compareTwoStrings(event.title || '', match.title || '') > 0.8);
       return { eventId: event.id, matches };

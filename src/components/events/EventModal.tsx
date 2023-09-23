@@ -2,14 +2,16 @@
 
 import { Close } from '@mui/icons-material';
 import { Button, Dialog, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Event, EventType } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { setMinutes } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
+import { eventTypesList } from 'utils';
 
-import { useEventType, useTeams } from 'hooks/useQuery';
+import { useTeams } from 'hooks/useQuery';
 
 export type EventModalProps = {
   event?: ExtendedEvent;
@@ -19,28 +21,27 @@ export type EventModalProps = {
 };
 
 type FormDataProps = {
-  eventTypeSlug: string;
-  title?: string;
+  eventType: Event['eventType'] | '';
+  title?: Event['title'];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   time: any;
-  location: string;
-  team: ExtendedEvent['teamId'];
+  location: Event['location'];
+  team: Event['teamId'];
 };
 
 const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
   const dateTimeFormat = "yyyy-MM-dd'T'HH:mm";
   const { handleSubmit, control, watch } = useForm<FormDataProps>({
     defaultValues: {
-      eventTypeSlug: event?.eventTypeSlug || '',
+      eventType: event?.eventType || '',
       title: event?.title || '',
       time: event && event.time ? format(new Date(event.time), dateTimeFormat) : format(setMinutes(new Date(), 0), dateTimeFormat),
       location: event?.location || '',
       team: event?.teamId || null,
     },
   });
-  const { data: eventTypes = [] } = useEventType();
   const { data: teams = [] } = useTeams();
-  const watchEventType = watch('eventTypeSlug');
+  const watchEventType = watch('eventType');
   const router = useRouter();
 
   const onSubmit = async (formData: FormDataProps) => {
@@ -70,35 +71,35 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
           </Stack>
           <Controller
             control={control}
-            name='eventTypeSlug'
+            name='eventType'
             render={({ field }) => (
               <FormControl disabled={Boolean(event)} fullWidth>
                 <InputLabel id='selectType-label'>Type</InputLabel>
                 <Select id='selectType' labelId='selectType-label' required {...field} label='Type'>
-                  {eventTypes.map((eventType) => (
-                    <MenuItem key={eventType.slug} value={eventType.slug}>
-                      {eventType.name}
+                  {eventTypesList.map((eventType) => (
+                    <MenuItem key={eventType.type} value={eventType.type}>
+                      {eventType.label}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             )}
           />
-          {watchEventType !== 'trening' && (
+          {watchEventType !== EventType.TRAINING && (
             <Controller
               control={control}
               name='title'
               render={({ field }) => (
                 <TextField
-                  label={watchEventType === 'kamp' ? 'Motstander' : 'Tittel'}
-                  placeholder={watchEventType === 'kamp' ? 'Motstander' : 'Tittel'}
+                  label={watchEventType === EventType.MATCH ? 'Motstander' : 'Tittel'}
+                  placeholder={watchEventType === EventType.MATCH ? 'Motstander' : 'Tittel'}
                   required
                   {...field}
                 />
               )}
             />
           )}
-          {watchEventType === 'kamp' && (
+          {watchEventType === EventType.MATCH && (
             <FormControl fullWidth>
               <InputLabel id='select-team'>Lag</InputLabel>
               <Controller

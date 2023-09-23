@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Position, Prisma } from '@prisma/client';
 import HttpStatusCode from 'http-status-typed';
 import { prisma } from 'lib/prisma';
 import { cookies } from 'next/headers';
@@ -24,7 +24,7 @@ export const POST = async (request: Request) => {
     // Create new players when there are new memberships at TIHLDE.org
     const newPlayers: Prisma.Enumerable<Prisma.PlayerCreateManyInput> = memberships.results
       .filter((membership) => !players.some((player) => player.tihlde_user_id === membership.user.user_id))
-      .map((membership) => ({ tihlde_user_id: membership.user.user_id, positionId: 1, name: membershipToName(membership) }));
+      .map((membership) => ({ tihlde_user_id: membership.user.user_id, position: Position.KEEPER, name: membershipToName(membership) }));
     const createPlayersQuery = prisma.player.createMany({ data: newPlayers, skipDuplicates: true });
 
     // Deactivate players when they are no longer a member of the group at TIHLDE.org

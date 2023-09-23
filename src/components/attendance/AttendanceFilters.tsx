@@ -2,18 +2,15 @@
 
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import { Alert, Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { EventType } from '@prisma/client';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { removeFalsyElementsFromObject } from 'utils';
+import { eventTypesList, removeFalsyElementsFromObject } from 'utils';
 
 import { StandaloneExpand } from 'components/Expand';
 
 export type AttendanceFiltersProps = {
-  eventTypes: {
-    slug: string;
-    name: string;
-  }[];
   teams: {
     id: number;
     name: string;
@@ -30,7 +27,7 @@ type FormData = {
   willArrive: string;
 };
 
-export const AttendanceFilters = ({ eventTypes, defaultToDate, defaultFromDate, teams }: AttendanceFiltersProps) => {
+export const AttendanceFilters = ({ defaultToDate, defaultFromDate, teams }: AttendanceFiltersProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -65,9 +62,9 @@ export const AttendanceFilters = ({ eventTypes, defaultToDate, defaultFromDate, 
               render={({ field }) => (
                 <Select id='type' label='Type' labelId='selectType-type' {...field}>
                   <MenuItem value=''>Alle</MenuItem>
-                  {eventTypes.map((eventType) => (
-                    <MenuItem key={eventType.slug} value={eventType.slug}>
-                      {eventType.name}
+                  {eventTypesList.map((eventType) => (
+                    <MenuItem key={eventType.type} value={eventType.type}>
+                      {eventType.label}
                     </MenuItem>
                   ))}
                 </Select>
@@ -111,7 +108,7 @@ export const AttendanceFilters = ({ eventTypes, defaultToDate, defaultFromDate, 
           </Button>
         </Box>
       </StandaloneExpand>
-      {(searchParams.get('eventType') === 'kamp' || !searchParams.get('eventType')) && !searchParams.get('team') && (
+      {(searchParams.get('eventType') === EventType.MATCH || !searchParams.get('eventType')) && !searchParams.get('team') && (
         <Alert severity='info' sx={{ mb: 1 }} variant='outlined'>
           Kamper er en del av filtreringen uten at et lag er valgt. Det medfører at ingen kan ha 100% påmeldinger ettersom det ikke er mulig å melde seg på
           andre lags kamper.
