@@ -19,7 +19,8 @@
     "db:studio": "prisma studio",
     "docker:down": "docker-compose down",
     "docker:fresh": "yarn docker:down && yarn docker:start && sleep 1 && yarn db:migrate && yarn db:generate",
-    "docker:start": "docker-compose up -d"
+    "docker:start": "docker-compose up -d",
+    "docker:stop": "docker-compose stop"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
