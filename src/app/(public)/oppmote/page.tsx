@@ -56,6 +56,7 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
   const playersQuery = prisma.player.findMany({
     where: {
       active: true,
+      disableRegistrations: false,
       teamId: teamFilter ? Number(teamFilter) : undefined,
     },
     select: {
