@@ -1,6 +1,7 @@
 import { Box, Divider, Typography, TypographyProps } from '@mui/material';
 import { EventType } from '@prisma/client';
 import { getMonth, parseISO, set } from 'date-fns';
+import { getTeams } from 'functions/getTeams';
 import { prisma } from 'lib/prisma';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
@@ -85,9 +86,7 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
     orderBy: { name: 'asc' },
   });
 
-  const teamsQuery = prisma.team.findMany();
-
-  const [eventsAmount, players, teams] = await Promise.all([eventsAmountQuery, playersQuery, teamsQuery]);
+  const [eventsAmount, players, teams] = await Promise.all([eventsAmountQuery, playersQuery, getTeams()]);
   const sortedPlayers = players
     .map((player) => ({
       ...player,

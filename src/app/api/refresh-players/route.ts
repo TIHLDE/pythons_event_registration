@@ -1,6 +1,8 @@
 import { Position, Prisma } from '@prisma/client';
+import { PLAYERS_CACHE_TAG } from 'functions/getPlayers';
 import HttpStatusCode from 'http-status-typed';
 import { prisma } from 'lib/prisma';
+import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { TIHLDEMembership } from 'tihlde';
@@ -46,6 +48,8 @@ export const POST = async (request: Request) => {
       .map((membership) => prisma.player.updateMany({ where: { tihlde_user_id: membership.user.user_id }, data: { name: membershipToName(membership) } }));
 
     await Promise.all([createPlayersQuery, ...updateActivePlayersQueries, ...updateDeactivatedPlayersQueries, ...updatePlayerNamesQueries]);
+
+    revalidateTag(PLAYERS_CACHE_TAG);
 
     return NextResponse.json({ detail: 'Successfully refreshed players' });
   } catch (e) {

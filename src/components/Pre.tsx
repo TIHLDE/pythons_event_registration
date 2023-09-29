@@ -1,6 +1,6 @@
 'use client';
 
-import { styled } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 export const Pre = styled('pre')(({ theme }) => ({
   color: theme.palette.text.primary,

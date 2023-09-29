@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Button, Chip, Divider, Typography, useTheme } from '@mui/material';
+import { Box, Button, Chip, Divider, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { EventType } from '@prisma/client';
 import axios from 'axios';
 import { format, isPast } from 'date-fns';

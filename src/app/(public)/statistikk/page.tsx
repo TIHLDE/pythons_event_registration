@@ -1,5 +1,6 @@
 import { Box, Divider, Typography, TypographyProps } from '@mui/material';
 import { MatchEventType } from '@prisma/client';
+import { getTeams } from 'functions/getTeams';
 import { prisma } from 'lib/prisma';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
@@ -59,9 +60,7 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
     orderBy: { name: 'asc' },
   });
 
-  const teamsQuery = prisma.team.findMany();
-
-  const [teams, players] = await Promise.all([teamsQuery, playersQuery]);
+  const [teams, players] = await Promise.all([getTeams(), playersQuery]);
   const sortedPlayers = players.filter((player) => player._count.matchEvents > 0).sort((a, b) => b._count.matchEvents - a._count.matchEvents);
 
   return {
