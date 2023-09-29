@@ -1,6 +1,6 @@
 'use client';
 
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack } from '@mui/material';
+import { Select, SelectItem } from '@nextui-org/select';
 import { MatchEventType } from '@prisma/client';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
@@ -31,57 +31,62 @@ export const StatisticsFilters = ({ teams }: StatisticsFiltersProps) => {
     matchEventType: typeof searchParams.get('matchEventType') === 'string' ? (searchParams.get('matchEventType') as MatchEventType) : MatchEventType.GOAL,
   });
 
-  const handleChange = (event: SelectChangeEvent, field: keyof Filters) => {
-    const newFilters = { ...filters, [field]: event.target.value as string };
+  const handleChange = (event: string, field: keyof Filters) => {
+    const newFilters = { ...filters, [field]: event };
     setFilters(newFilters);
     router.replace(`${pathname}?${new URLSearchParams(removeFalsyElementsFromObject(newFilters)).toString()}`, { scroll: false });
   };
 
   return (
-    <Stack direction='row' gap={1} sx={{ mb: 2 }}>
-      <FormControl fullWidth>
-        <InputLabel id='select-semester'>Semester</InputLabel>
-        <Select
-          id='semester'
-          label='Semester'
-          labelId='select-semester'
-          onChange={(e) => handleChange(e as SelectChangeEvent<string>, 'semester')}
-          value={filters.semester}>
-          <MenuItem value=''>Alle</MenuItem>
-          {semesters.map((semester) => (
-            <MenuItem key={semester.id} value={semester.id}>
-              {semester.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth>
-        <InputLabel id='select-team'>Lag</InputLabel>
-        <Select id='team' label='Lag' labelId='select-team' onChange={(e) => handleChange(e as SelectChangeEvent<string>, 'team')} value={filters.team}>
-          <MenuItem value=''>Alle</MenuItem>
-          {teams.map((team) => (
-            <MenuItem key={team.id} value={team.id}>
-              {team.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth>
-        <InputLabel id='type-label'>Type</InputLabel>
-        <Select
-          id='type'
-          label='Type'
-          labelId='type-label'
-          onChange={(e) => handleChange(e as SelectChangeEvent<string>, 'matchEventType')}
-          required
-          value={filters.matchEventType}>
-          <MenuItem value={MatchEventType.GOAL}>{MATCH_EVENT_TYPES[MatchEventType.GOAL]}</MenuItem>
-          <MenuItem value={MatchEventType.ASSIST}>{MATCH_EVENT_TYPES[MatchEventType.ASSIST]}</MenuItem>
-          <MenuItem value={MatchEventType.RED_CARD}>{MATCH_EVENT_TYPES[MatchEventType.RED_CARD]}</MenuItem>
-          <MenuItem value={MatchEventType.YELLOW_CARD}>{MATCH_EVENT_TYPES[MatchEventType.YELLOW_CARD]}</MenuItem>
-          <MenuItem value={MatchEventType.MOTM}>{MATCH_EVENT_TYPES[MatchEventType.MOTM]}</MenuItem>
-        </Select>
-      </FormControl>
-    </Stack>
+    <div className='mb-4 flex gap-2'>
+      <Select
+        fullWidth
+        items={[{ id: '', label: 'Alle' }, ...semesters]}
+        label='Semester'
+        onChange={(e) => handleChange(e.target.value, 'semester')}
+        selectedKeys={new Set(filters.semester ? [filters.semester] : [])}
+        variant='faded'>
+        {(semester) => (
+          <SelectItem key={semester.id} value={semester.id}>
+            {semester.label}
+          </SelectItem>
+        )}
+      </Select>
+      <Select
+        fullWidth
+        items={[{ id: '', name: 'Alle' }, ...teams]}
+        label='Lag'
+        onChange={(e) => handleChange(e.target.value, 'team')}
+        selectedKeys={new Set(filters.team ? [filters.team] : [])}
+        variant='faded'>
+        {(team) => (
+          <SelectItem key={team.id} value={team.id}>
+            {team.name}
+          </SelectItem>
+        )}
+      </Select>
+      <Select
+        fullWidth
+        label='Type'
+        onChange={(e) => handleChange(e.target.value, 'matchEventType')}
+        selectedKeys={new Set(filters.matchEventType ? [filters.matchEventType] : [])}
+        variant='faded'>
+        <SelectItem key={MatchEventType.GOAL} value={MatchEventType.GOAL}>
+          {MATCH_EVENT_TYPES[MatchEventType.GOAL]}
+        </SelectItem>
+        <SelectItem key={MatchEventType.ASSIST} value={MatchEventType.ASSIST}>
+          {MATCH_EVENT_TYPES[MatchEventType.ASSIST]}
+        </SelectItem>
+        <SelectItem key={MatchEventType.RED_CARD} value={MatchEventType.RED_CARD}>
+          {MATCH_EVENT_TYPES[MatchEventType.RED_CARD]}
+        </SelectItem>
+        <SelectItem key={MatchEventType.YELLOW_CARD} value={MatchEventType.YELLOW_CARD}>
+          {MATCH_EVENT_TYPES[MatchEventType.YELLOW_CARD]}
+        </SelectItem>
+        <SelectItem key={MatchEventType.MOTM} value={MatchEventType.MOTM}>
+          {MATCH_EVENT_TYPES[MatchEventType.MOTM]}
+        </SelectItem>
+      </Select>
+    </div>
   );
 };

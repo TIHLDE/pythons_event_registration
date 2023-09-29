@@ -1,8 +1,8 @@
 'use client';
 
-import { Stack } from '@mui/material';
 import { ExtendedEvent } from 'functions/event';
 import { ReactNode } from 'react';
+import { eventTypeBgGradient } from 'utils';
 
 export type EventCardProps = {
   eventDetails: ExtendedEvent;
@@ -10,19 +10,7 @@ export type EventCardProps = {
 };
 
 const EventCard = ({ eventDetails, children }: EventCardProps) => {
-  return (
-    <Stack
-      gap={1}
-      sx={{
-        background: ({ palette }) => palette.background[eventDetails.eventType],
-        width: '100%',
-        height: 'auto',
-        p: 1,
-        borderRadius: 1,
-      }}>
-      {children}
-    </Stack>
-  );
+  return <div className={`flex h-auto w-full flex-col gap-2 rounded-lg p-3 ${eventTypeBgGradient[eventDetails.eventType]}`}>{children}</div>;
 };
 
 export default EventCard;

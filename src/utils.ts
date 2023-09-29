@@ -111,3 +111,9 @@ export const getEventTitle = (event: ExtendedEvent) => {
   }
   return { icon, title, fullTitle: `${icon} ${title}` };
 };
+
+export const eventTypeBgGradient: Record<EventType, string> = {
+  [EventType.MATCH]: 'bg-gradient-to-b from-[#6e2a70] to-[#4c126b]',
+  [EventType.TRAINING]: 'bg-gradient-to-b from-[#3A2056] to-[#0b0941]',
+  [EventType.SOCIAL]: 'bg-gradient-to-b from-[#565220] to-[#563A20]',
+};

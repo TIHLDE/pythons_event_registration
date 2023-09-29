@@ -16,6 +16,7 @@ export const getAllMatches = unstable_cache(
       },
       where: {
         eventType: EventType.MATCH,
+        time: { lte: new Date() },
       },
     });
   },

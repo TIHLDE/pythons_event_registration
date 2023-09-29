@@ -1,48 +1,28 @@
 'use client';
 
-import { Button, Stack, StackProps } from '@mui/material';
+import { Tab, Tabs } from '@nextui-org/tabs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback } from 'react';
+import { useState } from 'react';
 
-export type LinkMenuProps = StackProps & {
+export type LinkMenuProps = {
   routes: {
     label: string;
     href: string;
   }[];
 };
 
-export const LinkMenu = ({ routes, ...props }: LinkMenuProps) => {
+export const MainLinkMenu = ({ routes }: LinkMenuProps) => {
   const pathname = usePathname();
-
-  const isCurrentRoute = useCallback((href: string) => href === pathname, [pathname]);
+  const [selected, setSelected] = useState<string | number>(pathname);
 
   return (
-    <Stack direction='row' gap={1} {...props}>
-      {routes.map((route) => (
-        <Button
-          color='menu'
-          component={Link}
-          fullWidth
-          href={route.href}
-          key={route.href}
-          size='large'
-          sx={{ fontWeight: isCurrentRoute(route.href) ? 'bold' : undefined }}
-          variant={isCurrentRoute(route.href) ? 'contained' : 'outlined'}>
-          {route.label}
-        </Button>
+    <Tabs className='mb-4' fullWidth onSelectionChange={setSelected} selectedKey={selected} size='lg' variant='bordered'>
+      {routes.map((item) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        <Tab as={Link} href={item.href} key={item.href} title={item.label} />
       ))}
-    </Stack>
+    </Tabs>
   );
 };
-
-export const MainLinkMenu = (props: Omit<LinkMenuProps, 'routes'>) => (
-  <LinkMenu
-    routes={[
-      { href: '/', label: 'Kalender' },
-      { href: '/statistikk', label: 'Statistikk' },
-      { href: '/oppmote', label: 'Oppmøte' },
-    ]}
-    {...props}
-  />
-);

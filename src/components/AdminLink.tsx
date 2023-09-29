@@ -1,4 +1,3 @@
-import { Stack, Typography } from '@mui/material';
 import Link from 'next/link';
 
 export type AdminLinkProps = {
@@ -10,22 +9,13 @@ export type AdminLinkProps = {
 
 const AdminLink = ({ path, title, description, openInNewTab }: AdminLinkProps) => {
   return (
-    <Stack
-      component={Link}
+    <Link
+      className='flex h-full flex-col gap-2 rounded-md bg-primary-900 p-4 no-underline hover:bg-primary-800'
       href={path}
-      spacing={1}
-      sx={{
-        textDecoration: 'none',
-        p: 2,
-        backgroundColor: '#532E7B',
-        cursor: 'pointer',
-        borderRadius: 1,
-        height: '100%',
-      }}
       target={openInNewTab ? '_blank' : undefined}>
-      <Typography variant='h2'>{title}</Typography>
-      <Typography variant='body1'>{description}</Typography>
-    </Stack>
+      <h2 className='font-oswald text-3xl font-bold'>{title}</h2>
+      <p className='text-md'>{description}</p>
+    </Link>
   );
 };
 

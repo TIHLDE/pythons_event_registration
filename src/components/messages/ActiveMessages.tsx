@@ -1,4 +1,4 @@
-import { Alert, Typography } from '@mui/material';
+import { Card, CardBody } from '@nextui-org/card';
 import { getActiveNotifications } from 'functions/getActiveNotifications';
 import { Suspense } from 'react';
 
@@ -10,12 +10,12 @@ type AlertMessageProps = {
 
 const AlertMessage = ({ notification }: AlertMessageProps) => {
   return (
-    <Alert severity='warning' variant='outlined'>
-      <Typography gutterBottom variant='body1'>
-        {notification.message}
-      </Typography>
-      <Typography variant='body2'>- {notification.author.name}</Typography>
-    </Alert>
+    <Card className='border-1 border-solid border-yellow-500 p-2 dark:bg-yellow-900' fullWidth shadow='sm'>
+      <CardBody className='gap-2'>
+        <p className='text-md'>{notification.message}</p>
+        <p className='text-sm'>- {notification.author.name}</p>
+      </CardBody>
+    </Card>
   );
 };
 

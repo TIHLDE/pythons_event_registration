@@ -1,9 +1,9 @@
-import { Container } from '@mui/material';
 import { dehydrate } from '@tanstack/react-query';
 import { getTeams } from 'functions/getTeams';
 import { getSignedInUser } from 'functions/getUser';
 import { getQueryClient } from 'getQueryClient';
 import { Metadata } from 'next';
+import { Cabin, Inter, Oswald } from 'next/font/google';
 import Providers from 'providers';
 
 import { QUERY_CONFIG } from 'hooks/useQuery';
@@ -14,6 +14,26 @@ import { Footer } from 'components/Footer';
 import NavBar from 'components/NavBar';
 import SignIn from 'components/SignIn';
 import ThemeRegistry from 'components/ThemeRegistry/ThemeRegistry';
+
+import 'app/globals.css';
+
+const cabin = Cabin({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-cabin',
+});
+
+const oswald = Oswald({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-oswald',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: 'TIHLDE Pythons',
@@ -29,19 +49,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
   const dehydratedState = dehydrate(queryClient);
   return (
-    <html lang='en'>
+    <html className={`dark ${inter.className} ${inter.variable} ${oswald.className} ${oswald.variable} ${cabin.className} ${cabin.variable}`} lang='no'>
       <body>
         <Analytics />
-        <ThemeRegistry>
-          <Container maxWidth='lg' sx={{ p: 2 }}>
-            <Providers dehydratedState={dehydratedState}>
+        <Providers dehydratedState={dehydratedState}>
+          <ThemeRegistry>
+            <div className='mx-auto w-full max-w-screen-lg p-4'>
               <NavBar />
               {Boolean(user) && <AdminHotKeys />}
               {user ? children : <SignIn />}
               <Footer />
-            </Providers>
-          </Container>
-        </ThemeRegistry>
+            </div>
+          </ThemeRegistry>
+        </Providers>
       </body>
     </html>
   );

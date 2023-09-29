@@ -1,60 +1,37 @@
 'use client';
 
-import ExpandLessIcon from '@mui/icons-material/ExpandLessRounded';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMoreRounded';
-import {
-  Collapse,
-  CollapseProps,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemProps,
-  ListItemText,
-  ListItemTextProps,
-  Paper,
-  PaperProps,
-  Stack,
-} from '@mui/material';
-import { ReactNode, useState } from 'react';
+import { Accordion, AccordionItem } from '@nextui-org/accordion';
+import clsx from 'clsx';
+import { ReactNode, useId, useState } from 'react';
 
-export type StandaloneExpandProps = PaperProps &
-  Pick<ListItemTextProps, 'primary' | 'secondary'> & {
-    icon: ReactNode;
-    children: ReactNode;
-    listItemProps?: ListItemProps;
-    collapseProps?: CollapseProps;
-    expanded?: boolean;
-    onExpand?: (expanded: boolean) => void;
-  };
+export type StandaloneExpandProps = {
+  primary: string;
+  secondary?: string;
+  icon: ReactNode;
+  children: ReactNode;
+  expanded?: boolean;
+  onExpand?: (expanded: boolean) => void;
+  className?: string;
+};
 
-export const StandaloneExpand = ({
-  primary,
-  secondary,
-  icon,
-  children,
-  collapseProps,
-  listItemProps,
-  expanded,
-  onExpand,
-  sx,
-  ...props
-}: StandaloneExpandProps) => {
+export const StandaloneExpand = ({ primary, secondary, className, icon, children, expanded, onExpand }: StandaloneExpandProps) => {
+  const id = useId();
   const [isExpanded, setExpanded] = useState(false);
 
   return (
-    <Paper sx={{ p: 0, overflow: 'hidden', ...sx }} {...props}>
-      <ListItem component='div' disablePadding {...listItemProps}>
-        <ListItemButton onClick={() => (onExpand ? onExpand(!(expanded !== undefined ? expanded : isExpanded)) : setExpanded((prev) => !prev))}>
-          <ListItemIcon sx={{ minWidth: 35 }}>{icon}</ListItemIcon>
-          <ListItemText primary={primary} secondary={secondary} />
-          <ListItemIcon sx={{ minWidth: 35 }}>{expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}</ListItemIcon>
-        </ListItemButton>
-      </ListItem>
-      <Collapse mountOnEnter {...collapseProps} in={expanded !== undefined ? expanded : isExpanded}>
-        <Stack gap={1} sx={{ p: 2 }}>
-          {children}
-        </Stack>
-      </Collapse>
-    </Paper>
+    <Accordion
+      className={clsx([`px-0`, className])}
+      itemClasses={{
+        trigger: 'py-3',
+        content: 'pb-4',
+        title: 'text-base',
+      }}
+      onSelectionChange={() => (onExpand ? onExpand(!(expanded !== undefined ? expanded : isExpanded)) : setExpanded((prev) => !prev))}
+      selectedKeys={new Set((expanded !== undefined ? expanded : isExpanded) ? [id] : [])}
+      variant='splitted'>
+      <AccordionItem key={id} startContent={icon} subtitle={secondary} title={primary}>
+        {children}
+      </AccordionItem>
+    </Accordion>
   );
 };

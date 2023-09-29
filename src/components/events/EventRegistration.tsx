@@ -1,6 +1,10 @@
 'use client';
 
-import { Alert, Box, Button, FormControl, FormControlLabel, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
+import { Button } from '@nextui-org/button';
+import { Card, CardBody } from '@nextui-org/card';
+import { Divider } from '@nextui-org/divider';
+import { Input } from '@nextui-org/input';
+import { Radio, RadioGroup } from '@nextui-org/radio';
 import { EventType, Player, Registrations } from '@prisma/client';
 import axios from 'axios';
 import { format, formatDistanceToNow, isFuture, isPast, subHours } from 'date-fns';
@@ -20,7 +24,7 @@ export type EventRegistrationProps = {
 
 type FormDataProps = {
   reason?: string;
-  registration?: string | number | undefined;
+  registration?: string | undefined;
 };
 
 const EventRegistration = ({ eventDetails, player, registration }: EventRegistrationProps) => {
@@ -86,68 +90,67 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
 
   return (
     <>
+      {isFuture(new Date(eventDetails.time)) && <Divider />}
       {registration && (
-        <Typography fontWeight='bold' sx={{ mb: -0.5 }} textAlign='center' variant='body1'>
-          {registration.willArrive ? '🤝 Du er påmeldt' : `😥 Du er avmeldt: ${registration.reason}`}
-        </Typography>
+        <p className='text-md text-center font-bold'>{registration.willArrive ? '🤝 Du er påmeldt' : `😥 Du er avmeldt: ${registration.reason}`}</p>
       )}
-      <Box component='span' id='confetti' sx={{ position: 'fixed', bottom: 0, left: '50%', translate: '-50% 0' }} />
+      <span className='fixed bottom-0 left-1/2 -translate-x-1/2' id='confetti' />
       {notAllowedRegisterError ? (
-        <Typography textAlign='center' variant='body2'>
-          {notAllowedRegisterError}
-        </Typography>
+        <p className='text-center text-sm'>{notAllowedRegisterError}</p>
       ) : (
         <>
           {openRegistration ? (
-            <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
+            <form className='flex flex-col gap-2' onSubmit={handleSubmit(onSubmit)}>
               {registrationDeadline !== undefined && isPast(registrationDeadline) && (
-                <Alert severity='warning' variant='outlined'>
-                  Du vil få bot om du registrerer eller endrer registreringsstatus etter fristen. Oppdatering av grunn gir deg ikke bot.
-                </Alert>
+                <Card className='border-1 border-solid border-yellow-500 dark:bg-yellow-900' fullWidth shadow='sm'>
+                  <CardBody className='p-2'>
+                    <p className='text-sm'>
+                      Du vil få bot om du registrerer eller endrer registreringsstatus etter fristen. Oppdatering av grunn gir deg ikke bot.
+                    </p>
+                  </CardBody>
+                </Card>
               )}
-              <FormControl>
-                <Controller
-                  control={control}
-                  name='registration'
-                  render={({ field: { value, onChange } }) => (
-                    <RadioGroup onChange={onChange} row value={value}>
-                      <FormControlLabel control={<Radio />} label='Kommer' value={1} />
-                      <FormControlLabel control={<Radio />} label='Kommer ikke' value={0} />
-                    </RadioGroup>
-                  )}
-                />
-              </FormControl>
+              <Controller
+                control={control}
+                name='registration'
+                render={({ field: { value, onChange } }) => (
+                  <RadioGroup onChange={onChange} orientation='horizontal' value={value}>
+                    <Radio value='1'>Kommer</Radio>
+                    <Radio value='0'>Kommer ikke</Radio>
+                  </RadioGroup>
+                )}
+              />
               {watchRegistration === '0' && (
                 <Controller
                   control={control}
                   name={'reason'}
-                  render={({ field: { onChange, value } }) => <TextField autoFocus label={'Grunn'} onChange={onChange} required value={value} />}
+                  render={({ field: { onChange, value } }) => <Input autoFocus label='Grunn' onChange={onChange} required value={value} variant='bordered' />}
                   rules={{ required: 'Du må oppgi en grunn' }}
                 />
               )}
-              <Button type='submit' variant='contained'>
+              <Button color='primary' type='submit' variant='solid'>
                 Bekreft
               </Button>
-              <Button onClick={() => setOpenRegistration(false)} variant='text'>
+              <Button onClick={() => setOpenRegistration(false)} variant='light'>
                 Avbryt
               </Button>
-            </Stack>
+            </form>
           ) : (
-            <>
-              {isFuture(new Date(eventDetails.time)) && (
-                <Button onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'text' : 'contained'}>
+            isFuture(new Date(eventDetails.time)) && (
+              <>
+                <Button color='primary' onClick={() => setOpenRegistration(true)} variant={userHasRegistrated ? 'light' : 'solid'}>
                   {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
                 </Button>
-              )}
-              {registrationDeadline !== undefined && (
-                <Typography sx={{ mt: -0.5 }} textAlign='center' variant='body2'>
-                  {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
-                    locale: nb,
-                    addSuffix: true,
-                  })} - kl. ${format(registrationDeadline, 'HH:mm')}`}
-                </Typography>
-              )}
-            </>
+                {registrationDeadline !== undefined && (
+                  <p className='text-center text-sm'>
+                    {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
+                      locale: nb,
+                      addSuffix: true,
+                    })} - kl. ${format(registrationDeadline, 'HH:mm')}`}
+                  </p>
+                )}
+              </>
+            )
           )}
         </>
       )}

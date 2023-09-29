@@ -1,4 +1,4 @@
-import { Tooltip, Typography } from '@mui/material';
+import { Tooltip } from '@nextui-org/tooltip';
 import { EventType } from '@prisma/client';
 import { endOfDay, hoursToSeconds, isAfter, isPast, parseJSON, subMinutes } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
@@ -61,10 +61,10 @@ const EventWeather = async ({ eventDetails }: EventWeatherProps) => {
 
   return (
     <>
-      <Tooltip title='Været ifølge yr.no'>
+      <Tooltip content='Været ifølge yr.no'>
         <Image alt={data.symbol} height={24} src={`/weather-icon/${data.symbol}.svg`} style={{ filter: 'brightness(1.2)' }} width={24} />
       </Tooltip>
-      <Typography variant='body1'>{`${data.precipitation_amount} mm • ${data.air_temperature}° • ${data.wind_speed} m/s`}</Typography>
+      <p className='text-md'>{`${data.precipitation_amount} mm • ${data.air_temperature}° • ${data.wind_speed} m/s`}</p>
     </>
   );
 };
