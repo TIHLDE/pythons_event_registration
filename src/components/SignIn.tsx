@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@mui/material';
-import { Stack, TextField, Typography } from '@mui/material';
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
 import axios from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/navigation';
@@ -36,32 +36,24 @@ const SignIn = () => {
       <Head>
         <title>Pythons - innlogging</title>
       </Head>
-      <Stack
-        alignItems='center'
-        component='form'
-        gap={2}
-        onSubmit={handleSubmit(signIn)}
-        sx={{ py: 1, m: 'auto', width: { xs: '100%', md: '50%' } }}
-        textAlign='center'>
-        <Typography variant='h1'>Oppmøte-registrering</Typography>
-        <Typography variant='body1'>
-          Du må logge inn med din TIHLDE-bruker før du kan registrere oppmøte på treninger, kamper og sosiale arrangementer.
-        </Typography>
-        {error && <Typography color='red'>{error}</Typography>}
+      <form className='m-auto flex w-full flex-col items-center gap-4 py-2 text-center md:w-1/2' onSubmit={handleSubmit(signIn)}>
+        <h1 className='font-oswald text-4xl font-bold'>Oppmøte-registrering</h1>
+        <p className='text-md'>Du må logge inn med din TIHLDE-bruker før du kan registrere oppmøte på treninger, kamper og sosiale arrangementer.</p>
+        {error && <p className='text-md text-danger-500'>{error}</p>}
         <Controller
           control={control}
           name='user_id'
-          render={({ field }) => <TextField disabled={isLoading} fullWidth label='Brukernavn' required variant='outlined' {...field} />}
+          render={({ field }) => <Input fullWidth isDisabled={isLoading} label='Brukernavn' required variant='faded' {...field} />}
         />
         <Controller
           control={control}
           name='password'
-          render={({ field }) => <TextField disabled={isLoading} fullWidth label='Passord' required type='password' variant='outlined' {...field} />}
+          render={({ field }) => <Input fullWidth isDisabled={isLoading} label='Passord' required type='password' variant='faded' {...field} />}
         />
-        <Button disabled={isLoading} fullWidth type='submit' variant='contained'>
+        <Button color='primary' fullWidth isDisabled={isLoading} type='submit' variant='solid'>
           {isLoading ? 'Logger inn...' : 'Logg inn'}
         </Button>
-      </Stack>
+      </form>
     </>
   );
 };

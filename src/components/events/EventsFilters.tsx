@@ -142,7 +142,7 @@ export const EventsFilters = ({ className }: { className?: string }) => {
           </form>
         </StandaloneExpand>
       ) : (
-        <div className='mb-4 flex gap-2'>
+        <div className='flex gap-2'>
           <Select
             items={semesters}
             label='Semester'

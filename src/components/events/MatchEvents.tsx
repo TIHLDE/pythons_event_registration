@@ -1,10 +1,13 @@
 'use client';
 
-import { Autocomplete, Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Button } from '@nextui-org/button';
+import { Card } from '@nextui-org/card';
+import { Select, SelectItem, SelectSection } from '@nextui-org/select';
 import { MatchEvent, MatchEventType, Player, Prisma } from '@prisma/client';
 import axios from 'axios';
+import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { MATCH_EVENT_TYPES, positionsMap } from 'utils';
+import { MATCH_EVENT_TYPES, positionsList } from 'utils';
 
 import { useMatchEvents, usePlayers } from 'hooks/useQuery';
 
@@ -22,7 +25,7 @@ export type MatchEventsProps = {
 };
 
 type FormData = Pick<MatchEvent, 'type'> & {
-  player: Player | null;
+  player: Player['id'] | null;
 };
 
 const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
@@ -38,11 +41,21 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
   const { data: matchEvents, refetch } = useMatchEvents(event.match?.id ?? -1, { enabled: Boolean(event.match?.id) });
   const { data: players = [], isLoading: isPlayersLoading } = usePlayers({ enabled: isAdmin });
 
+  const playersByPosition = useMemo(
+    () =>
+      positionsList.map((position) => ({
+        type: position.type,
+        label: position.label,
+        players: players.filter((player) => player.position === position.type),
+      })),
+    [players],
+  );
+
   const onSubmit = async (data: FormData) => {
     if (!data.player) {
       return;
     }
-    await axios.post(`/api/matches/${event.match?.id}/events`, { data: { type: data.type, playerId: data.player.id } });
+    await axios.post(`/api/matches/${event.match?.id}/events`, { data: { type: data.type, playerId: Number(data.player) } });
     refetch();
     setValue('player', null);
   };
@@ -52,84 +65,81 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
   };
 
   return (
-    <Stack gap={1}>
+    <div className='flex flex-col gap-2'>
       {matchEvents ? (
         matchEvents.length ? (
           matchEvents.map((matchEvent) => (
-            <Typography key={matchEvent.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <p className='text-md flex items-center gap-2' key={matchEvent.id}>
               <span>{`${MATCH_EVENT_TYPES[matchEvent.type]} - ${matchEvent.player.name}`}</span>
               {isAdmin && (
-                <ConfirmModal color='error' onConfirm={() => deleteMatchEvent(matchEvent.id)} size='small' title='Slett hendelse' variant='outlined'>
+                <ConfirmModal onConfirm={() => deleteMatchEvent(matchEvent.id)} size='sm' title='Slett hendelse' variant='bordered'>
                   Slett
                 </ConfirmModal>
               )}
-            </Typography>
+            </p>
           ))
         ) : (
-          <Typography>Ingen hendelser er registrert</Typography>
+          <p className='text-md'>Ingen hendelser er registrert</p>
         )
       ) : (
         <LoadingLogo />
       )}
       {isAdmin && (
-        <Stack
-          component='form'
-          gap={1}
-          onSubmit={handleSubmit(onSubmit)}
-          sx={{ border: (theme) => `1px solid ${theme.palette.divider}`, p: 2, borderRadius: 1, bgcolor: 'background.paper' }}>
-          <Stack direction='row' gap={1}>
+        <Card as='form' className='flex flex-col gap-2 rounded-md p-4' isBlurred onSubmit={handleSubmit(onSubmit)}>
+          <div className='flex gap-2'>
             <Controller
               control={control}
               name='type'
-              render={({ field }) => (
-                <FormControl fullWidth>
-                  <InputLabel id='type-label'>Hendelse</InputLabel>
-                  <Select id='type' labelId='type-label' required {...field} label='Hendelse'>
-                    <MenuItem value={MatchEventType.GOAL}>{MATCH_EVENT_TYPES[MatchEventType.GOAL]}</MenuItem>
-                    <MenuItem value={MatchEventType.ASSIST}>{MATCH_EVENT_TYPES[MatchEventType.ASSIST]}</MenuItem>
-                    <MenuItem value={MatchEventType.RED_CARD}>{MATCH_EVENT_TYPES[MatchEventType.RED_CARD]}</MenuItem>
-                    <MenuItem value={MatchEventType.YELLOW_CARD}>{MATCH_EVENT_TYPES[MatchEventType.YELLOW_CARD]}</MenuItem>
-                    <MenuItem value={MatchEventType.MOTM}>{MATCH_EVENT_TYPES[MatchEventType.MOTM]}</MenuItem>
-                  </Select>
-                </FormControl>
+              render={({ field: { onChange, value } }) => (
+                <Select label='Hendelse' onChange={(e) => onChange(e.target.value)} selectedKeys={new Set(value ? [value] : [])} variant='faded'>
+                  <SelectItem key={MatchEventType.GOAL} value={MatchEventType.GOAL}>
+                    {MATCH_EVENT_TYPES[MatchEventType.GOAL]}
+                  </SelectItem>
+                  <SelectItem key={MatchEventType.ASSIST} value={MatchEventType.ASSIST}>
+                    {MATCH_EVENT_TYPES[MatchEventType.ASSIST]}
+                  </SelectItem>
+                  <SelectItem key={MatchEventType.RED_CARD} value={MatchEventType.RED_CARD}>
+                    {MATCH_EVENT_TYPES[MatchEventType.RED_CARD]}
+                  </SelectItem>
+                  <SelectItem key={MatchEventType.YELLOW_CARD} value={MatchEventType.YELLOW_CARD}>
+                    {MATCH_EVENT_TYPES[MatchEventType.YELLOW_CARD]}
+                  </SelectItem>
+                  <SelectItem key={MatchEventType.MOTM} value={MatchEventType.MOTM}>
+                    {MATCH_EVENT_TYPES[MatchEventType.MOTM]}
+                  </SelectItem>
+                </Select>
               )}
             />
             <Controller
               control={control}
               name='player'
               render={({ field: { onChange, value } }) => (
-                <Autocomplete
-                  disabled={isPlayersLoading}
-                  disablePortal
-                  fullWidth
-                  getOptionLabel={(option) => option.name}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  groupBy={(option) => option.position}
-                  isOptionEqualToValue={(option, value) => option.id === value?.id}
-                  noOptionsText='Fant ingen spillere med dette navnet'
-                  onChange={(_, value) => onChange(value)}
-                  options={players
-                    .sort((a, b) => positionsMap[a.position].order - positionsMap[b.position].order)
-                    .map((player) => ({ ...player, position: positionsMap[player.position].label }))}
-                  renderInput={(params) => (
-                    <TextField
-                      sx={{ background: 'transparent', color: 'white' }}
-                      {...params}
-                      label={isPlayersLoading ? 'Laster spillere...' : 'Velg spiller'}
-                    />
-                  )}
-                  value={value}
-                />
+                <Select
+                  isDisabled={isPlayersLoading}
+                  label={isPlayersLoading ? 'Laster spillere...' : 'Velg spiller'}
+                  onChange={(e) => onChange(e.target.value)}
+                  required
+                  selectedKeys={new Set(value ? [value] : [])}
+                  variant='faded'>
+                  {playersByPosition.map((position) => (
+                    <SelectSection key={position.type} showDivider title={position.label}>
+                      {position.players.map((player) => (
+                        <SelectItem key={player.id} value={player.id}>
+                          {player.name}
+                        </SelectItem>
+                      ))}
+                    </SelectSection>
+                  ))}
+                </Select>
               )}
             />
-          </Stack>
-          <Button disabled={!selectedPlayer || formState.isSubmitting} type='submit' variant='contained'>
+          </div>
+          <Button color='primary' isDisabled={!selectedPlayer || formState.isSubmitting} type='submit' variant='solid'>
             Legg til hendelse
           </Button>
-        </Stack>
+        </Card>
       )}
-    </Stack>
+    </div>
   );
 };
 

@@ -28,7 +28,6 @@ export const CalendarSubscription = async (props: Partial<StandaloneExpandProps>
         det være fordi kalenderen sjelden ser etter oppdateringer. Oppdaterings-frekvensen varierer fra kalender til kalender, enkelte oppdateres kun daglig.
       </p>
       <Snippet className='w-full' symbol='' variant='bordered'>{`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/api/ics/${user?.tihlde_user_id}`}</Snippet>
-      {/* <Pre>{`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/api/ics/${user?.tihlde_user_id}`}</Pre> */}
     </StandaloneExpand>
   );
 };

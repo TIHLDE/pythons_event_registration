@@ -80,27 +80,27 @@ const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
               })}
             </p>
             {isAdmin && (
-              <Card as='form' className='flex flex-col gap-2 p-4' onSubmit={handleSubmit(onSubmit)}>
+              <Card as='form' className='flex flex-col gap-2 p-4' isBlurred onSubmit={handleSubmit(onSubmit)}>
                 <div className='mt-2 flex gap-2'>
                   <Controller
                     control={control}
                     name='homeGoals'
                     render={({ field }) => (
-                      <Input fullWidth inputMode='numeric' label={`Mål av oss (${event.team?.name})`} required variant='bordered' {...field} />
+                      <Input fullWidth inputMode='numeric' label={`Mål av oss (${event.team?.name})`} required variant='faded' {...field} />
                     )}
                   />
                   <Controller
                     control={control}
                     name='awayGoals'
-                    render={({ field }) => <Input fullWidth inputMode='numeric' label={`Mål av ${event.title}`} required variant='bordered' {...field} />}
+                    render={({ field }) => <Input fullWidth inputMode='numeric' label={`Mål av ${event.title}`} required variant='faded' {...field} />}
                   />
                 </div>
-                <Button type='submit' variant='solid'>
+                <Button color='primary' type='submit' variant='solid'>
                   Lagre resultat
                 </Button>
               </Card>
             )}
-            {isAdmin && <h3 className='font-cabin text-xl'>Hendelser</h3>}
+            {isAdmin && <h3 className='font-cabin mt-2 text-xl'>Hendelser</h3>}
             <MatchEvents event={event} isAdmin={isAdmin} />
           </ModalBody>
         </ModalContent>

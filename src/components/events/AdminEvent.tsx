@@ -1,15 +1,17 @@
 'use client';
 
-import { Box, Button, Chip, Divider, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Button } from '@nextui-org/button';
+import { Card } from '@nextui-org/card';
+import { Chip } from '@nextui-org/chip';
+import { Divider } from '@nextui-org/divider';
+import { useDisclosure } from '@nextui-org/react';
 import { EventType } from '@prisma/client';
 import axios from 'axios';
 import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { ExtendedEvent } from 'functions/event';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { eventTypesMap } from 'utils';
+import { eventTypeBgGradient, eventTypesMap } from 'utils';
 
 import ConfirmModal from 'components/ConfirmModal';
 import EventModal from 'components/events/EventModal';
@@ -20,88 +22,58 @@ export type AdminEventProps = {
 };
 
 const AdminEvent = ({ event }: AdminEventProps) => {
-  const theme = useTheme();
-  const [updateEventModal, setUpdateEventModal] = useState(false);
-  const handleUpdateEventModal = () => setUpdateEventModal(true);
-  const handleCloseUpdateEventModal = () => setUpdateEventModal(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const router = useRouter();
 
-  const deleteEvent = () => {
-    axios.delete(`/api/events/${event.id}`).then(() => {
-      router.refresh();
-    });
+  const deleteEvent = async () => {
+    await axios.delete(`/api/events/${event.id}`);
+    router.refresh();
   };
 
-  const type = { name: eventTypesMap[event.eventType].label, background: theme.palette.background[event.eventType] };
-
   return (
-    <Box
-      gap={1}
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: 'auto 1fr',
-        p: 2,
-        background: type.background,
-        border: (theme) => `1px solid ${theme.palette.divider}`,
-        borderRadius: 1,
-      }}>
-      <Typography fontWeight={'bold'} variant='body1'>
-        Type
-      </Typography>
-      <Chip label={type.name} sx={{ bgcolor: 'background.paper' }} />
+    <Card className={`grid grid-cols-[auto_1fr] gap-2 self-start rounded-md p-4 ${eventTypeBgGradient[event.eventType]}`}>
+      <p className='text-md font-bold'>Type</p>
+      <Chip color='secondary' variant='faded'>
+        {eventTypesMap[event.eventType].label}
+      </Chip>
       {(event.eventType === EventType.MATCH || event.team) && (
         <>
-          <Typography fontWeight={'bold'} variant='body1'>
-            Lag
-          </Typography>
-          <Typography variant='body1'>{event.team?.name ?? '⚠️ Mangler lag ⚠️'}</Typography>
+          <p className='text-md font-bold'>Lag</p>
+          <p className='text-md'>{event.team?.name ?? '⚠️ Mangler lag ⚠️'}</p>
         </>
       )}
       {event.title && (
         <>
-          <Typography fontWeight='bold' variant='body1'>
-            {event.eventType === EventType.MATCH ? 'Mot' : 'Tittel'}
-          </Typography>
-          <Typography variant='body1'>{event.title}</Typography>
+          <p className='text-md font-bold'>{event.eventType === EventType.MATCH ? 'Mot' : 'Tittel'}</p>
+          <p className='text-md'>{event.title}</p>
         </>
       )}
-      <Typography fontWeight={'bold'} variant='body1'>
-        Dato
-      </Typography>
-      <Typography sx={{ textTransform: 'capitalize' }} variant='body1'>
+      <p className='text-md font-bold'>Dato</p>
+      <p className='text-md capitalize'>
         {format(new Date(event.time), 'EEEE - dd.MM', {
           locale: nb,
         })}
-      </Typography>
-      <Typography fontWeight={'bold'} variant='body1'>
-        Tid
-      </Typography>
-      <Typography variant='body1'>{format(new Date(event.time), 'HH:mm')}</Typography>
-      <Typography fontWeight={'bold'} variant='body1'>
-        Sted
-      </Typography>
-      <Typography variant='body1'>{event.location}</Typography>
+      </p>
+      <p className='text-md font-bold'>Tid</p>
+      <p className='text-md'>{format(new Date(event.time), 'HH:mm')}</p>
+      <p className='text-md font-bold'>Sted</p>
+      <p className='text-md'>{event.location}</p>
       {event.match && isPast(new Date(event.time)) && (
         <>
-          <Divider sx={{ my: 1, gridColumn: 'span 2' }} />
-          <MatchModal event={event} isAdmin sx={{ gridColumn: 'span 2' }} />
-          <Divider sx={{ my: 1, gridColumn: 'span 2' }} />
+          <Divider className='col-span-2 my-2' />
+          <MatchModal className='col-span-2' event={event} isAdmin />
+          <Divider className='col-span-2 my-2' />
         </>
       )}
-      <ConfirmModal
-        color='error'
-        description='Er du sikker på at du vil slette arrangementet?'
-        onConfirm={() => deleteEvent()}
-        size='small'
-        title='Slett arrangement'>
+      <ConfirmModal description='Er du sikker på at du vil slette arrangementet?' onConfirm={() => deleteEvent()} size='sm' title='Slett arrangement'>
         Slett
       </ConfirmModal>
-      <Button color='secondary' onClick={handleUpdateEventModal} size='small' variant='outlined'>
+      <Button color='secondary' onClick={onOpen} size='sm' variant='bordered'>
         Endre
       </Button>
-      {updateEventModal && <EventModal event={event} handleClose={handleCloseUpdateEventModal} open={updateEventModal} title='Endre arrangement' />}
-    </Box>
+      {isOpen && <EventModal event={event} handleClose={onClose} open={isOpen} title='Endre arrangement' />}
+    </Card>
   );
 };
 

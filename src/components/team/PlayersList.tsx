@@ -1,7 +1,8 @@
 'use client';
 
 import PersonAddDisabledRoundedIcon from '@mui/icons-material/PersonAddDisabledRounded';
-import { Stack, Tooltip, Typography } from '@mui/material';
+import { Card } from '@nextui-org/card';
+import { Tooltip } from '@nextui-org/tooltip';
 import { Player } from '@prisma/client';
 
 import EditPlayerModal from 'components/team/EditPlayerModal';
@@ -13,26 +14,22 @@ export type PlayersListProps = {
 
 const PlayersList = ({ title, players }: PlayersListProps) => {
   return (
-    <Stack gap={1} justifyContent='space-between' sx={{ flex: 1, borderRadius: 1, border: (theme) => `1px solid ${theme.palette.divider}`, p: 1 }}>
-      <Stack gap={1}>
-        <Typography variant='h3'>
-          {title} ({players.length})
-        </Typography>
-        {players.map((player) => (
-          <Stack direction='row' gap={1} key={player.id}>
-            <EditPlayerModal player={player} />
-            <Typography sx={{ flex: 1 }} variant='body1'>
-              {player.name}
-            </Typography>
-            {player.disableRegistrations && (
-              <Tooltip title='Deaktivert påmelding'>
-                <PersonAddDisabledRoundedIcon />
-              </Tooltip>
-            )}
-          </Stack>
-        ))}
-      </Stack>
-    </Stack>
+    <Card className='flex flex-1 flex-col justify-between gap-2 rounded-md p-2'>
+      <h3 className='font-cabin text-2xl font-bold'>
+        {title} ({players.length})
+      </h3>
+      {players.map((player) => (
+        <div className='flex gap-2' key={player.id}>
+          <EditPlayerModal player={player} />
+          <p className='text-md flex-1'>{player.name}</p>
+          {player.disableRegistrations && (
+            <Tooltip content='Deaktivert påmelding' showArrow>
+              <PersonAddDisabledRoundedIcon />
+            </Tooltip>
+          )}
+        </div>
+      ))}
+    </Card>
   );
 };
 

@@ -1,4 +1,3 @@
-import { Grid } from '@mui/material';
 import { type ExtendedEvent, getEventsWhereFilter } from 'functions/event';
 import { prisma } from 'lib/prisma';
 
@@ -24,18 +23,14 @@ const Players = async ({ searchParams }: PageProps) => {
   const { events } = await getData({ searchParams });
   return (
     <>
-      <EventsFilters sx={{ mb: 2 }} />
+      <EventsFilters />
 
-      <Grid container spacing={4}>
+      <div className='my-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3'>
         {events.map((event) => (
-          <Grid item key={event.id} md={4} sm={6} xs={12}>
-            <AdminEvent event={event} />
-          </Grid>
+          <AdminEvent event={event} key={event.id} />
         ))}
-        <Grid item md={4} sm={6} xs={12}>
-          <NewEventModal />
-        </Grid>
-      </Grid>
+      </div>
+      <NewEventModal />
     </>
   );
 };

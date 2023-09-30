@@ -1,4 +1,6 @@
-import { List, ListItem, ListItemText, Link as MuiLink, Typography } from '@mui/material';
+import { Divider } from '@nextui-org/divider';
+import { Link } from '@nextui-org/link';
+import { Fragment } from 'react';
 import type { TIHLDEUser } from 'tihlde';
 import { getAllnotPayedFines } from 'tihlde/fines';
 import { getAllPythonsMemberships } from 'tihlde/memberships';
@@ -20,21 +22,22 @@ const PlayersWithNoCreatedFines = async () => {
   const { players } = await getData();
   return (
     <>
-      <Typography sx={{ mb: 1 }}>
+      <p className='text-md mb-4'>
         Viser navn på spillere som skal motta bot for brudd på paragraf <i>§11 - Snitches don&apos;t get stitches</i> på bakgrunn av{' '}
-        <MuiLink href='https://tihlde.org/grupper/pythons-gutter-a/lovverk/' rel='noreferrer' target='_blank'>
+        <Link href='https://tihlde.org/grupper/pythons-gutter-a/lovverk/' isExternal underline='always'>
           lovverket
-        </MuiLink>
+        </Link>
         .
-      </Typography>
-      {!players.length && <Typography>Alle medlemmer av TIHLDE Pythons har gitt minst 1 bot til enten seg selv eller en annen</Typography>}
-      <List dense>
-        {players.map((player) => (
-          <ListItem divider key={player.user_id}>
-            <ListItemText primary={`${player.first_name} ${player.last_name}`} />
-          </ListItem>
+      </p>
+      {!players.length && <p className='text-md'>Alle medlemmer av TIHLDE Pythons har gitt minst 1 bot til enten seg selv eller en annen</p>}
+      <div className='flex flex-col gap-2'>
+        {players.map((player, index) => (
+          <Fragment key={player.user_id}>
+            <p className='text-md'>{`${player.first_name} ${player.last_name}`}</p>
+            {index !== players.length - 1 && <Divider />}
+          </Fragment>
         ))}
-      </List>
+      </div>
     </>
   );
 };
