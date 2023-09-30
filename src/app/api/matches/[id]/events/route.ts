@@ -1,5 +1,4 @@
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
 
 export const GET = async (_: Request, { params }: { params: { id: string } }) => {
   const parsedId = Number(params.id);
@@ -14,7 +13,7 @@ export const GET = async (_: Request, { params }: { params: { id: string } }) =>
       type: 'asc',
     },
   });
-  return NextResponse.json(matchEvents);
+  return Response.json(matchEvents);
 };
 
 export const POST = async (request: Request, { params }: { params: { id: string } }) => {
@@ -35,5 +34,5 @@ export const POST = async (request: Request, { params }: { params: { id: string 
       },
     },
   });
-  return NextResponse.json(matchEvent);
+  return Response.json(matchEvent);
 };

@@ -1,7 +1,6 @@
 import { getSignedInUserOrThrow } from 'functions/getUser';
 import HttpStatusCode from 'http-status-typed';
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data, willArrive } = await request.json();
@@ -20,11 +19,11 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
     ]);
 
     if (user.id !== playerId) {
-      return NextResponse.json({ message: `Du kan ikke endre andre spillere sine registreringer` }, { status: HttpStatusCode.FORBIDDEN });
+      return Response.json({ message: `Du kan ikke endre andre spillere sine registreringer` }, { status: HttpStatusCode.FORBIDDEN });
     }
 
     if (existingRegistration.event.time < new Date()) {
-      return NextResponse.json({ message: `Det er ikke lov å endre en registrering etter at arrangementet har startet` }, { status: HttpStatusCode.FORBIDDEN });
+      return Response.json({ message: `Det er ikke lov å endre en registrering etter at arrangementet har startet` }, { status: HttpStatusCode.FORBIDDEN });
     }
 
     const registration = await prisma.registrations.update({
@@ -37,7 +36,7 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
         reason: willArrive ? '' : data.reason || 'Oppga ikke grunn',
       },
     });
-    return NextResponse.json(registration);
+    return Response.json(registration);
   }
-  return NextResponse.json({ message: `Expected an id of the following format: "<player_id>_<event_id>"` }, { status: HttpStatusCode.BAD_REQUEST });
+  return Response.json({ message: `Expected an id of the following format: "<player_id>_<event_id>"` }, { status: HttpStatusCode.BAD_REQUEST });
 };

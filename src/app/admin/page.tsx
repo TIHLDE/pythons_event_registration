@@ -26,7 +26,7 @@ const AdminLink = ({ path, title, description, openInNewTab }: AdminLinkProps) =
 const Admin = () => {
   return (
     <>
-      <h1 className='font-oswald mb-4 text-4xl font-bold md:text-5xl'>Admin</h1>
+      <h1 className='mb-4 font-oswald text-4xl font-bold md:text-5xl'>Admin</h1>
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         <AdminLink description='Administrer tidligere og kommende arrangementer' path='/admin/arrangementer' title='🎉 Arrangementer' />
         <AdminLink description='Opprett, rediger eller slett beskjeder' path='/admin/beskjeder' title='📨 Beskjeder' />

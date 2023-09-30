@@ -41,7 +41,7 @@ const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) =>
         <ModalContent>
           <ModalHeader className='flex items-center gap-4 pb-0 pt-6'>
             <Image alt='Logo' height={37.625} src='/pythons.png' width={25} />
-            <h2 className='font-oswald flex-1 text-3xl'>{`${title} (${registrations.length})`}</h2>
+            <h2 className='flex-1 font-oswald text-3xl'>{`${title} (${registrations.length})`}</h2>
           </ModalHeader>
           <ModalBody className='flex flex-col gap-2 pb-4'>
             {groupedPlayers.map((position) => (

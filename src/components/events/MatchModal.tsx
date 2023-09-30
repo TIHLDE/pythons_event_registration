@@ -100,7 +100,7 @@ const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
                 </Button>
               </Card>
             )}
-            {isAdmin && <h3 className='font-cabin mt-2 text-xl'>Hendelser</h3>}
+            {isAdmin && <h3 className='mt-2 font-cabin text-xl'>Hendelser</h3>}
             <MatchEvents event={event} isAdmin={isAdmin} />
           </ModalBody>
         </ModalContent>

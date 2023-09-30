@@ -68,13 +68,13 @@ export const FineAccordion = ({ event }: FineAccordionProps) => {
         <Table removeWrapper>
           <TableHeader>
             <TableColumn className='font-cabin text-lg text-white'>Navn</TableColumn>
-            <TableColumn className='font-cabin w-full text-lg text-white'>Lovbrudd</TableColumn>
+            <TableColumn className='w-full font-cabin text-lg text-white'>Lovbrudd</TableColumn>
           </TableHeader>
           <TableBody emptyContent='Ingen fortjener bot'>
             {event.fines.map((fine) => (
               <TableRow key={fine.player.id}>
-                <TableCell className='font-cabin text-md whitespace-nowrap text-white'>{fine.player.name}</TableCell>
-                <TableCell className='font-cabin text-md whitespace-nowrap text-white'>{`${fine.reason} - ${fine.amount} bøter ${
+                <TableCell className='text-md whitespace-nowrap font-cabin text-white'>{fine.player.name}</TableCell>
+                <TableCell className='text-md whitespace-nowrap font-cabin text-white'>{`${fine.reason} - ${fine.amount} bøter ${
                   fine.time ? `(${formatTime(fine.time)})` : ''
                 }`}</TableCell>
               </TableRow>

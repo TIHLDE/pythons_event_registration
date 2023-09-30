@@ -5,7 +5,6 @@ import { ExtendedEvent, getEventsWithRegistrations } from 'functions/event';
 import HttpStatusCode from 'http-status-typed';
 import { createEvents, DateArray, EventAttributes } from 'ics';
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
 import { stats } from 'stats';
 import { promisify } from 'util';
 import { getEventTitle } from 'utils';
@@ -78,7 +77,7 @@ export const GET = async (_: Request, { params }: { params: { user_id: string } 
   });
   const [player, events] = await Promise.all([playerQuery, eventsQuery]);
   if (!player) {
-    return NextResponse.json({ detail: 'Could not find a user with the given user_id' }, { status: HttpStatusCode.BAD_REQUEST });
+    return Response.json({ detail: 'Could not find a user with the given user_id' }, { status: HttpStatusCode.BAD_REQUEST });
   }
 
   await stats.event(`Load ics-events at /api/ics/<user_id>`);

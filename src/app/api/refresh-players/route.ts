@@ -4,7 +4,6 @@ import HttpStatusCode from 'http-status-typed';
 import { prisma } from 'lib/prisma';
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
 import { TIHLDEMembership } from 'tihlde';
 import { getAllPythonsMemberships } from 'tihlde/memberships';
 import { AUTH_TOKEN_COOKIE_KEY } from 'values';
@@ -15,7 +14,7 @@ export const POST = async (request: Request) => {
   try {
     const { authToken } = await request.json();
     if (!authToken) {
-      return NextResponse.json({ error: 'authToken is missing in request-body' }, { status: HttpStatusCode.BAD_REQUEST });
+      return Response.json({ error: 'authToken is missing in request-body' }, { status: HttpStatusCode.BAD_REQUEST });
     }
     cookies().set(AUTH_TOKEN_COOKIE_KEY, authToken);
 
@@ -51,8 +50,8 @@ export const POST = async (request: Request) => {
 
     revalidateTag(PLAYERS_CACHE_TAG);
 
-    return NextResponse.json({ detail: 'Successfully refreshed players' });
+    return Response.json({ detail: 'Successfully refreshed players' });
   } catch (e) {
-    return NextResponse.json({ error: (e as Error).message }, { status: HttpStatusCode.BAD_REQUEST });
+    return Response.json({ error: (e as Error).message }, { status: HttpStatusCode.BAD_REQUEST });
   }
 };

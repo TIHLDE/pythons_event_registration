@@ -1,5 +1,4 @@
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
 
 export const DELETE = async (_: Request, { params }: { params: { id: string; match_event_id: string } }) => {
   const parsedId = Number(params.match_event_id);
@@ -9,5 +8,5 @@ export const DELETE = async (_: Request, { params }: { params: { id: string; mat
     },
   });
 
-  return NextResponse.json({});
+  return Response.json({});
 };

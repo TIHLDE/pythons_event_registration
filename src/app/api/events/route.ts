@@ -1,12 +1,11 @@
 import { EventType } from '@prisma/client';
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async () => {
   const players = await prisma.event.findMany();
-  return NextResponse.json(players);
+  return Response.json(players);
 };
 
 export const POST = async (request: Request) => {
@@ -37,5 +36,5 @@ export const POST = async (request: Request) => {
         }),
     },
   });
-  return NextResponse.json({});
+  return Response.json({});
 };

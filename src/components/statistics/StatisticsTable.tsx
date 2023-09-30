@@ -20,7 +20,7 @@ export const StatisticsTable = ({ players }: StatisticsTableProps) => {
     <Table aria-label='Oversikt over statistikk for spillere' removeWrapper>
       <TableHeader>
         <TableColumn className='font-cabin text-lg font-bold text-white'>#</TableColumn>
-        <TableColumn className='font-cabin w-full text-lg text-white'>Navn</TableColumn>
+        <TableColumn className='w-full font-cabin text-lg text-white'>Navn</TableColumn>
         <TableColumn className='font-cabin text-lg font-bold text-white'>
           {stripEmojis(typeof matchEventType === 'string' ? MATCH_EVENT_TYPES[matchEventType as MatchEventType] : '')}
         </TableColumn>
@@ -28,9 +28,9 @@ export const StatisticsTable = ({ players }: StatisticsTableProps) => {
       <TableBody emptyContent='Fant ingen treff med denne filtreringen'>
         {players.map((player, index) => (
           <TableRow key={index}>
-            <TableCell className='font-cabin text-md text-white'>{index + 1}.</TableCell>
-            <TableCell className='font-cabin text-md text-white'>{player.name}</TableCell>
-            <TableCell className='font-cabin text-md text-white'>{player.count}</TableCell>
+            <TableCell className='text-md font-cabin text-white'>{index + 1}.</TableCell>
+            <TableCell className='text-md font-cabin text-white'>{player.name}</TableCell>
+            <TableCell className='text-md font-cabin text-white'>{player.count}</TableCell>
           </TableRow>
         ))}
       </TableBody>

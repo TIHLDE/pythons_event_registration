@@ -1,6 +1,5 @@
 import { EventType } from '@prisma/client';
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data } = await request.json();
@@ -20,7 +19,7 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
     },
   });
 
-  return NextResponse.json(updatedEvent);
+  return Response.json(updatedEvent);
 };
 
 export const DELETE = async (_: Request, { params }: { params: { id: string } }) => {
@@ -31,5 +30,5 @@ export const DELETE = async (_: Request, { params }: { params: { id: string } })
     },
   });
 
-  return NextResponse.json({});
+  return Response.json({});
 };
