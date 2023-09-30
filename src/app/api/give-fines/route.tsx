@@ -1,5 +1,4 @@
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
 import { createFine, FineCreate } from 'tihlde/fines';
 
 export const POST = async (request: Request) => {
@@ -13,5 +12,5 @@ export const POST = async (request: Request) => {
     data: { finesGiven: true },
   });
 
-  return NextResponse.json({});
+  return Response.json({});
 };

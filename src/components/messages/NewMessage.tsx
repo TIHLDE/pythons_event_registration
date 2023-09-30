@@ -1,11 +1,12 @@
 'use client';
 
-import { Button, Stack, TextField } from '@mui/material';
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
+import { useDisclosure } from '@nextui-org/use-disclosure';
 import { Notification } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 type FormDataProps = {
@@ -23,7 +24,7 @@ export type NewMessageProps = {
 const NewMessage = ({ alwaysShow, notification, handleClose }: NewMessageProps) => {
   const router = useRouter();
 
-  const [showNewMessage, setShowNewMessage] = useState(false);
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const dateTimeFormat = "yyyy-MM-dd'T'HH:mm";
   const { control, reset, handleSubmit } = useForm<FormDataProps>({
@@ -48,8 +49,8 @@ const NewMessage = ({ alwaysShow, notification, handleClose }: NewMessageProps) 
     onClose();
   };
 
-  const onClose = () => {
-    setShowNewMessage(false);
+  const handleCloseClick = () => {
+    onClose();
     if (handleClose) {
       handleClose();
     }
@@ -58,27 +59,29 @@ const NewMessage = ({ alwaysShow, notification, handleClose }: NewMessageProps) 
   return (
     <>
       {!alwaysShow && (
-        <Button disabled={showNewMessage} onClick={() => setShowNewMessage(true)} variant='contained'>
+        <Button color='primary' isDisabled={isOpen} onClick={onOpen} variant='solid'>
           Opprett ny beskjed
         </Button>
       )}
-      {(alwaysShow || showNewMessage) && (
-        <Stack component='form' direction={{ md: 'row' }} gap={1} onSubmit={handleSubmit(onSubmit)} sx={{ py: 1 }}>
+      {(alwaysShow || isOpen) && (
+        <form className='flex flex-col items-center gap-2 py-2 md:flex-row' onSubmit={handleSubmit(onSubmit)}>
           <Controller
             control={control}
             name='message'
-            render={({ field }) => <TextField label={'Beskjed'} placeholder='Beskjed' required sx={{ flex: 1 }} variant='outlined' {...field} />}
+            render={({ field }) => <Input className='flex-1' label='Beskjed' required variant='faded' {...field} />}
           />
           <Controller
             control={control}
             name='expiringDate'
-            render={({ field }) => <TextField label={'Utløper'} placeholder='Utløper' required type='datetime-local' variant='outlined' {...field} />}
+            render={({ field }) => <Input className='w-fit' label='Utløper' placeholder='Utløper' required type='datetime-local' variant='faded' {...field} />}
           />
-          <Button type='submit' variant='contained'>
+          <Button color='primary' type='submit' variant='solid'>
             {notification ? 'Oppdater' : 'Opprett'}
           </Button>
-          <Button onClick={onClose}>Avbryt</Button>
-        </Stack>
+          <Button color='danger' onClick={handleCloseClick} variant='light'>
+            Avbryt
+          </Button>
+        </form>
       )}
     </>
   );

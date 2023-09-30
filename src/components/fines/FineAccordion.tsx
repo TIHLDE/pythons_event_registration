@@ -1,14 +1,16 @@
 'use client';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Checkbox, Divider, FormControlLabel, Stack, Typography } from '@mui/material';
+import { Accordion, AccordionItem } from '@nextui-org/accordion';
+import { Button } from '@nextui-org/button';
+import { Checkbox } from '@nextui-org/checkbox';
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table';
 import { EventType } from '@prisma/client';
 import { EventWithFines } from 'app/admin/boter/page';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
-import { Fragment, useCallback } from 'react';
+import { useCallback } from 'react';
 import { FineCreate } from 'tihlde/fines';
 import { eventTypesMap } from 'utils';
 
@@ -53,35 +55,33 @@ export const FineAccordion = ({ event }: FineAccordionProps) => {
   );
 
   return (
-    <Accordion sx={{ backgroundColor: '#3A2056' }}>
-      <AccordionSummary aria-controls='panel1bh-content' expandIcon={<ExpandMoreIcon />} id='panel1bh-header'>
-        <Typography>
-          {`${event.finesGiven ? '✅' : '❌'} `}
-          {getEventTitle(event)}
-          <Typography component='span' sx={{ color: 'text.secondary', ml: 4 }}>
-            {event.fines.length} spillere
-          </Typography>
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Stack direction='row' gap={2} sx={{ mb: 2 }}>
-          <Button color='info' disabled={event.finesGiven} onClick={() => autoGiveFines(event)} variant='contained'>
+    <Accordion selectionMode='multiple' variant='bordered'>
+      <AccordionItem startContent={event.finesGiven ? '✅' : '❌'} subtitle={`${event.fines.length} spillere`} title={getEventTitle(event)}>
+        <div className='mb-4 flex gap-4'>
+          <Button color='primary' isDisabled={event.finesGiven} onClick={() => autoGiveFines(event)} variant='solid'>
             Gi bøter automagisk
           </Button>
-          <FormControlLabel control={<Checkbox checked={event.finesGiven} onChange={(e) => setFinesGiven(event, e.target.checked)} />} label='Gitt bøter' />
-        </Stack>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 0.5, columnGap: 2 }}>
-          {event.fines.map((fine, index) => (
-            <Fragment key={fine.player.id}>
-              <Typography variant='body1'>{fine.player.name}</Typography>
-              <Typography variant='body1'>
-                <>{`${fine.reason} - ${fine.amount} bøter ${fine.time ? `(${formatTime(fine.time)})` : ''}`}</>
-              </Typography>
-              {index + 1 !== event.fines.length && <Divider sx={{ gridColumn: 'span 2' }} />}
-            </Fragment>
-          ))}
-        </Box>
-      </AccordionDetails>
+          <Checkbox isSelected={event.finesGiven} onValueChange={(e) => setFinesGiven(event, e)}>
+            Gitt bøter
+          </Checkbox>
+        </div>
+        <Table removeWrapper>
+          <TableHeader>
+            <TableColumn className='font-cabin text-lg text-white'>Navn</TableColumn>
+            <TableColumn className='w-full font-cabin text-lg text-white'>Lovbrudd</TableColumn>
+          </TableHeader>
+          <TableBody emptyContent='Ingen fortjener bot'>
+            {event.fines.map((fine) => (
+              <TableRow key={fine.player.id}>
+                <TableCell className='text-md whitespace-nowrap font-cabin text-white'>{fine.player.name}</TableCell>
+                <TableCell className='text-md whitespace-nowrap font-cabin text-white'>{`${fine.reason} - ${fine.amount} bøter ${
+                  fine.time ? `(${formatTime(fine.time)})` : ''
+                }`}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </AccordionItem>
     </Accordion>
   );
 };

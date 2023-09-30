@@ -1,5 +1,6 @@
+import { NOTIFICATIONS_CACHE_TAG } from 'functions/getActiveNotifications';
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data } = await request.json();
@@ -15,7 +16,9 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
     },
   });
 
-  return NextResponse.json(result);
+  revalidateTag(NOTIFICATIONS_CACHE_TAG);
+
+  return Response.json(result);
 };
 
 export const DELETE = async (request: Request, { params }: { params: { id: string } }) => {
@@ -27,5 +30,7 @@ export const DELETE = async (request: Request, { params }: { params: { id: strin
     },
   });
 
-  return NextResponse.json({});
+  revalidateTag(NOTIFICATIONS_CACHE_TAG);
+
+  return Response.json({});
 };

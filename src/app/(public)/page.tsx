@@ -1,5 +1,3 @@
-import { Stack, Typography } from '@mui/material';
-import { Grid } from '@mui/material';
 import { EventType } from '@prisma/client';
 import { addWeeks, endOfWeek, format, getWeek, startOfWeek } from 'date-fns';
 import nb from 'date-fns/locale/nb';
@@ -66,24 +64,22 @@ const Home = async ({ searchParams }: PageProps) => {
   const { eventsRelatedMatches, groupedEvents } = await getData({ searchParams });
 
   return (
-    <Stack gap={2}>
+    <div className='flex flex-col gap-4'>
       <ActiveMessages />
       <EventsFilters />
-      {!Object.keys(groupedEvents).length && <Typography>Fant ingen arrangementer med denne filtrering</Typography>}
+      {!Object.keys(groupedEvents).length && <p className='text-sm'>Fant ingen arrangementer med denne filtrering</p>}
       {Object.keys(groupedEvents).map((group) => (
-        <Stack gap={1} key={group}>
-          <Typography variant='h3'>{group}</Typography>
-          <Grid container spacing={2}>
+        <div className='flex flex-col gap-2' key={group}>
+          <h3 className='font-cabin text-2xl'>{group}</h3>
+          <div className='grid grid-cols-1 items-start gap-4 sm:grid-cols-2 md:grid-cols-3'>
             {groupedEvents[group].map((event) => (
-              <Grid item key={event.id} md={4} sm={6} xs={12}>
-                <Event eventDetails={event} relatedMatches={eventsRelatedMatches[event.id] || []} />
-              </Grid>
+              <Event eventDetails={event} key={event.id} relatedMatches={eventsRelatedMatches[event.id] || []} />
             ))}
-          </Grid>
-        </Stack>
+          </div>
+        </div>
       ))}
-      <CalendarSubscription sx={{ mt: 2 }} />
-    </Stack>
+      <CalendarSubscription className='mt-4' />
+    </div>
   );
 };
 

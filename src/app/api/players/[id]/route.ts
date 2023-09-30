@@ -1,10 +1,11 @@
+import { PLAYERS_CACHE_TAG } from 'functions/getPlayers';
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 export const GET = async (_: Request, { params }: { params: { id: string } }) => {
   const parsedId = Number(params.id);
   const player = await prisma.player.findFirst({ where: { id: parsedId }, include: { team: true } });
-  return NextResponse.json(player);
+  return Response.json(player);
 };
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
@@ -16,5 +17,6 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
     },
     data: data,
   });
-  return NextResponse.json(player);
+  revalidateTag(PLAYERS_CACHE_TAG);
+  return Response.json(player);
 };

@@ -1,5 +1,6 @@
+import { TEAMS_CACHE_TAG } from 'functions/getTeams';
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 export const DELETE = async (_: Request, { params }: { params: { id: string } }) => {
   const parsedId = parseInt(params.id);
@@ -9,5 +10,7 @@ export const DELETE = async (_: Request, { params }: { params: { id: string } })
     },
   });
 
-  return NextResponse.json({});
+  revalidateTag(TEAMS_CACHE_TAG);
+
+  return Response.json({});
 };

@@ -1,14 +1,12 @@
 'use client';
 
-import { Button, Typography } from '@mui/material';
+import { Button } from '@nextui-org/button';
 
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <>
-      <Typography gutterBottom variant='h2'>
-        Noe gikk galt
-      </Typography>
-      <Typography gutterBottom>{error.message}</Typography>
+      <h2 className='mb-4'>Noe gikk galt</h2>
+      <p className='mb-2'>{error.message}</p>
       <Button onClick={reset}>Prøv igjen</Button>
     </>
   );

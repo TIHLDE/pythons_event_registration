@@ -1,7 +1,9 @@
 'use client';
 
-import { Close } from '@mui/icons-material';
-import { Button, Dialog, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
+import { Select, SelectItem } from '@nextui-org/select';
 import { Event, EventType } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
@@ -22,22 +24,23 @@ export type EventModalProps = {
 
 type FormDataProps = {
   eventType: Event['eventType'] | '';
-  title?: Event['title'];
+  title?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   time: any;
   location: Event['location'];
   team: Event['teamId'];
 };
 
+const dateTimeFormat = "yyyy-MM-dd'T'HH:mm";
+
 const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
-  const dateTimeFormat = "yyyy-MM-dd'T'HH:mm";
   const { handleSubmit, control, watch } = useForm<FormDataProps>({
     defaultValues: {
-      eventType: event?.eventType || '',
-      title: event?.title || '',
+      eventType: event?.eventType ?? '',
+      title: event?.title ?? '',
       time: event && event.time ? format(new Date(event.time), dateTimeFormat) : format(setMinutes(new Date(), 0), dateTimeFormat),
-      location: event?.location || '',
-      team: event?.teamId || null,
+      location: event?.location ?? '',
+      team: event?.teamId ?? null,
     },
   });
   const { data: teams = [] } = useTeams();
@@ -60,72 +63,74 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={2}>
-          <Stack direction='row' justifyContent='space-between' spacing={2} sx={{ alignItems: 'center' }}>
-            <Typography variant='h2'>{title}</Typography>
-            <IconButton onClick={handleClose}>
-              <Close />
-            </IconButton>
-          </Stack>
+    <Modal isOpen={open} onClose={handleClose}>
+      <ModalContent as='form' onSubmit={handleSubmit(onSubmit)}>
+        <ModalHeader>{title}</ModalHeader>
+        <ModalBody>
           <Controller
             control={control}
             name='eventType'
-            render={({ field }) => (
-              <FormControl disabled={Boolean(event)} fullWidth>
-                <InputLabel id='selectType-label'>Type</InputLabel>
-                <Select id='selectType' labelId='selectType-label' required {...field} label='Type'>
-                  {eventTypesList.map((eventType) => (
-                    <MenuItem key={eventType.type} value={eventType.type}>
-                      {eventType.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            render={({ field: { onChange, value } }) => (
+              <Select
+                isDisabled={Boolean(event)}
+                items={eventTypesList}
+                label='Type'
+                onChange={(e) => onChange(e.target.value)}
+                selectedKeys={new Set(value ? [value] : [])}
+                variant='faded'>
+                {(eventType) => (
+                  <SelectItem key={eventType.type} value={eventType.type}>
+                    {eventType.label}
+                  </SelectItem>
+                )}
+              </Select>
             )}
           />
           {watchEventType !== EventType.TRAINING && (
             <Controller
               control={control}
               name='title'
-              render={({ field }) => (
-                <TextField
-                  label={watchEventType === EventType.MATCH ? 'Motstander' : 'Tittel'}
-                  placeholder={watchEventType === EventType.MATCH ? 'Motstander' : 'Tittel'}
-                  required
-                  {...field}
-                />
+              render={({ field }) => <Input label={watchEventType === EventType.MATCH ? 'Motstander' : 'Tittel'} required variant='faded' {...field} />}
+            />
+          )}
+          {watchEventType === EventType.MATCH && teams.length > 0 && (
+            <Controller
+              control={control}
+              name='team'
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  items={teams}
+                  label='Lag'
+                  onChange={(e) => onChange(e.target.value)}
+                  selectedKeys={new Set(value ? [String(value)] : [])}
+                  variant='faded'>
+                  {(team) => (
+                    <SelectItem key={team.id} value={team.id}>
+                      {team.name}
+                    </SelectItem>
+                  )}
+                </Select>
               )}
             />
           )}
-          {watchEventType === EventType.MATCH && (
-            <FormControl fullWidth>
-              <InputLabel id='select-team'>Lag</InputLabel>
-              <Controller
-                control={control}
-                name='team'
-                render={({ field: { onChange, value } }) => (
-                  <Select label='Lag' onChange={onChange} value={value}>
-                    {teams?.map((team) => (
-                      <MenuItem key={team.id} value={team.id}>
-                        {team.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-          )}
 
-          <Controller control={control} name='time' render={({ field }) => <TextField label={'Tidspunkt'} required type='datetime-local' {...field} />} />
-          <Controller control={control} name='location' render={({ field }) => <TextField label={'Sted'} placeholder='Sted' required {...field} />} />
-          <Button type='submit' variant='contained'>
+          <Controller
+            control={control}
+            name='time'
+            render={({ field }) => <Input label='Tidspunkt' placeholder='Tidspunkt' required type='datetime-local' variant='faded' {...field} />}
+          />
+          <Controller control={control} name='location' render={({ field }) => <Input label='Sted' required variant='faded' {...field} />} />
+        </ModalBody>
+        <ModalFooter>
+          <Button color='danger' onPress={handleClose} variant='flat'>
+            Avbryt
+          </Button>
+          <Button color='primary' type='submit'>
             {event ? 'Oppdater' : 'Opprett'}
           </Button>
-        </Stack>
-      </form>
-    </Dialog>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 

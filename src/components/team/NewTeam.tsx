@@ -1,41 +1,53 @@
 'use client';
 
-import AddIcon from '@mui/icons-material/AddRounded';
-import { Button, Stack, TextField } from '@mui/material';
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
+import { useDisclosure } from '@nextui-org/use-disclosure';
 import { Team } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { MdAdd } from 'react-icons/md';
 
 export const NewTeam = () => {
-  const [showNewTeam, setShowNewTeam] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { handleSubmit, control, reset } = useForm<Pick<Team, 'name'>>();
   const router = useRouter();
 
   const onSubmit = async (data: Pick<Team, 'name'>) => {
     await axios.post('/api/teams', { data });
-    setShowNewTeam(false);
+    onClose();
     reset();
     router.refresh();
   };
 
   return (
     <>
-      {showNewTeam ? (
-        <Stack component='form' gap={1} onSubmit={handleSubmit(onSubmit)}>
+      {isOpen ? (
+        <form className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
           <Controller
             control={control}
             name={'name'}
-            render={({ field: { onChange, value } }) => <TextField autoFocus label='Navn' onChange={onChange} required value={value} />}
+            render={({ field: { onChange, value }, fieldState }) => (
+              <Input
+                autoFocus
+                errorMessage={fieldState.error?.message}
+                isInvalid={Boolean(fieldState.error?.message)}
+                label='Navn'
+                onChange={onChange}
+                required
+                value={value}
+                variant='faded'
+              />
+            )}
             rules={{ required: 'Laget må ha et navn' }}
           />
-          <Button type='submit' variant='contained'>
+          <Button color='primary' type='submit' variant='solid'>
             Legg til
           </Button>
-        </Stack>
+        </form>
       ) : (
-        <Button fullWidth onClick={() => setShowNewTeam(true)} startIcon={<AddIcon />} variant='outlined'>
+        <Button color='primary' fullWidth onClick={onOpen} startContent={<MdAdd className='h-6 w-6' />} variant='bordered'>
           Nytt lag
         </Button>
       )}

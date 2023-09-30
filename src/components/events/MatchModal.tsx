@@ -1,18 +1,23 @@
 'use client';
 
-import { Close } from '@mui/icons-material';
-import { Box, Button, ButtonProps, Dialog, IconButton, Stack, TextField, Typography } from '@mui/material';
-import { Match, Prisma } from '@prisma/client';
+import { Button } from '@nextui-org/button';
+import { Card } from '@nextui-org/card';
+import { Input } from '@nextui-org/input';
+import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal';
+import { Prisma } from '@prisma/client';
 import axios from 'axios';
+import clsx from 'clsx';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { eventTypeBgGradient } from 'utils';
 
 import MatchEvents from 'components/events/MatchEvents';
 
-export type MatchModalProps = ButtonProps & {
+export type MatchModalProps = {
+  className?: string;
   isAdmin?: boolean;
   event: Prisma.EventGetPayload<{
     include: {
@@ -22,18 +27,21 @@ export type MatchModalProps = ButtonProps & {
   }>;
 };
 
-type FormDataProps = Pick<Match, 'homeGoals' | 'awayGoals'>;
+type FormDataProps = {
+  homeGoals: string;
+  awayGoals: string;
+};
 
-const MatchModal = ({ event, isAdmin = false, sx, ...props }: MatchModalProps) => {
+const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
   const router = useRouter();
 
-  const [open, setOpen] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [shouldRefreshOnClose, setShouldRefreshOnClose] = useState(false);
 
   const { handleSubmit, control } = useForm<FormDataProps>({
     defaultValues: {
-      homeGoals: event.match?.homeGoals || 0,
-      awayGoals: event.match?.awayGoals || 0,
+      homeGoals: String(event.match?.homeGoals ?? 0),
+      awayGoals: String(event.match?.awayGoals ?? 0),
     },
   });
 
@@ -43,7 +51,7 @@ const MatchModal = ({ event, isAdmin = false, sx, ...props }: MatchModalProps) =
     if (shouldRefreshOnClose) {
       router.refresh();
     }
-    setOpen(false);
+    onClose();
     setShouldRefreshOnClose(false);
   };
 
@@ -51,76 +59,52 @@ const MatchModal = ({ event, isAdmin = false, sx, ...props }: MatchModalProps) =
 
   return (
     <>
-      <Button fullWidth onClick={() => setOpen(true)} sx={{ color: 'inherit', textTransform: 'none', ...sx }} {...props}>
-        <Typography component='span' sx={{ width: '100%', display: 'flex', gap: 1, alignItems: 'center' }} variant='body1'>
-          <Box component='span' sx={{ flex: 1, py: 0.25, textAlign: 'right' }}>
-            {event.team?.name}
-          </Box>
-          <Box component='span' sx={{ display: 'flex', gap: 0.5, py: 0.25, px: 0.5, borderRadius: 0.5, bgcolor: '#ffffff44', fontWeight: 'bold' }}>
-            <Box component='span' sx={{ flex: 1, textAlign: 'right' }}>
-              {event.match?.homeGoals ?? '?'}
-            </Box>
-            -
-            <Box component='span' sx={{ flex: 1, textAlign: 'left' }}>
-              {event.match?.awayGoals ?? '?'}
-            </Box>
-          </Box>
-          <Box component='span' sx={{ flex: 1, py: 0.25, textAlign: 'left' }}>
-            {event.title}
-          </Box>
-        </Typography>
+      <Button className={clsx([`normal-case text-inherit`, className])} fullWidth onClick={onOpen} variant='light'>
+        <span className='text-md flex w-full items-center gap-2'>
+          <span className='flex-1 py-1 text-right'>{event.team?.name}</span>
+          <span className='flex gap-1 rounded-md bg-[#ffffff44] px-2 py-1 font-bold'>
+            <span className='flex-1 text-right'>{event.match?.homeGoals ?? '?'}</span>-<span className='flex-1 text-left'>{event.match?.awayGoals ?? '?'}</span>
+          </span>
+          <span className='flex-1 py-1 text-left'>{event.title}</span>
+        </span>
       </Button>
-      <Dialog onClose={handleClose} open={open} sx={{ '& .MuiPaper-root': { background: ({ palette }) => palette.background[event.eventType] } }}>
-        <Stack gap={1}>
-          <Stack direction='row' justifyContent='space-between' spacing={2} sx={{ alignItems: 'center' }}>
-            <Typography variant='h2'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</Typography>
-            <IconButton onClick={handleClose}>
-              <Close />
-            </IconButton>
-          </Stack>
-          <Typography sx={{ textTransform: 'capitalize' }} variant='body2'>
-            {format(new Date(event.time), "EEEE dd. MMMM yyyy' 'HH:mm", {
-              locale: nb,
-            })}
-          </Typography>
-          {isAdmin && (
-            <Stack
-              component='form'
-              gap={1}
-              onSubmit={handleSubmit(onSubmit)}
-              sx={{ border: (theme) => `1px solid ${theme.palette.divider}`, p: 2, borderRadius: 1, bgcolor: 'background.paper' }}>
-              <Stack direction='row' gap={1} sx={{ mt: 1 }}>
-                <Controller
-                  control={control}
-                  name='homeGoals'
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      inputMode='numeric'
-                      label={`Mål av oss (${event.team?.name})`}
-                      placeholder={`Mål av oss (${event.team?.name})`}
-                      required
-                      {...field}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name='awayGoals'
-                  render={({ field }) => (
-                    <TextField fullWidth inputMode='numeric' label={`Mål av ${event.title}`} placeholder={`Mål av ${event.title}`} required {...field} />
-                  )}
-                />
-              </Stack>
-              <Button type='submit' variant='contained'>
-                Lagre resultat
-              </Button>
-            </Stack>
-          )}
-          {isAdmin && <Typography variant='h3'>Hendelser</Typography>}
-          <MatchEvents event={event} isAdmin={isAdmin} />
-        </Stack>
-      </Dialog>
+      <Modal classNames={{ base: `${eventTypeBgGradient[event.eventType]}` }} isOpen={isOpen} onOpenChange={handleClose}>
+        <ModalContent>
+          <ModalHeader className='pb-0 pt-6'>
+            <h2 className='font-oswald text-3xl'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</h2>
+          </ModalHeader>
+          <ModalBody className='flex flex-col gap-2 pb-4'>
+            <p className='text-sm capitalize'>
+              {format(new Date(event.time), "EEEE dd. MMMM yyyy' 'HH:mm", {
+                locale: nb,
+              })}
+            </p>
+            {isAdmin && (
+              <Card as='form' className='flex flex-col gap-2 p-4' isBlurred onSubmit={handleSubmit(onSubmit)}>
+                <div className='mt-2 flex gap-2'>
+                  <Controller
+                    control={control}
+                    name='homeGoals'
+                    render={({ field }) => (
+                      <Input fullWidth inputMode='numeric' label={`Mål av oss (${event.team?.name})`} required variant='faded' {...field} />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name='awayGoals'
+                    render={({ field }) => <Input fullWidth inputMode='numeric' label={`Mål av ${event.title}`} required variant='faded' {...field} />}
+                  />
+                </div>
+                <Button color='primary' type='submit' variant='solid'>
+                  Lagre resultat
+                </Button>
+              </Card>
+            )}
+            {isAdmin && <h3 className='mt-2 font-cabin text-xl'>Hendelser</h3>}
+            <MatchEvents event={event} isAdmin={isAdmin} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

@@ -1,6 +1,5 @@
 import { Result } from '@prisma/client';
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data } = await request.json();
@@ -14,5 +13,5 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
     where: { id: parsedId },
     data: { result, homeGoals, awayGoals },
   });
-  return NextResponse.json(match);
+  return Response.json(match);
 };

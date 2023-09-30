@@ -1,14 +1,12 @@
-import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import { Box, Divider, Stack, Tooltip, Typography } from '@mui/material';
+import { Divider } from '@nextui-org/divider';
+import { Tooltip } from '@nextui-org/tooltip';
 import { isPast } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
 import { getSignedInUser } from 'functions/getUser';
 import { Suspense } from 'react';
-import { getEventTitle } from 'utils';
+import { MdLocationOn, MdOutlineGroups, MdWatchLater } from 'react-icons/md';
+import { eventTypeBgGradient, getEventTitle } from 'utils';
 
-import EventCard from 'components/events/EventCard';
 import EventRegistration from 'components/events/EventRegistration';
 import EventRelatedMatches from 'components/events/EventRelatedMatches';
 import EventWeather from 'components/events/EventWeather';
@@ -26,33 +24,26 @@ const Event = async ({ eventDetails, relatedMatches }: EventProps) => {
   const userRegistration = eventDetails.registrations.find((registration) => registration.playerId === user?.id);
 
   return (
-    <EventCard eventDetails={eventDetails}>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 1.5 }}>
-        <Typography component='span' variant='h3'>
-          {getEventTitle(eventDetails).icon}
-        </Typography>
-        <Stack direction='row' justifyContent='space-between'>
-          <Typography fontWeight='bold' variant='h3'>
-            {getEventTitle(eventDetails).title}
-          </Typography>
-        </Stack>
-
-        <Tooltip title='Tidspunkt'>
-          <WatchLaterIcon />
+    <div className={`flex h-auto w-full flex-col gap-2 rounded-lg p-3 ${eventTypeBgGradient[eventDetails.eventType]}`}>
+      <div className='grid grid-cols-[auto_1fr] gap-x-3 gap-y-2'>
+        <span className='text-2xl'>{getEventTitle(eventDetails).icon}</span>
+        <h3 className='font-cabin text-2xl font-bold'>{getEventTitle(eventDetails).title}</h3>
+        <Tooltip content='Tidspunkt' showArrow>
+          <MdWatchLater className='h-6 w-6' />
         </Tooltip>
-        <Typography sx={{ textTransform: 'capitalize' }} variant='body1'>
+        <p className='text-md capitalize'>
           <FormatDate time={eventDetails.time.toJSON()} />
-        </Typography>
-        <Tooltip title='Sted'>
-          <LocationOnIcon />
+        </p>
+        <Tooltip content='Sted' showArrow>
+          <MdLocationOn className='h-6 w-6' />
         </Tooltip>
-        <Typography variant='body1'>{eventDetails.location}</Typography>
+        <p className='text-md'>{eventDetails.location}</p>
         {eventDetails.team && (
           <>
-            <Tooltip title='Lag'>
-              <GroupsRoundedIcon />
+            <Tooltip content='Lag' showArrow>
+              <MdOutlineGroups className='h-6 w-6' />
             </Tooltip>
-            <Typography variant='body1'>{eventDetails.team.name}</Typography>
+            <p className='text-md'>{eventDetails.team.name}</p>
           </>
         )}
 
@@ -60,20 +51,19 @@ const Event = async ({ eventDetails, relatedMatches }: EventProps) => {
           <EventWeather eventDetails={eventDetails} />
         </Suspense>
 
-        <Stack direction='row' gap={1} sx={{ gridColumn: 'span 2' }}>
+        <div className='col-span-2 flex gap-2'>
           <PlayersModal eventType={eventDetails.eventType} registrations={eventDetails?.willArrive || []} title='Påmeldt' />
           <PlayersModal eventType={eventDetails.eventType} registrations={eventDetails?.willNotArrive || []} title='Avmeldt' />
           <PlayersModal eventType={eventDetails.eventType} registrations={eventDetails?.hasNotResponded || []} title='Ikke svart' />
-        </Stack>
-      </Box>
+        </div>
+      </div>
 
-      {((eventDetails.match && isPast(new Date(eventDetails.time))) || relatedMatches.length > 0) && <Divider sx={{ my: 0.5 }} />}
-      {eventDetails.match && isPast(new Date(eventDetails.time)) && <MatchModal event={eventDetails} sx={{ my: -0.5 }} />}
+      {((eventDetails.match && isPast(new Date(eventDetails.time))) || relatedMatches.length > 0) && <Divider />}
+      {eventDetails.match && isPast(new Date(eventDetails.time)) && <MatchModal event={eventDetails} />}
       <EventRelatedMatches relatedMatches={relatedMatches} />
-      <Divider sx={{ mt: 0.5 }} />
 
       <EventRegistration eventDetails={eventDetails} player={user!} registration={userRegistration} />
-    </EventCard>
+    </div>
   );
 };
 

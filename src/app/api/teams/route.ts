@@ -1,12 +1,12 @@
-import { getTeams } from 'functions/getTeams';
+import { getTeams, TEAMS_CACHE_TAG } from 'functions/getTeams';
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async () => {
   const teams = await getTeams();
-  return NextResponse.json(teams);
+  return Response.json(teams);
 };
 
 export const POST = async (request: Request) => {
@@ -17,5 +17,8 @@ export const POST = async (request: Request) => {
       name: data.name,
     },
   });
-  return NextResponse.json(newTeam);
+
+  revalidateTag(TEAMS_CACHE_TAG);
+
+  return Response.json(newTeam);
 };

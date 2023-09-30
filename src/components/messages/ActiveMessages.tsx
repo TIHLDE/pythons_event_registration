@@ -1,23 +1,8 @@
-import { Alert, Typography } from '@mui/material';
 import { getActiveNotifications } from 'functions/getActiveNotifications';
 import { Suspense } from 'react';
 
-import { ExtendedNotification } from 'components/messages/AdminMessage';
-
-type AlertMessageProps = {
-  notification: ExtendedNotification;
-};
-
-const AlertMessage = ({ notification }: AlertMessageProps) => {
-  return (
-    <Alert severity='warning' variant='outlined'>
-      <Typography gutterBottom variant='body1'>
-        {notification.message}
-      </Typography>
-      <Typography variant='body2'>- {notification.author.name}</Typography>
-    </Alert>
-  );
-};
+import { ExtendedNotification } from 'components/messages/AlertMessage';
+import { AlertMessage } from 'components/messages/AlertMessage';
 
 export const ActiveMessages = async () => {
   const notifications = await getActiveNotifications();

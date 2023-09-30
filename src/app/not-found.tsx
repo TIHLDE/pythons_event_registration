@@ -1,20 +1,18 @@
-import { Typography } from '@mui/material';
+import { Link } from '@nextui-org/link';
 import Image from 'next/image';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import image from 'static/images/404.gif';
 
 export default function NotFound() {
   return (
     <>
-      <Typography gutterBottom variant='h1'>
-        404 - Ikke funnet
-      </Typography>
-      <Typography gutterBottom>
+      <h1 className='mb-4'>404 - Ikke funnet</h1>
+      <p className='mb-2'>
         Denne siden finnes ikke{' '}
-        <Typography component={Link} href='/'>
+        <Link as={NextLink} href='/'>
           gå til forsiden
-        </Typography>
-      </Typography>
+        </Link>
+      </p>
       <Image
         alt='Picture of the author'
         sizes='(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 33vw'

@@ -1,14 +1,14 @@
-import { Box, Divider, Typography, TypographyProps } from '@mui/material';
 import { EventType } from '@prisma/client';
 import { getMonth, parseISO, set } from 'date-fns';
+import { getTeams } from 'functions/getTeams';
 import { prisma } from 'lib/prisma';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { Fragment } from 'react';
 
 import { PageProps } from 'types';
 
 import { AttendanceFilters } from 'components/attendance/AttendanceFilters';
+import { AttendanceTable } from 'components/attendance/AttendanceTable';
 
 export const metadata: Metadata = {
   title: 'Oppmøte - TIHLDE Pythons',
@@ -85,28 +85,16 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
     orderBy: { name: 'asc' },
   });
 
-  const teamsQuery = prisma.team.findMany();
-
-  const [eventsAmount, players, teams] = await Promise.all([eventsAmountQuery, playersQuery, teamsQuery]);
+  const [eventsAmount, players, teams] = await Promise.all([eventsAmountQuery, playersQuery, getTeams()]);
   const sortedPlayers = players
     .map((player) => ({
-      ...player,
-      _count: { registrations: willArriveFilter === null ? eventsAmount._count - player._count.registrations : player._count.registrations },
+      name: player.name,
+      count: willArriveFilter === null ? eventsAmount._count - player._count.registrations : player._count.registrations,
     }))
-    .sort((a, b) => b._count.registrations - a._count.registrations);
+    .sort((a, b) => b.count - a.count);
 
-  return {
-    eventsAmount: eventsAmount._count,
-    players: sortedPlayers,
-    teams: teams,
-  };
+  return { eventsAmount: eventsAmount._count, players: sortedPlayers, teams: teams };
 };
-
-const TableText = ({ children, sx }: Pick<TypographyProps, 'children' | 'sx'>) => (
-  <Typography component='p' sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' }, ...sx }} variant='h3'>
-    {children}
-  </Typography>
-);
 
 const Attendance = async ({ searchParams }: PageProps) => {
   const { eventsAmount, players, teams } = await getData({ searchParams });
@@ -114,25 +102,10 @@ const Attendance = async ({ searchParams }: PageProps) => {
   return (
     <>
       <AttendanceFilters defaultFromDate={DEFAULT_FROM_DATE} defaultToDate={DEFAULT_TO_DATE} teams={teams} />
-      <Typography gutterBottom>
-        Med nåværende filtrering finnes det totalt <b>{eventsAmount}</b> arrangementer.
-      </Typography>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', columnGap: 2, rowGap: 0.5 }}>
-        <TableText sx={{ pl: 0.5, fontWeight: 'bold' }}>#</TableText>
-        <TableText sx={{ fontWeight: 'bold' }}>Navn</TableText>
-        <TableText sx={{ pr: 0.5, fontWeight: 'bold' }}>Antall</TableText>
-        <Divider sx={{ gridColumn: 'span 3' }} />
-        {players.map((player, index) => (
-          <Fragment key={player.id}>
-            <TableText sx={{ pl: 0.5 }}>{index + 1}.</TableText>
-            <TableText sx={{}}>{player.name}</TableText>
-            <TableText sx={{ pr: 0.5 }}>
-              {player._count.registrations} ({Math.round((player._count.registrations / eventsAmount) * 100) || 0}%)
-            </TableText>
-            <Divider sx={{ gridColumn: 'span 3' }} />
-          </Fragment>
-        ))}
-      </Box>
+      <p className='my-4 text-sm'>
+        Med gitt filtrering finnes det totalt <b>{eventsAmount}</b> arrangementer.
+      </p>
+      <AttendanceTable eventsAmount={eventsAmount} players={players} />
     </>
   );
 };

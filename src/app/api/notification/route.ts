@@ -1,6 +1,7 @@
+import { NOTIFICATIONS_CACHE_TAG } from 'functions/getActiveNotifications';
 import { getSignedInUserOrThrow } from 'functions/getUser';
 import { prisma } from 'lib/prisma';
-import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 export const POST = async (request: Request) => {
   const user = await getSignedInUserOrThrow();
@@ -14,5 +15,7 @@ export const POST = async (request: Request) => {
     },
   });
 
-  return NextResponse.json(notification);
+  revalidateTag(NOTIFICATIONS_CACHE_TAG);
+
+  return Response.json(notification);
 };

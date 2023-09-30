@@ -1,12 +1,10 @@
-import { Stack, Typography } from '@mui/material';
-
 import LoadingLogo from 'components/LoadingLogo';
 
 const PageLoader = (label: string) => () => (
-  <Stack gap={1} sx={{ alignItems: 'center' }}>
+  <div className='flex flex-col items-center gap-2'>
     <LoadingLogo />
-    <Typography sx={{ fontStyle: 'italic' }}>{`Laster inn ${label}...`}</Typography>
-  </Stack>
+    <p className='text-md italic'>{`Laster inn ${label}...`}</p>
+  </div>
 );
 
 export default PageLoader;

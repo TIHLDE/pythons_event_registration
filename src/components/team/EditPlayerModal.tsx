@@ -1,30 +1,19 @@
 'use client';
 
-import EditRounded from '@mui/icons-material/EditRounded';
-import {
-  Button,
-  Checkbox,
-  Dialog,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormHelperText,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Button } from '@nextui-org/button';
+import { Checkbox } from '@nextui-org/checkbox';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
+import { Select, SelectItem } from '@nextui-org/select';
+import { useDisclosure } from '@nextui-org/use-disclosure';
 import { Player } from '@prisma/client';
 import axios from 'axios';
 import { format, parseJSON } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { MdEdit } from 'react-icons/md';
 import { positionsList } from 'utils';
 
-import { useModal } from 'hooks/useModal';
 import { useTeams } from 'hooks/useQuery';
 
 export type EditPlayerModalProps = {
@@ -38,7 +27,7 @@ type FormDataProps = {
 };
 
 const EditPlayerModal = ({ player }: EditPlayerModalProps) => {
-  const { modalOpen, handleOpenModal, handleCloseModal } = useModal(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { data: teams = [] } = useTeams();
   const router = useRouter();
   const { control, handleSubmit } = useForm<FormDataProps>({
@@ -48,86 +37,86 @@ const EditPlayerModal = ({ player }: EditPlayerModalProps) => {
     async (formData: FormDataProps) => {
       const data: Pick<Player, 'teamId' | 'position' | 'disableRegistrations'> = { ...formData, teamId: formData.teamId === '' ? null : formData.teamId };
       await axios.put(`/api/players/${player.id}`, { data: data });
-      handleCloseModal();
+      onClose();
       router.refresh();
     },
-    [handleCloseModal, player.id, router],
+    [onClose, player.id, router],
   );
   return (
     <>
-      <IconButton onClick={handleOpenModal} size='small' sx={{ width: 24, height: 24 }}>
-        <EditRounded />
-      </IconButton>
-      <Dialog onClose={handleCloseModal} open={modalOpen}>
-        <Stack gap={2}>
-          <Typography variant='h5'>Rediger spillerprofil</Typography>
-          <Typography sx={{ whiteSpace: 'break-spaces' }}>{`Navn: ${player.name}
+      <Button className='h-6 w-6 min-w-0' isIconOnly onClick={onOpen} size='sm' variant='light'>
+        <MdEdit className='h-6 w-6' />
+      </Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalContent as='form' onSubmit={handleSubmit(onSubmit)}>
+          <ModalHeader>Rediger spillerprofil</ModalHeader>
+          <ModalBody className='flex flex-col gap-4'>
+            <p className='text-md whitespace-break-spaces'>{`Navn: ${player.name}
 TIHLDE-id: ${player.tihlde_user_id}
 Opprettet: ${format(parseJSON(player.createdAt), 'dd-MM-yyyy')}
-`}</Typography>
-          <Stack component='form' gap={2} onSubmit={handleSubmit(onSubmit)}>
-            <FormControl fullWidth>
-              <InputLabel>Lag</InputLabel>
-              <Controller
-                control={control}
-                name='teamId'
-                render={({ field: { onChange, value } }) => (
-                  <Select label='Lag' onChange={onChange} value={value}>
-                    <MenuItem value=''>Ikke noe lag</MenuItem>
-                    {teams.map((team) => (
-                      <MenuItem key={team.id} value={team.id}>
-                        {team.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Posisjon</InputLabel>
-              <Controller
-                control={control}
-                name='position'
-                render={({ field: { onChange, value } }) => (
-                  <Select label='Posisjon' onChange={onChange} value={value}>
-                    {positionsList.map((position) => (
-                      <MenuItem key={position.type} value={position.type}>
-                        {position.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Controller
-                    control={control}
-                    name='disableRegistrations'
-                    render={({ field: { onChange, value } }) => <Checkbox checked={value} onChange={onChange} />}
-                  />
-                }
-                label='Deaktiver påmelding'
-              />
-              <FormHelperText>
-                {`Ved å deaktivere påmelding til arrangementer vil spilleren heller ikke motta bøter for manglende påmelding. Spilleren vil fremdeles kunne melde
+`}</p>
+            <Controller
+              control={control}
+              name='teamId'
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  items={[{ id: '', name: 'Alle' }, ...teams]}
+                  label='Lag'
+                  onChange={(e) => onChange(e.target.value)}
+                  selectedKeys={new Set(value ? [String(value)] : [])}
+                  variant='faded'>
+                  {(team) => (
+                    <SelectItem key={team.id} value={team.id}>
+                      {team.name}
+                    </SelectItem>
+                  )}
+                </Select>
+              )}
+            />
+            <Controller
+              control={control}
+              name='position'
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  items={positionsList}
+                  label='Posisjon'
+                  onChange={(e) => onChange(e.target.value)}
+                  selectedKeys={new Set(value ? [value] : [])}
+                  variant='faded'>
+                  {(position) => (
+                    <SelectItem key={position.type} value={position.type}>
+                      {position.label}
+                    </SelectItem>
+                  )}
+                </Select>
+              )}
+            />
+            <Controller
+              control={control}
+              name='disableRegistrations'
+              render={({ field: { onChange, value } }) => (
+                <Checkbox isSelected={value} onValueChange={onChange}>
+                  Deaktiver påmelding
+                </Checkbox>
+              )}
+            />
+            <p className='text-xs'>
+              {`Ved å deaktivere påmelding til arrangementer vil spilleren heller ikke motta bøter for manglende påmelding. Spilleren vil fremdeles kunne melde
                 seg på sosiale arrangementer, men vil ikke vises i listen over "Ikke svart" før den eventuelt har meldt seg på/av. Passende for spillere som midlertidig
                 ikke trener og spiller kamper, for eksempel på grunn av langtidsskade eller utveksling. Om spilleren allerede har meldt seg på fremtidige arrangementer
                 vil den fremdeles kunne endre påmelding på disse etter at "Deaktiver påmelding" skrus på.`}
-              </FormHelperText>
-            </FormGroup>
-            <Stack direction='row' gap={1} justifyContent='space-between'>
-              <Button color='error' onClick={handleCloseModal} variant='text'>
-                Avbryt
-              </Button>
-              <Button type='submit' variant='contained'>
-                Lagre
-              </Button>
-            </Stack>
-          </Stack>
-        </Stack>
-      </Dialog>
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color='danger' onPress={onClose} variant='flat'>
+              Avbryt
+            </Button>
+            <Button color='primary' type='submit'>
+              Lagre
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

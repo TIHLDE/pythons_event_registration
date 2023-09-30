@@ -1,12 +1,7 @@
-'use client';
-
-import { Box, Stack, Typography } from '@mui/material';
 import { Position, Team } from '@prisma/client';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
 
-import ConfirmModal from 'components/ConfirmModal';
 import PlayersList, { PlayersListProps } from 'components/team/PlayersList';
+import { TeamDelete } from 'components/team/TeamDelete';
 
 export type TeamOverviewProps = {
   team: Team | string;
@@ -18,34 +13,19 @@ export type TeamOverviewProps = {
 };
 
 const TeamOverview = ({ team, positions }: TeamOverviewProps) => {
-  const router = useRouter();
-  const deleteTeam = async (id: Team['id']) => {
-    await axios.delete(`/api/teams/${id}`);
-    router.refresh();
-  };
   return (
     <>
-      <Stack direction='row' justifyContent='space-between' sx={{ mb: 1 }}>
-        <Typography variant='h2'>
+      <div className='mb-2 flex justify-between'>
+        <h2 className='font-oswald text-2xl font-bold'>
           {typeof team === 'string' ? team : `${team.name} (${positions.reduce((acc, curr) => acc + curr.players.length, 0)})`}
-        </Typography>
-        {typeof team !== 'string' && (
-          <ConfirmModal
-            color='error'
-            description='Er du helt sikker? Lagets spillere vil ikke berøres, men bli stående uten tilhørighet til et lag.'
-            onConfirm={() => deleteTeam(team.id)}
-            size='small'
-            title='Slett lag'
-            variant='outlined'>
-            Slett
-          </ConfirmModal>
-        )}
-      </Stack>
-      <Box gap={1} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' } }}>
+        </h2>
+        {typeof team !== 'string' && <TeamDelete team={team} />}
+      </div>
+      <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3'>
         {positions.map((position) => (
           <PlayersList key={position.type} players={position.players} title={position.label} />
         ))}
-      </Box>
+      </div>
     </>
   );
 };

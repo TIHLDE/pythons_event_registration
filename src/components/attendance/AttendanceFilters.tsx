@@ -1,11 +1,14 @@
 'use client';
 
-import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
-import { Alert, Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Button } from '@nextui-org/button';
+import { Card, CardBody } from '@nextui-org/card';
+import { Input } from '@nextui-org/input';
+import { Select, SelectItem } from '@nextui-org/select';
 import { EventType } from '@prisma/client';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { MdOutlineFilterList } from 'react-icons/md';
 import { eventTypesList, removeFalsyElementsFromObject } from 'utils';
 
 import { StandaloneExpand } from 'components/Expand';
@@ -50,69 +53,80 @@ export const AttendanceFilters = ({ defaultToDate, defaultFromDate, teams }: Att
 
   return (
     <>
-      <StandaloneExpand expanded={open} icon={<FilterListRoundedIcon />} onExpand={() => setOpen((prev) => !prev)} primary='Filtrering' sx={{ mb: 2 }}>
-        <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ pt: 1, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 1 }}>
-          <Controller control={control} name='from' render={({ field }) => <TextField label='Fra' type='date' {...field} />} />
-          <Controller control={control} name='to' render={({ field }) => <TextField label='Til' type='date' {...field} />} />
-          <FormControl fullWidth>
-            <InputLabel id='selectType-type'>Type</InputLabel>
-            <Controller
-              control={control}
-              name='eventType'
-              render={({ field }) => (
-                <Select id='type' label='Type' labelId='selectType-type' {...field}>
-                  <MenuItem value=''>Alle</MenuItem>
-                  {eventTypesList.map((eventType) => (
-                    <MenuItem key={eventType.type} value={eventType.type}>
-                      {eventType.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id='select-team'>Lag</InputLabel>
-            <Controller
-              control={control}
-              name='team'
-              render={({ field }) => (
-                <Select id='team' label='Lag' labelId='select-team' {...field}>
-                  <MenuItem value=''>Alle</MenuItem>
-                  {teams.map((team) => (
-                    <MenuItem key={team.id} value={team.id}>
-                      {team.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id='select-willArrive'>Oppmøte</InputLabel>
-            <Controller
-              control={control}
-              name='willArrive'
-              render={({ field }) => (
-                <Select id='willArrive' label='Oppmøte' labelId='select-willArrive' {...field}>
-                  <MenuItem value=''>Alle</MenuItem>
-                  <MenuItem value='yes'>Ja</MenuItem>
-                  <MenuItem value='no'>Nei</MenuItem>
-                  <MenuItem value='none'>Ikke registrert</MenuItem>
-                </Select>
-              )}
-            />
-          </FormControl>
-          <Button sx={{ gridColumn: { xs: undefined, md: 'span 2' } }} type='submit' variant='contained'>
+      <StandaloneExpand expanded={open} icon={<MdOutlineFilterList className='h-6 w-6' />} onExpand={() => setOpen((prev) => !prev)} primary='Filtrering'>
+        <form className='grid grid-cols-1 gap-2 pt-2 md:grid-cols-2' onSubmit={handleSubmit(onSubmit)}>
+          <Controller control={control} name='from' render={({ field }) => <Input label='Fra' placeholder='Fra' type='date' variant='faded' {...field} />} />
+          <Controller control={control} name='to' render={({ field }) => <Input label='Til' placeholder='Til' type='date' variant='faded' {...field} />} />
+          <Controller
+            control={control}
+            name='eventType'
+            render={({ field: { onChange, value } }) => (
+              <Select
+                items={[{ type: '', label: 'Alle' }, ...eventTypesList]}
+                label='Type'
+                onChange={(e) => onChange(e.target.value)}
+                selectedKeys={new Set([value])}
+                variant='faded'>
+                {(eventType) => (
+                  <SelectItem key={eventType.type} value={eventType.type}>
+                    {eventType.label}
+                  </SelectItem>
+                )}
+              </Select>
+            )}
+          />
+          <Controller
+            control={control}
+            name='team'
+            render={({ field: { onChange, value } }) => (
+              <Select
+                items={[{ id: '', name: 'Alle' }, ...teams]}
+                label='Lag'
+                onChange={(e) => onChange(e.target.value)}
+                selectedKeys={new Set([value])}
+                variant='faded'>
+                {(team) => (
+                  <SelectItem key={team.id} value={team.id}>
+                    {team.name}
+                  </SelectItem>
+                )}
+              </Select>
+            )}
+          />
+          <Controller
+            control={control}
+            name='willArrive'
+            render={({ field: { onChange, value } }) => (
+              <Select label='Oppmøte' onChange={(e) => onChange(e.target.value)} selectedKeys={new Set([value])} variant='faded'>
+                <SelectItem key='' value=''>
+                  Alle
+                </SelectItem>
+                <SelectItem key='yes' value='yes'>
+                  Ja
+                </SelectItem>
+                <SelectItem key='no' value='no'>
+                  Nei
+                </SelectItem>
+                <SelectItem key='none' value='none'>
+                  Ikke registrert
+                </SelectItem>
+              </Select>
+            )}
+          />
+          <Button className='md:col-span-2' color='primary' type='submit' variant='solid'>
             Oppdater filtre
           </Button>
-        </Box>
+        </form>
       </StandaloneExpand>
       {(searchParams.get('eventType') === EventType.MATCH || !searchParams.get('eventType')) && !searchParams.get('team') && (
-        <Alert severity='info' sx={{ mb: 1 }} variant='outlined'>
-          Kamper er en del av filtreringen uten at et lag er valgt. Det medfører at ingen kan ha 100% påmeldinger ettersom det ikke er mulig å melde seg på
-          andre lags kamper.
-        </Alert>
+        <Card className='mt-4 border-1 border-solid border-blue-500 dark:bg-blue-900' fullWidth shadow='sm'>
+          <CardBody className='p-2'>
+            <p className='text-sm'>
+              Kamper er en del av filtreringen uten at et lag er valgt. Det medfører at ingen kan ha 100% påmeldinger ettersom det ikke er mulig å melde seg på
+              andre lags kamper.
+            </p>
+          </CardBody>
+        </Card>
       )}
     </>
   );

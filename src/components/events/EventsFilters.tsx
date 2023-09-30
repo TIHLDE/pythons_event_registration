@@ -1,11 +1,14 @@
 'use client';
 
-import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, StackProps, TextField } from '@mui/material';
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
+import { Select, SelectItem } from '@nextui-org/select';
+import { Tab, Tabs } from '@nextui-org/tabs';
 import { addMonths, startOfToday } from 'date-fns';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { MdOutlineFilterList } from 'react-icons/md';
 import { eventTypesList, getSemesters, removeFalsyElementsFromObject } from 'utils';
 
 import { useTeams } from 'hooks/useQuery';
@@ -29,7 +32,7 @@ type AllEventsFilters = {
 
 const semesters = getSemesters();
 
-export const EventsFilters = (props: StackProps) => {
+export const EventsFilters = ({ className }: { className?: string }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -62,8 +65,8 @@ export const EventsFilters = (props: StackProps) => {
     reset();
   };
 
-  const handleChange = (event: SelectChangeEvent, field: keyof MatchesFilters) => {
-    const newFilters: MatchesFilters = { ...matchesFilters, [field]: event.target.value as string };
+  const handleChange = (value: string, field: keyof MatchesFilters) => {
+    const newFilters: MatchesFilters = { ...matchesFilters, [field]: value };
     updateMatchesFilters(newFilters);
   };
 
@@ -84,109 +87,88 @@ export const EventsFilters = (props: StackProps) => {
   };
 
   return (
-    <Stack gap={2} {...props}>
-      <Stack direction='row' gap={1}>
-        <Button
-          color='menu'
-          fullWidth
-          onClick={() => changeView('all')}
-          size='large'
-          sx={{ fontWeight: view === 'all' ? 'bold' : undefined }}
-          variant={view === 'all' ? 'contained' : 'outlined'}>
-          Alle
-        </Button>
-        <Button
-          color='menu'
-          fullWidth
-          onClick={() => changeView('matches')}
-          size='large'
-          sx={{ fontWeight: view === 'matches' ? 'bold' : undefined }}
-          variant={view === 'matches' ? 'contained' : 'outlined'}>
-          Terminliste
-        </Button>
-      </Stack>
+    <div className={`flex flex-col gap-4 ${className}`}>
+      <Tabs fullWidth onSelectionChange={(key) => changeView(key as 'all' | 'matches')} selectedKey={view} size='lg' variant='bordered'>
+        <Tab key='all' title='Alle' />
+        <Tab key='matches' title='Terminliste' />
+      </Tabs>
       {view === 'all' ? (
-        <StandaloneExpand expanded={open} icon={<FilterListRoundedIcon />} onExpand={() => setOpen((prev) => !prev)} primary='Filtrering'>
-          <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ pt: 1, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 1 }}>
-            <Controller control={control} name='from' render={({ field }) => <TextField label='Fra' type='date' {...field} />} />
-            <Controller control={control} name='to' render={({ field }) => <TextField label='Til' type='date' {...field} />} />
-            <FormControl fullWidth>
-              <InputLabel id='selectType-type'>Type</InputLabel>
-              <Controller
-                control={control}
-                name='eventType'
-                render={({ field }) => (
-                  <Select id='type' label='Type' labelId='selectType-type' {...field}>
-                    <MenuItem value=''>Alle</MenuItem>
-                    {eventTypesList.map((eventType) => (
-                      <MenuItem key={eventType.type} value={eventType.type}>
-                        {eventType.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id='select-team'>Lag</InputLabel>
-              <Controller
-                control={control}
-                name='team'
-                render={({ field }) => (
-                  <Select id='team' label='Lag' labelId='select-team' {...field}>
-                    <MenuItem value=''>Alle</MenuItem>
-                    {teams.map((team) => (
-                      <MenuItem key={team.id} value={team.id}>
-                        {team.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-            <Button sx={{ gridColumn: { xs: undefined, md: 'span 2' } }} type='submit' variant='contained'>
+        <StandaloneExpand expanded={open} icon={<MdOutlineFilterList className='h-6 w-6' />} onExpand={() => setOpen((prev) => !prev)} primary='Filtrering'>
+          <form className='grid grid-cols-1 gap-2 pt-2 md:grid-cols-2' onSubmit={handleSubmit(onSubmit)}>
+            <Controller control={control} name='from' render={({ field }) => <Input label='Fra' placeholder='Fra' type='date' variant='faded' {...field} />} />
+            <Controller control={control} name='to' render={({ field }) => <Input label='Til' placeholder='Til' type='date' variant='faded' {...field} />} />
+            <Controller
+              control={control}
+              name='eventType'
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  items={[{ type: '', label: 'Alle' }, ...eventTypesList]}
+                  label='Type'
+                  onChange={(e) => onChange(e.target.value)}
+                  selectedKeys={new Set([value])}
+                  variant='faded'>
+                  {(eventType) => (
+                    <SelectItem key={eventType.type} value={eventType.type}>
+                      {eventType.label}
+                    </SelectItem>
+                  )}
+                </Select>
+              )}
+            />
+            <Controller
+              control={control}
+              name='team'
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  items={[{ id: '', name: 'Alle' }, ...teams]}
+                  label='Lag'
+                  onChange={(e) => onChange(e.target.value)}
+                  selectedKeys={new Set([value])}
+                  variant='faded'>
+                  {(team) => (
+                    <SelectItem key={team.id} value={team.id}>
+                      {team.name}
+                    </SelectItem>
+                  )}
+                </Select>
+              )}
+            />
+            <Button className='md:col-span-2' color='primary' type='submit' variant='solid'>
               Oppdater filtre
             </Button>
-            <Button onClick={clearFilters} sx={{ gridColumn: { xs: undefined, md: 'span 2' } }} variant='outlined'>
+            <Button className='md:col-span-2' onClick={clearFilters} variant='bordered'>
               Fjern filtre
             </Button>
-          </Box>
+          </form>
         </StandaloneExpand>
       ) : (
-        <Stack direction='row' gap={1} sx={{ mb: 2 }}>
-          <FormControl fullWidth>
-            <InputLabel id='select-semester'>Semester</InputLabel>
-            <Select
-              id='semester'
-              label='Semester'
-              labelId='select-semester'
-              onChange={(e) => handleChange(e as SelectChangeEvent<string>, 'semester')}
-              value={matchesFilters.semester}>
-              {semesters.map((semester) => (
-                <MenuItem key={semester.id} value={semester.id}>
-                  {semester.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id='select-team'>Lag</InputLabel>
-            <Select
-              id='team'
-              label='Lag'
-              labelId='select-team'
-              onChange={(e) => handleChange(e as SelectChangeEvent<string>, 'team')}
-              value={matchesFilters.team}>
-              <MenuItem value=''>Alle</MenuItem>
-              {teams.map((team) => (
-                <MenuItem key={team.id} value={team.id}>
-                  {team.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Stack>
+        <div className='flex gap-2'>
+          <Select
+            items={semesters}
+            label='Semester'
+            onChange={(e) => handleChange(e.target.value, 'semester')}
+            selectedKeys={new Set([matchesFilters.semester])}
+            variant='faded'>
+            {(semester) => (
+              <SelectItem key={semester.id} value={semester.id}>
+                {semester.label}
+              </SelectItem>
+            )}
+          </Select>
+          <Select
+            items={[{ id: '', name: 'Alle' }, ...teams]}
+            label='Lag'
+            onChange={(e) => handleChange(e.target.value, 'team')}
+            selectedKeys={new Set(matchesFilters.team ? [matchesFilters.team] : [])}
+            variant='faded'>
+            {(team) => (
+              <SelectItem key={team.id} value={team.id}>
+                {team.name}
+              </SelectItem>
+            )}
+          </Select>
+        </div>
       )}
-    </Stack>
+    </div>
   );
 };
