@@ -13,7 +13,6 @@ import { Analytics } from 'components/Analytics';
 import { Footer } from 'components/Footer';
 import NavBar from 'components/NavBar';
 import SignIn from 'components/SignIn';
-import ThemeRegistry from 'components/ThemeRegistry/ThemeRegistry';
 
 import 'app/globals.css';
 
@@ -53,14 +52,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <Analytics />
         <Providers dehydratedState={dehydratedState}>
-          <ThemeRegistry>
-            <div className='mx-auto w-full max-w-screen-lg p-4'>
-              <NavBar />
-              {Boolean(user) && <AdminHotKeys />}
-              {user ? children : <SignIn />}
-              <Footer />
-            </div>
-          </ThemeRegistry>
+          <div className='mx-auto w-full max-w-screen-lg p-4'>
+            <NavBar />
+            {Boolean(user) && <AdminHotKeys />}
+            {user ? children : <SignIn />}
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>

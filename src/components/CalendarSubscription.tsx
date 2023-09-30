@@ -1,7 +1,7 @@
-import CloudSyncIcon from '@mui/icons-material/CloudSyncRounded';
 import { Link } from '@nextui-org/link';
 import { Snippet } from '@nextui-org/snippet';
 import { getSignedInUser } from 'functions/getUser';
+import { MdOutlineCloudSync } from 'react-icons/md';
 
 import { StandaloneExpand, StandaloneExpandProps } from 'components/Expand';
 
@@ -9,7 +9,11 @@ export const CalendarSubscription = async (props: Partial<StandaloneExpandProps>
   const user = await getSignedInUser();
 
   return (
-    <StandaloneExpand icon={<CloudSyncIcon />} primary='Kalender-abonnement' secondary='Treninger, kamper og sosialt i din kalender' {...props}>
+    <StandaloneExpand
+      icon={<MdOutlineCloudSync className='h-6 w-6' />}
+      primary='Kalender-abonnement'
+      secondary='Treninger, kamper og sosialt i din kalender'
+      {...props}>
       <p className='mb-2 text-sm'>
         Du kan abonnere på din arrangement-kalender slik at nye treninger, kamper og sosiale arrangementer kommer automatisk inn i kalenderen din. Om du melder
         deg av vil arrangementet fjernes fra din kalender. Kopier URLen under og åpne{' '}

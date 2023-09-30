@@ -1,15 +1,12 @@
-import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { Divider } from '@nextui-org/divider';
 import { Tooltip } from '@nextui-org/tooltip';
 import { isPast } from 'date-fns';
 import { ExtendedEvent } from 'functions/event';
 import { getSignedInUser } from 'functions/getUser';
 import { Suspense } from 'react';
-import { getEventTitle } from 'utils';
+import { MdLocationOn, MdOutlineGroups, MdWatchLater } from 'react-icons/md';
+import { eventTypeBgGradient, getEventTitle } from 'utils';
 
-import EventCard from 'components/events/EventCard';
 import EventRegistration from 'components/events/EventRegistration';
 import EventRelatedMatches from 'components/events/EventRelatedMatches';
 import EventWeather from 'components/events/EventWeather';
@@ -27,24 +24,24 @@ const Event = async ({ eventDetails, relatedMatches }: EventProps) => {
   const userRegistration = eventDetails.registrations.find((registration) => registration.playerId === user?.id);
 
   return (
-    <EventCard eventDetails={eventDetails}>
+    <div className={`flex h-auto w-full flex-col gap-2 rounded-lg p-3 ${eventTypeBgGradient[eventDetails.eventType]}`}>
       <div className='grid grid-cols-[auto_1fr] gap-x-3 gap-y-2'>
         <span className='text-2xl'>{getEventTitle(eventDetails).icon}</span>
         <h3 className='font-cabin text-2xl font-bold'>{getEventTitle(eventDetails).title}</h3>
         <Tooltip content='Tidspunkt' showArrow>
-          <WatchLaterIcon />
+          <MdWatchLater className='h-6 w-6' />
         </Tooltip>
         <p className='text-md capitalize'>
           <FormatDate time={eventDetails.time.toJSON()} />
         </p>
         <Tooltip content='Sted' showArrow>
-          <LocationOnIcon />
+          <MdLocationOn className='h-6 w-6' />
         </Tooltip>
         <p className='text-md'>{eventDetails.location}</p>
         {eventDetails.team && (
           <>
             <Tooltip content='Lag' showArrow>
-              <GroupsRoundedIcon />
+              <MdOutlineGroups className='h-6 w-6' />
             </Tooltip>
             <p className='text-md'>{eventDetails.team.name}</p>
           </>
@@ -66,7 +63,7 @@ const Event = async ({ eventDetails, relatedMatches }: EventProps) => {
       <EventRelatedMatches relatedMatches={relatedMatches} />
 
       <EventRegistration eventDetails={eventDetails} player={user!} registration={userRegistration} />
-    </EventCard>
+    </div>
   );
 };
 

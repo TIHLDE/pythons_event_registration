@@ -1,6 +1,5 @@
 'use client';
 
-import AddIcon from '@mui/icons-material/AddRounded';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
 import { useDisclosure } from '@nextui-org/use-disclosure';
@@ -8,6 +7,7 @@ import { Team } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
+import { MdAdd } from 'react-icons/md';
 
 export const NewTeam = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -47,7 +47,7 @@ export const NewTeam = () => {
           </Button>
         </form>
       ) : (
-        <Button color='primary' fullWidth onClick={onOpen} startContent={<AddIcon />} variant='bordered'>
+        <Button color='primary' fullWidth onClick={onOpen} startContent={<MdAdd className='h-6 w-6' />} variant='bordered'>
           Nytt lag
         </Button>
       )}

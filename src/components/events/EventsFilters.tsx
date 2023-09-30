@@ -1,6 +1,5 @@
 'use client';
 
-import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
 import { Select, SelectItem } from '@nextui-org/select';
@@ -9,6 +8,7 @@ import { addMonths, startOfToday } from 'date-fns';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { MdOutlineFilterList } from 'react-icons/md';
 import { eventTypesList, getSemesters, removeFalsyElementsFromObject } from 'utils';
 
 import { useTeams } from 'hooks/useQuery';
@@ -93,7 +93,7 @@ export const EventsFilters = ({ className }: { className?: string }) => {
         <Tab key='matches' title='Terminliste' />
       </Tabs>
       {view === 'all' ? (
-        <StandaloneExpand expanded={open} icon={<FilterListRoundedIcon />} onExpand={() => setOpen((prev) => !prev)} primary='Filtrering'>
+        <StandaloneExpand expanded={open} icon={<MdOutlineFilterList className='h-6 w-6' />} onExpand={() => setOpen((prev) => !prev)} primary='Filtrering'>
           <form className='grid grid-cols-1 gap-2 pt-2 md:grid-cols-2' onSubmit={handleSubmit(onSubmit)}>
             <Controller control={control} name='from' render={({ field }) => <Input label='Fra' placeholder='Fra' type='date' variant='faded' {...field} />} />
             <Controller control={control} name='to' render={({ field }) => <Input label='Til' placeholder='Til' type='date' variant='faded' {...field} />} />

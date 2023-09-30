@@ -1,9 +1,7 @@
-'use client';
-
-import PersonAddDisabledRoundedIcon from '@mui/icons-material/PersonAddDisabledRounded';
 import { Card } from '@nextui-org/card';
 import { Tooltip } from '@nextui-org/tooltip';
 import { Player } from '@prisma/client';
+import { MdOutlinePersonAddDisabled } from 'react-icons/md';
 
 import EditPlayerModal from 'components/team/EditPlayerModal';
 
@@ -24,7 +22,7 @@ const PlayersList = ({ title, players }: PlayersListProps) => {
           <p className='text-md flex-1'>{player.name}</p>
           {player.disableRegistrations && (
             <Tooltip content='Deaktivert påmelding' showArrow>
-              <PersonAddDisabledRoundedIcon />
+              <MdOutlinePersonAddDisabled className='h-6 w-6' />
             </Tooltip>
           )}
         </div>

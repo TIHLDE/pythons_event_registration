@@ -1,6 +1,5 @@
 'use client';
 
-import EditRounded from '@mui/icons-material/EditRounded';
 import { Button } from '@nextui-org/button';
 import { Checkbox } from '@nextui-org/checkbox';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
@@ -12,6 +11,7 @@ import { format, parseJSON } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { MdEdit } from 'react-icons/md';
 import { positionsList } from 'utils';
 
 import { useTeams } from 'hooks/useQuery';
@@ -45,7 +45,7 @@ const EditPlayerModal = ({ player }: EditPlayerModalProps) => {
   return (
     <>
       <Button className='h-6 w-6 min-w-0' isIconOnly onClick={onOpen} size='sm' variant='light'>
-        <EditRounded />
+        <MdEdit className='h-6 w-6' />
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent as='form' onSubmit={handleSubmit(onSubmit)}>

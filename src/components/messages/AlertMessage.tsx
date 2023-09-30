@@ -1,7 +1,5 @@
 'use client';
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import { Button } from '@nextui-org/button';
 import { Card, CardBody } from '@nextui-org/card';
 import { useDisclosure } from '@nextui-org/use-disclosure';
@@ -9,6 +7,7 @@ import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
+import { MdDelete, MdEdit } from 'react-icons/md';
 
 import NewMessage from 'components/messages/NewMessage';
 
@@ -46,10 +45,10 @@ export const AlertMessage = ({ notification, isAdmin }: AlertMessageProps) => {
                 <p className='text-sm italic'>Utløper {format(new Date(notification.expiringDate), 'dd.MM.yy HH:mm')}</p>
                 <div className='flex gap-2'>
                   <Button color='primary' isIconOnly onClick={onOpen}>
-                    <EditIcon />
+                    <MdEdit className='h-6 w-6' />
                   </Button>
                   <Button color='danger' isIconOnly onClick={deleteMessage} variant='faded'>
-                    <DeleteIcon />
+                    <MdDelete className='h-6 w-6' />
                   </Button>
                 </div>
               </>
