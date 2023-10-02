@@ -70,11 +70,11 @@ const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
       </Button>
       <Modal classNames={{ base: `${eventTypeBgGradient[event.eventType]}` }} hideCloseButton isOpen={isOpen} onOpenChange={handleClose}>
         <ModalContent>
-          <ModalHeader className='pb-0 pt-6'>
-            <h2 className='font-oswald text-3xl'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</h2>
+          <ModalHeader className='pb-1'>
+            <h2 className='font-oswald text-2xl'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</h2>
           </ModalHeader>
-          <ModalBody className='flex flex-col gap-2 pb-4'>
-            <p className='text-sm capitalize'>
+          <ModalBody className='flex flex-col gap-2'>
+            <p className='text-sm font-light capitalize'>
               {format(new Date(event.time), "EEEE dd. MMMM yyyy' 'HH:mm", {
                 locale: nb,
               })}

@@ -17,7 +17,7 @@ export const MainLinkMenu = ({ routes }: LinkMenuProps) => {
   const [selected, setSelected] = useState<string | number>(pathname);
 
   return (
-    <Tabs className='mb-4' fullWidth onSelectionChange={setSelected} selectedKey={selected} size='lg' variant='bordered'>
+    <Tabs className='mb-4 font-cabin' color='primary' fullWidth onSelectionChange={setSelected} selectedKey={selected} size='lg' variant='bordered'>
       {routes.map((item) => (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

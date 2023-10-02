@@ -88,7 +88,14 @@ export const EventsFilters = ({ className }: { className?: string }) => {
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
-      <Tabs fullWidth onSelectionChange={(key) => changeView(key as 'all' | 'matches')} selectedKey={view} size='lg' variant='bordered'>
+      <Tabs
+        className='font-cabin'
+        color='primary'
+        fullWidth
+        onSelectionChange={(key) => changeView(key as 'all' | 'matches')}
+        selectedKey={view}
+        size='lg'
+        variant='bordered'>
         <Tab key='all' title='Alle' />
         <Tab key='matches' title='Terminliste' />
       </Tabs>

@@ -8,8 +8,8 @@ const NavBar = async () => {
   return (
     <div className='mb-6 flex flex-col gap-4'>
       <div className='flex justify-between gap-4'>
-        <h3 className='text-md'>{user ? `🏋️‍♂️ ${user.name}` : `Du er ikke innlogget`}</h3>
-        <ExternalLink className='text-md text-white' href='https://tihlde.org/grupper/pythons-gutter-a/boter/' isExternal showAnchorIcon>
+        <h3 className='text-md font-cabin'>{user ? `🏋️‍♂️ ${user.name}` : `Du er ikke innlogget`}</h3>
+        <ExternalLink className='text-md font-cabin text-white' href='https://tihlde.org/grupper/pythons-gutter-a/boter/' isExternal showAnchorIcon>
           Botinnmelding
         </ExternalLink>
       </div>

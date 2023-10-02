@@ -3,7 +3,6 @@
 import { Button } from '@nextui-org/button';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/modal';
 import { Event, Prisma } from '@prisma/client';
-import Image from 'next/image';
 import { useMemo } from 'react';
 import { eventTypeBgGradient, positionsList } from 'utils';
 
@@ -39,14 +38,13 @@ const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) =>
       </Button>
       <Modal className={`${eventTypeBgGradient[eventType]}`} hideCloseButton isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior='inside'>
         <ModalContent>
-          <ModalHeader className='flex items-center gap-4 pb-0 pt-6'>
-            <Image alt='Logo' height={37.625} src='/pythons.png' width={25} />
-            <h2 className='flex-1 font-oswald text-3xl'>{`${title} (${registrations.length})`}</h2>
+          <ModalHeader className='pb-1'>
+            <h2 className='font-oswald text-2xl'>{`${title} (${registrations.length})`}</h2>
           </ModalHeader>
-          <ModalBody className='flex flex-col gap-2 pb-4'>
+          <ModalBody className='flex flex-col gap-2'>
             {groupedPlayers.map((position) => (
-              <div className='flex flex-col gap-2' key={position.type}>
-                <h3 className='font-cabin text-2xl font-bold'>
+              <div className='flex flex-col gap-1' key={position.type}>
+                <h3 className='font-cabin text-xl font-bold'>
                   {position.label} ({position.players.length})
                 </h3>
                 <div className='grid grid-cols-[repeat(auto-fill,_minmax(130px,_1fr))] gap-2'>
