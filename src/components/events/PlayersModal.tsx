@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@nextui-org/button';
-import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/modal';
 import { Event, Prisma } from '@prisma/client';
 import Image from 'next/image';
 import { useMemo } from 'react';
@@ -20,7 +20,7 @@ export type PlayersModalProps = {
 };
 
 const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
   const groupedPlayers = useMemo(
     () =>
@@ -37,7 +37,7 @@ const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) =>
         <span className='font-cabin text-2xl'>{registrations.length}</span>
         <span className='text-sm font-light uppercase'>{title}</span>
       </Button>
-      <Modal className={`${eventTypeBgGradient[eventType]}`} classNames={{ closeButton: 'top-6 right-4' }} isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal className={`${eventTypeBgGradient[eventType]}`} hideCloseButton isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior='inside'>
         <ModalContent>
           <ModalHeader className='flex items-center gap-4 pb-0 pt-6'>
             <Image alt='Logo' height={37.625} src='/pythons.png' width={25} />
@@ -60,6 +60,11 @@ const PlayersModal = ({ eventType, registrations, title }: PlayersModalProps) =>
               </div>
             ))}
           </ModalBody>
+          <ModalFooter>
+            <Button color='default' onPress={onClose} variant='light'>
+              Lukk
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

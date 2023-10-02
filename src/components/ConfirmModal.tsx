@@ -17,7 +17,7 @@ const ConfirmModal = ({ title, description = 'Er du helt sikker?', onConfirm, ch
       <Button color='danger' variant='light' {...props} onClick={onOpen}>
         {children}
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal hideCloseButton isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           <ModalHeader>{title}</ModalHeader>
           <ModalBody className='flex flex-col gap-4'>

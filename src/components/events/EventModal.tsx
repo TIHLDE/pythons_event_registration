@@ -63,7 +63,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
   };
 
   return (
-    <Modal isOpen={open} onClose={handleClose}>
+    <Modal hideCloseButton isOpen={open} onClose={handleClose}>
       <ModalContent as='form' onSubmit={handleSubmit(onSubmit)}>
         <ModalHeader>{title}</ModalHeader>
         <ModalBody>

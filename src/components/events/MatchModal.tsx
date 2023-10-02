@@ -3,7 +3,7 @@
 import { Button } from '@nextui-org/button';
 import { Card } from '@nextui-org/card';
 import { Input } from '@nextui-org/input';
-import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/modal';
 import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import clsx from 'clsx';
@@ -68,7 +68,7 @@ const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
           <span className='flex-1 py-1 text-left'>{event.title}</span>
         </span>
       </Button>
-      <Modal classNames={{ base: `${eventTypeBgGradient[event.eventType]}` }} isOpen={isOpen} onOpenChange={handleClose}>
+      <Modal classNames={{ base: `${eventTypeBgGradient[event.eventType]}` }} hideCloseButton isOpen={isOpen} onOpenChange={handleClose}>
         <ModalContent>
           <ModalHeader className='pb-0 pt-6'>
             <h2 className='font-oswald text-3xl'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</h2>
@@ -103,6 +103,11 @@ const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
             {isAdmin && <h3 className='mt-2 font-cabin text-xl'>Hendelser</h3>}
             <MatchEvents event={event} isAdmin={isAdmin} />
           </ModalBody>
+          <ModalFooter>
+            <Button color='default' onPress={onClose} variant='light'>
+              Lukk
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>
