@@ -12,7 +12,7 @@ export type PlayersListProps = {
 
 const PlayersList = ({ title, players }: PlayersListProps) => {
   return (
-    <Card className='flex flex-1 flex-col justify-between gap-2 rounded-md p-2'>
+    <Card className='flex flex-1 flex-col gap-2 rounded-md p-2'>
       <h3 className='font-cabin text-2xl font-bold'>
         {title} ({players.length})
       </h3>

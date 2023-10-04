@@ -15,7 +15,7 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
     where: {
       id: parsedId,
     },
-    data: data,
+    data,
   });
   revalidateTag(PLAYERS_CACHE_TAG);
   return Response.json(player);

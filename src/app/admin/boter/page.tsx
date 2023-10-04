@@ -1,4 +1,3 @@
-import { Divider } from '@nextui-org/divider';
 import { Link } from '@nextui-org/link';
 import { Event, EventType, Player, Registrations } from '@prisma/client';
 import { subHours, subWeeks } from 'date-fns';
@@ -6,7 +5,7 @@ import { prisma } from 'lib/prisma';
 import { rules } from 'rules';
 import { FineCreate } from 'tihlde/fines';
 
-import { FineAccordion } from 'components/fines/FineAccordion';
+import { FinesAccordion } from 'components/fines/FinesAccordion';
 
 const getData = async () => {
   const today = new Date();
@@ -103,20 +102,16 @@ const Fines = async () => {
 
   return (
     <>
-      <Divider className='my-2' />
-      <p className='text-md'>
+      <p className='text-md my-4'>
         Viser bøter for arrangementer 2 uker tilbake i tid. Bøtene er kalkulert på bakgrunn av{' '}
         <Link href='https://tihlde.org/grupper/pythons-gutter-a/lovverk/' isExternal underline='always'>
           lovverket
         </Link>
         .
       </p>
-      <Divider className='my-2' />
       <div>
         {!events.length && <p className='text-md'>Ingen bøter å vise</p>}
-        {events.map((event, index) => (
-          <FineAccordion event={event} key={index} />
-        ))}
+        <FinesAccordion events={events} />
       </div>
     </>
   );

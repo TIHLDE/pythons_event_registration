@@ -35,7 +35,10 @@ const EditPlayerModal = ({ player }: EditPlayerModalProps) => {
   });
   const onSubmit = useCallback(
     async (formData: FormDataProps) => {
-      const data: Pick<Player, 'teamId' | 'position' | 'disableRegistrations'> = { ...formData, teamId: formData.teamId === '' ? null : formData.teamId };
+      const data: Pick<Player, 'teamId' | 'position' | 'disableRegistrations'> = {
+        ...formData,
+        teamId: formData.teamId === '' ? null : Number(formData.teamId),
+      };
       await axios.put(`/api/players/${player.id}`, { data: data });
       onClose();
       router.refresh();
@@ -60,7 +63,7 @@ Opprettet: ${format(parseJSON(player.createdAt), 'dd-MM-yyyy')}
               name='teamId'
               render={({ field: { onChange, value } }) => (
                 <Select
-                  items={[{ id: '', name: 'Alle' }, ...teams]}
+                  items={[{ id: '', name: 'Ingen tilknytning' }, ...teams]}
                   label='Lag'
                   onChange={(e) => onChange(e.target.value)}
                   selectedKeys={new Set(value ? [String(value)] : [])}
