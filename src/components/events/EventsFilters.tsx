@@ -90,6 +90,7 @@ export const EventsFilters = ({ className }: { className?: string }) => {
     <div className={`flex flex-col gap-4 ${className}`}>
       <Tabs
         className='font-cabin'
+        classNames={{ tabContent: 'group-data-[selected=true]:font-bold' }}
         color='primary'
         fullWidth
         onSelectionChange={(key) => changeView(key as 'all' | 'matches')}
