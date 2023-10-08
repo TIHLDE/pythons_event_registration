@@ -85,7 +85,7 @@ const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
               })}
             </p>
             {isAdmin && (
-              <Card as='form' className='flex flex-col gap-2 p-4' isBlurred onSubmit={handleSubmit(onSubmit)}>
+              <Card as='form' className='flex flex-col gap-2 overflow-visible p-4' isBlurred onSubmit={handleSubmit(onSubmit)}>
                 <div className='mt-2 flex gap-2'>
                   <Controller
                     control={control}
