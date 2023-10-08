@@ -69,7 +69,7 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
       {matchEvents ? (
         matchEvents.length ? (
           matchEvents.map((matchEvent) => (
-            <p className='text-md flex items-center gap-2' key={matchEvent.id}>
+            <p className='text-md flex items-center justify-between gap-2' key={matchEvent.id}>
               <span>{`${MATCH_EVENT_TYPES[matchEvent.type]} - ${matchEvent.player.name}`}</span>
               {isAdmin && (
                 <ConfirmModal onConfirm={() => deleteMatchEvent(matchEvent.id)} size='sm' title='Slett hendelse' variant='bordered'>
