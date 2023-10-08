@@ -63,7 +63,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
   };
 
   return (
-    <Modal hideCloseButton isOpen={open} onClose={handleClose}>
+    <Modal hideCloseButton isOpen={open} onClose={handleClose} scrollBehavior='inside'>
       <ModalContent as='form' onSubmit={handleSubmit(onSubmit)}>
         <ModalHeader>{title}</ModalHeader>
         <ModalBody>

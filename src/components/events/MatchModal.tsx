@@ -68,7 +68,12 @@ const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
           <span className='flex-1 py-1 text-left'>{event.title}</span>
         </span>
       </Button>
-      <Modal classNames={{ base: `${eventTypeBgGradient[event.eventType]}` }} hideCloseButton isOpen={isOpen} onOpenChange={handleClose} scrollBehavior‎='inside'>
+      <Modal
+        classNames={{ base: `${eventTypeBgGradient[event.eventType]}` }}
+        hideCloseButton
+        isOpen={isOpen}
+        onOpenChange={handleClose}
+        scrollBehavior='inside'>
         <ModalContent>
           <ModalHeader className='pb-1'>
             <h2 className='font-oswald text-2xl'>{`${event.team?.name} ${event.match?.homeGoals} - ${event.match?.awayGoals} ${event.title}`}</h2>

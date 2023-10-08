@@ -50,7 +50,7 @@ const EditPlayerModal = ({ player }: EditPlayerModalProps) => {
       <Button className='h-6 w-6 min-w-0' isIconOnly onClick={onOpen} size='sm' variant='light'>
         <MdEdit className='h-6 w-6' />
       </Button>
-      <Modal hideCloseButton isOpen={isOpen} onClose={onClose}>
+      <Modal hideCloseButton isOpen={isOpen} onClose={onClose} scrollBehavior='inside'>
         <ModalContent as='form' onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader>Rediger spillerprofil</ModalHeader>
           <ModalBody className='flex flex-col gap-4'>
