@@ -3,7 +3,8 @@
 import { Tab, Tabs } from '@nextui-org/tabs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { Key } from 'react';
 
 export type LinkMenuProps = {
   routes: {
@@ -14,7 +15,14 @@ export type LinkMenuProps = {
 
 export const MainLinkMenu = ({ routes }: LinkMenuProps) => {
   const pathname = usePathname();
-  const [selected, setSelected] = useState<string | number>(pathname);
+  const [selected, setSelected] = useState<Key>(pathname);
+
+  useEffect(() => {
+    if (selected !== pathname) {
+      setSelected(pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   return (
     <Tabs
