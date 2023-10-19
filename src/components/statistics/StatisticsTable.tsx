@@ -3,6 +3,8 @@
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table';
 import { MatchEventType } from '@prisma/client';
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { MATCH_EVENT_TYPES, stripEmojis } from 'utils';
 
 export type StatisticsTableProps = {
@@ -13,8 +15,22 @@ export type StatisticsTableProps = {
 };
 
 export const StatisticsTable = ({ players }: StatisticsTableProps) => {
+  const [statsPlayers, setStatsPlayers] = useState(players);
   const searchParams = useSearchParams();
   const matchEventType = searchParams.get('matchEventType');
+
+  useEffect(() => {
+    if (!document.startViewTransition) {
+      setStatsPlayers(players);
+      return;
+    }
+
+    document.startViewTransition(() => {
+      flushSync(() => {
+        setStatsPlayers(players);
+      });
+    });
+  }, [players]);
 
   return (
     <Table aria-label='Oversikt over statistikk for spillere' removeWrapper>
@@ -26,11 +42,15 @@ export const StatisticsTable = ({ players }: StatisticsTableProps) => {
         </TableColumn>
       </TableHeader>
       <TableBody emptyContent='Fant ingen treff med denne filtreringen'>
-        {players.map((player, index) => (
+        {statsPlayers.map((player, index) => (
           <TableRow key={index}>
             <TableCell className='text-md font-cabin text-white'>{index + 1}.</TableCell>
-            <TableCell className='text-md font-cabin text-white'>{player.name}</TableCell>
-            <TableCell className='text-md font-cabin text-white'>{player.count}</TableCell>
+            <TableCell className='text-md font-cabin text-white' style={{ 'view-transition-name': `name-${player.name.replaceAll(' ', '')}` }}>
+              {player.name}
+            </TableCell>
+            <TableCell className='text-md font-cabin text-white' style={{ 'view-transition-name': `count-${player.name.replaceAll(' ', '')}` }}>
+              {player.count}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
