@@ -11,6 +11,7 @@ import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { ExtendedEvent } from 'functions/event';
 import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
 import { eventTypeBgGradient, eventTypesMap } from 'utils';
 
 import ConfirmModal from 'components/ConfirmModal';
@@ -22,14 +23,21 @@ export type AdminEventProps = {
 };
 
 const AdminEvent = ({ event }: AdminEventProps) => {
+  const [isCreatingMatch, setIsCreatingMatch] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const router = useRouter();
+  const { refresh } = useRouter();
 
-  const deleteEvent = async () => {
+  const deleteEvent = useCallback(async () => {
     await axios.delete(`/api/events/${event.id}`);
-    router.refresh();
-  };
+    refresh();
+  }, [event, refresh]);
+
+  const createMatch = useCallback(async () => {
+    setIsCreatingMatch(true);
+    await axios.post(`/api/matches`, { eventId: event.id });
+    refresh();
+  }, [event, refresh]);
 
   return (
     <Card className={`grid grid-cols-[auto_1fr] gap-2 self-start rounded-md p-4 ${eventTypeBgGradient[event.eventType]}`}>
@@ -59,10 +67,16 @@ const AdminEvent = ({ event }: AdminEventProps) => {
       <p className='text-md'>{format(new Date(event.time), 'HH:mm')}</p>
       <p className='text-md font-bold'>Sted</p>
       <p className='text-md'>{event.location}</p>
-      {event.match && isPast(new Date(event.time)) && (
+      {event.eventType === EventType.MATCH && isPast(new Date(event.time)) && (
         <>
           <Divider className='col-span-2 my-2' />
-          <MatchModal className='col-span-2' event={event} isAdmin />
+          {event.match ? (
+            <MatchModal className='col-span-2' event={event} isAdmin />
+          ) : (
+            <Button className='col-span-2' fullWidth isLoading={isCreatingMatch} onClick={createMatch} variant='light'>
+              {`Opprett${isCreatingMatch ? 'er' : ''} kampresultat`}
+            </Button>
+          )}
           <Divider className='col-span-2 my-2' />
         </>
       )}
