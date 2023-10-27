@@ -4,6 +4,8 @@ import Link from 'next/link';
 
 import { getSignedInUser } from '~/functions/getUser';
 
+import img from '~/static/images/pythons.png';
+
 const NavBar = async () => {
   const user = await getSignedInUser();
   return (
@@ -16,7 +18,7 @@ const NavBar = async () => {
       </div>
       <div className='flex items-center justify-center'>
         <Link href='/'>
-          <Image alt='Logo' height={75.25} src='/pythons.png' width={50} />
+          <Image alt='Logo' height={75} src={img} width={50} />
         </Link>
       </div>
     </div>
