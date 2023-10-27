@@ -7,12 +7,13 @@ import { MatchEvent, MatchEventType, Player, Prisma } from '@prisma/client';
 import axios from 'axios';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { MATCH_EVENT_TYPES, positionsList } from 'utils';
 
-import { useMatchEvents, usePlayers } from 'hooks/useQuery';
+import { useMatchEvents, usePlayers } from '~/hooks/useQuery';
 
-import ConfirmModal from 'components/ConfirmModal';
-import LoadingLogo from 'components/LoadingLogo';
+import ConfirmModal from '~/components/ConfirmModal';
+import LoadingLogo from '~/components/LoadingLogo';
+
+import { MATCH_EVENT_TYPES, positionsList } from '~/utils';
 
 export type MatchEventsProps = {
   isAdmin?: boolean;

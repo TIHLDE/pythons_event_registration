@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { MdDelete, MdEdit } from 'react-icons/md';
 
-import NewMessage from 'components/messages/NewMessage';
+import NewMessage from '~/components/messages/NewMessage';
 
 export type ExtendedNotification = Prisma.NotificationGetPayload<{
   include: {

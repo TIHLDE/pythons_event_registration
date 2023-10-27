@@ -1,10 +1,11 @@
 import { Tooltip } from '@nextui-org/tooltip';
 import { EventType } from '@prisma/client';
 import { endOfDay, hoursToSeconds, isAfter, isPast, parseJSON, subMinutes } from 'date-fns';
-import { ExtendedEvent } from 'functions/event';
 import Image from 'next/image';
 
-import { LocationForecast } from 'types/MetApi';
+import { LocationForecast } from '~/types/MetApi';
+
+import { ExtendedEvent } from '~/functions/event';
 
 const getCoordinates = (eventType: ExtendedEvent['eventType']) => {
   switch (eventType) {

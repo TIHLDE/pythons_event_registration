@@ -1,8 +1,9 @@
 import { Divider } from '@nextui-org/divider';
-import { getActiveNotifications } from 'functions/getActiveNotifications';
 
-import { AlertMessage } from 'components/messages/AlertMessage';
-import NewMessage from 'components/messages/NewMessage';
+import { getActiveNotifications } from '~/functions/getActiveNotifications';
+
+import { AlertMessage } from '~/components/messages/AlertMessage';
+import NewMessage from '~/components/messages/NewMessage';
 
 const Messages = async () => {
   const messages = await getActiveNotifications();

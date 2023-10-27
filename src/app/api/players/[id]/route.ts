@@ -1,6 +1,7 @@
-import { PLAYERS_CACHE_TAG } from 'functions/getPlayers';
-import { prisma } from 'lib/prisma';
 import { revalidateTag } from 'next/cache';
+
+import { PLAYERS_CACHE_TAG } from '~/functions/getPlayers';
+import { prisma } from '~/lib/prisma';
 
 export const GET = async (_: Request, { params }: { params: { id: string } }) => {
   const parsedId = Number(params.id);

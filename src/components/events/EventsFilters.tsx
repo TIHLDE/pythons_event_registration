@@ -9,11 +9,12 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { MdOutlineFilterList } from 'react-icons/md';
-import { eventTypesList, getSemesters, removeFalsyElementsFromObject } from 'utils';
 
-import { useTeams } from 'hooks/useQuery';
+import { useTeams } from '~/hooks/useQuery';
 
-import { StandaloneExpand } from 'components/Expand';
+import { StandaloneExpand } from '~/components/Expand';
+
+import { eventTypesList, getSemesters, removeFalsyElementsFromObject } from '~/utils';
 
 const DEFAULT_FROM_DATE = startOfToday();
 const DEFAULT_TO_DATE = addMonths(DEFAULT_FROM_DATE, 4);

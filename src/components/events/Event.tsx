@@ -1,18 +1,20 @@
 import { Divider } from '@nextui-org/divider';
 import { Tooltip } from '@nextui-org/tooltip';
 import { isPast } from 'date-fns';
-import { ExtendedEvent } from 'functions/event';
-import { getSignedInUser } from 'functions/getUser';
 import { Suspense } from 'react';
 import { MdLocationOn, MdOutlineGroups, MdWatchLater } from 'react-icons/md';
-import { eventTypeBgGradient, getEventTitle } from 'utils';
 
-import EventRegistration from 'components/events/EventRegistration';
-import EventRelatedMatches from 'components/events/EventRelatedMatches';
-import EventWeather from 'components/events/EventWeather';
-import MatchModal, { MatchModalProps } from 'components/events/MatchModal';
-import PlayersModal from 'components/events/PlayersModal';
-import { FormatDate } from 'components/FormatDate';
+import { ExtendedEvent } from '~/functions/event';
+import { getSignedInUser } from '~/functions/getUser';
+
+import EventRegistration from '~/components/events/EventRegistration';
+import EventRelatedMatches from '~/components/events/EventRelatedMatches';
+import EventWeather from '~/components/events/EventWeather';
+import MatchModal, { MatchModalProps } from '~/components/events/MatchModal';
+import PlayersModal from '~/components/events/PlayersModal';
+import { FormatDate } from '~/components/FormatDate';
+
+import { eventTypeBgGradient, getEventTitle } from '~/utils';
 
 export type EventProps = {
   eventDetails: ExtendedEvent;

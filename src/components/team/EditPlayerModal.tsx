@@ -12,9 +12,10 @@ import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { MdEdit } from 'react-icons/md';
-import { positionsList } from 'utils';
 
-import { useTeams } from 'hooks/useQuery';
+import { useTeams } from '~/hooks/useQuery';
+
+import { positionsList } from '~/utils';
 
 export type EditPlayerModalProps = {
   player: Player;

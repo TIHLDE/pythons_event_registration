@@ -1,12 +1,14 @@
 import { Position, Prisma } from '@prisma/client';
-import { PLAYERS_CACHE_TAG } from 'functions/getPlayers';
 import HttpStatusCode from 'http-status-typed';
-import { prisma } from 'lib/prisma';
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
-import { TIHLDEMembership } from 'tihlde';
-import { getAllPythonsMemberships } from 'tihlde/memberships';
-import { AUTH_TOKEN_COOKIE_KEY } from 'values';
+
+import { PLAYERS_CACHE_TAG } from '~/functions/getPlayers';
+import { prisma } from '~/lib/prisma';
+import { TIHLDEMembership } from '~/tihlde';
+import { getAllPythonsMemberships } from '~/tihlde/memberships';
+
+import { AUTH_TOKEN_COOKIE_KEY } from '~/values';
 
 const membershipToName = (membership: TIHLDEMembership) => `${membership.user.first_name} ${membership.user.last_name}`;
 

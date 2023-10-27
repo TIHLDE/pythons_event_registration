@@ -1,6 +1,7 @@
-import { NOTIFICATIONS_CACHE_TAG } from 'functions/getActiveNotifications';
-import { prisma } from 'lib/prisma';
 import { revalidateTag } from 'next/cache';
+
+import { NOTIFICATIONS_CACHE_TAG } from '~/functions/getActiveNotifications';
+import { prisma } from '~/lib/prisma';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data } = await request.json();

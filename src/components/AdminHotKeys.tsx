@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { stats } from 'stats';
+
+import { stats } from '~/stats';
 
 export const AdminHotKeys = () => {
   const router = useRouter();

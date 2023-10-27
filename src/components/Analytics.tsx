@@ -2,7 +2,8 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { stats } from 'stats';
+
+import { stats } from '~/stats';
 
 export const Analytics = () => {
   const pathname = usePathname();

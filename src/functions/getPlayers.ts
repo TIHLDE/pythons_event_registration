@@ -2,8 +2,9 @@ import 'server-only';
 
 import { Player } from '@prisma/client';
 import { minutesToSeconds } from 'date-fns';
-import { prisma } from 'lib/prisma';
 import { unstable_cache } from 'next/cache';
+
+import { prisma } from '~/lib/prisma';
 
 export const PLAYERS_CACHE_TAG = 'players';
 

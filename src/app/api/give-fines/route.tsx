@@ -1,5 +1,5 @@
-import { prisma } from 'lib/prisma';
-import { createFine, FineCreate } from 'tihlde/fines';
+import { prisma } from '~/lib/prisma';
+import { createFine, FineCreate } from '~/tihlde/fines';
 
 export const POST = async (request: Request) => {
   const { data } = await request.json();

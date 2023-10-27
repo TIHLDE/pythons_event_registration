@@ -1,14 +1,16 @@
 import { MatchEventType } from '@prisma/client';
-import { getTeams } from 'functions/getTeams';
-import { prisma } from 'lib/prisma';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { getSemesters } from 'utils';
 
-import { PageProps } from 'types';
+import { PageProps } from '~/types';
 
-import { StatisticsFilters } from 'components/statistics/StatisticsFilters';
-import { StatisticsTable } from 'components/statistics/StatisticsTable';
+import { getTeams } from '~/functions/getTeams';
+import { prisma } from '~/lib/prisma';
+
+import { StatisticsFilters } from '~/components/statistics/StatisticsFilters';
+import { StatisticsTable } from '~/components/statistics/StatisticsTable';
+
+import { getSemesters } from '~/utils';
 
 export const metadata: Metadata = {
   title: 'Statistikk - TIHLDE Pythons',

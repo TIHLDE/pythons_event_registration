@@ -1,7 +1,7 @@
 import { Position, Team } from '@prisma/client';
 
-import PlayersList, { PlayersListProps } from 'components/team/PlayersList';
-import { TeamDelete } from 'components/team/TeamDelete';
+import PlayersList, { PlayersListProps } from '~/components/team/PlayersList';
+import { TeamDelete } from '~/components/team/TeamDelete';
 
 export type TeamOverviewProps = {
   team: Team | string;

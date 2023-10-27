@@ -1,18 +1,19 @@
 import { EventType } from '@prisma/client';
 import { addWeeks, endOfWeek, format, getWeek, startOfWeek } from 'date-fns';
 import nb from 'date-fns/locale/nb';
-import { ExtendedEvent, getEventsWithRegistrations } from 'functions/event';
-import { getAllMatches } from 'functions/getAllMatches';
 import type { Metadata } from 'next';
 import { compareTwoStrings } from 'string-similarity';
 
-import { PageProps } from 'types';
+import { PageProps } from '~/types';
 
-import { CalendarSubscription } from 'components/CalendarSubscription';
-import Event from 'components/events/Event';
-import { EventsFilters } from 'components/events/EventsFilters';
-import { MatchModalProps } from 'components/events/MatchModal';
-import { ActiveMessages } from 'components/messages/ActiveMessages';
+import { ExtendedEvent, getEventsWithRegistrations } from '~/functions/event';
+import { getAllMatches } from '~/functions/getAllMatches';
+
+import { CalendarSubscription } from '~/components/CalendarSubscription';
+import Event from '~/components/events/Event';
+import { EventsFilters } from '~/components/events/EventsFilters';
+import { MatchModalProps } from '~/components/events/MatchModal';
+import { ActiveMessages } from '~/components/messages/ActiveMessages';
 
 export const metadata: Metadata = {
   title: 'Kalender - TIHLDE Pythons',

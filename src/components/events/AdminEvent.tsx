@@ -9,14 +9,16 @@ import { EventType } from '@prisma/client';
 import axios from 'axios';
 import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
-import { ExtendedEvent } from 'functions/event';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { eventTypeBgGradient, eventTypesMap } from 'utils';
 
-import ConfirmModal from 'components/ConfirmModal';
-import EventModal from 'components/events/EventModal';
-import MatchModal from 'components/events/MatchModal';
+import { ExtendedEvent } from '~/functions/event';
+
+import ConfirmModal from '~/components/ConfirmModal';
+import EventModal from '~/components/events/EventModal';
+import MatchModal from '~/components/events/MatchModal';
+
+import { eventTypeBgGradient, eventTypesMap } from '~/utils';
 
 export type AdminEventProps = {
   event: ExtendedEvent;

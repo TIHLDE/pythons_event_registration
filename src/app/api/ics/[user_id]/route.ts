@@ -1,13 +1,15 @@
 import { EventType, Player } from '@prisma/client';
 import { addYears, format, getDate, getHours, getMinutes, getMonth, getYear, set } from 'date-fns';
 import { nb } from 'date-fns/locale';
-import { ExtendedEvent, getEventsWithRegistrations } from 'functions/event';
 import HttpStatusCode from 'http-status-typed';
 import { createEvents, DateArray, EventAttributes } from 'ics';
-import { prisma } from 'lib/prisma';
-import { stats } from 'stats';
 import { promisify } from 'util';
-import { getEventTitle } from 'utils';
+
+import { ExtendedEvent, getEventsWithRegistrations } from '~/functions/event';
+import { prisma } from '~/lib/prisma';
+
+import { stats } from '~/stats';
+import { getEventTitle } from '~/utils';
 
 const createIcsEvents = promisify<EventAttributes[], string | undefined>(createEvents);
 

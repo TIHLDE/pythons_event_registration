@@ -3,7 +3,7 @@ import { Tooltip } from '@nextui-org/tooltip';
 import { Player } from '@prisma/client';
 import { MdOutlinePersonAddDisabled } from 'react-icons/md';
 
-import EditPlayerModal from 'components/team/EditPlayerModal';
+import EditPlayerModal from '~/components/team/EditPlayerModal';
 
 export type PlayersListProps = {
   title: string;

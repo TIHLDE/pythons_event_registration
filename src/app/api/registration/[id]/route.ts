@@ -1,6 +1,7 @@
-import { getSignedInUserOrThrow } from 'functions/getUser';
 import HttpStatusCode from 'http-status-typed';
-import { prisma } from 'lib/prisma';
+
+import { getSignedInUserOrThrow } from '~/functions/getUser';
+import { prisma } from '~/lib/prisma';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data, willArrive } = await request.json();

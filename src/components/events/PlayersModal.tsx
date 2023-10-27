@@ -4,7 +4,8 @@ import { Button } from '@nextui-org/button';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/modal';
 import { Event, Prisma } from '@prisma/client';
 import { useMemo } from 'react';
-import { eventTypeBgGradient, positionsList } from 'utils';
+
+import { eventTypeBgGradient, positionsList } from '~/utils';
 
 type ExtendedRegistrations = Prisma.RegistrationsGetPayload<{
   include: {

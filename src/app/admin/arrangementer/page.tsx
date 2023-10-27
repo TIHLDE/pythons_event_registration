@@ -1,11 +1,11 @@
-import { type ExtendedEvent, getEventsWhereFilter } from 'functions/event';
-import { prisma } from 'lib/prisma';
+import { PageProps } from '~/types';
 
-import { PageProps } from 'types';
+import { type ExtendedEvent, getEventsWhereFilter } from '~/functions/event';
+import { prisma } from '~/lib/prisma';
 
-import AdminEvent from 'components/events/AdminEvent';
-import { EventsFilters } from 'components/events/EventsFilters';
-import { NewEventModal } from 'components/events/NewEventModal';
+import AdminEvent from '~/components/events/AdminEvent';
+import { EventsFilters } from '~/components/events/EventsFilters';
+import { NewEventModal } from '~/components/events/NewEventModal';
 
 const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
   const events = (await prisma.event.findMany({

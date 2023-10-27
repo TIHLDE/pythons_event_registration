@@ -9,9 +9,10 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { MdOutlineFilterList } from 'react-icons/md';
-import { eventTypesList, removeFalsyElementsFromObject } from 'utils';
 
-import { StandaloneExpand } from 'components/Expand';
+import { StandaloneExpand } from '~/components/Expand';
+
+import { eventTypesList, removeFalsyElementsFromObject } from '~/utils';
 
 export type AttendanceFiltersProps = {
   teams: {

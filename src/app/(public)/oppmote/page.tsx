@@ -1,14 +1,15 @@
 import { EventType } from '@prisma/client';
 import { getMonth, parseISO, set } from 'date-fns';
-import { getTeams } from 'functions/getTeams';
-import { prisma } from 'lib/prisma';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-import { PageProps } from 'types';
+import { PageProps } from '~/types';
 
-import { AttendanceFilters } from 'components/attendance/AttendanceFilters';
-import { AttendanceTable } from 'components/attendance/AttendanceTable';
+import { getTeams } from '~/functions/getTeams';
+import { prisma } from '~/lib/prisma';
+
+import { AttendanceFilters } from '~/components/attendance/AttendanceFilters';
+import { AttendanceTable } from '~/components/attendance/AttendanceTable';
 
 export const metadata: Metadata = {
   title: 'Oppmøte - TIHLDE Pythons',

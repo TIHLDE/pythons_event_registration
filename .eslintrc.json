@@ -7,15 +7,12 @@
       {
         "groups": [
           ["absolute", "module"],
-          "/^types/",
-          "/^api/",
-          "/^services/",
-          "/^hooks/",
-          "/^pages/",
-          "/^features/",
-          "/^components/",
-          "/^assets/",
-          ["sibling", "parent", "index"]
+          "/^~/types/",
+          ["/^~/functions/", "/^~/tihlde/", "/^~/lib/"],
+          "/^~/hooks/",
+          "/^~/app/",
+          "/^~/components/",
+          ["/^~//", "sibling", "parent", "index"]
         ],
         "newlinesBetween": "always",
         "alphabetize": { "order": "asc", "ignoreCase": true }

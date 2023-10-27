@@ -5,14 +5,17 @@ import { Button } from '@nextui-org/button';
 import { Checkbox } from '@nextui-org/checkbox';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table';
 import { EventType } from '@prisma/client';
-import { EventWithFines } from 'app/admin/boter/page';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
-import { FineCreate } from 'tihlde/fines';
-import { eventTypesMap } from 'utils';
+
+import { FineCreate } from '~/tihlde/fines';
+
+import { EventWithFines } from '~/app/admin/boter/page';
+
+import { eventTypesMap } from '~/utils';
 
 const formatTime = (time: string) =>
   format(new Date(time), "EEEE dd. MMMM' 'HH:mm", {

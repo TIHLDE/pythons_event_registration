@@ -1,5 +1,6 @@
 import HttpStatusCode from 'http-status-typed';
-import { authenticate } from 'tihlde/auth';
+
+import { authenticate } from '~/tihlde/auth';
 
 export const POST = async (request: Request) => {
   const { user_id, password } = await request.json();

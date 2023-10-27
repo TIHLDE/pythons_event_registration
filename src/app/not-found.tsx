@@ -1,7 +1,8 @@
 import { Link } from '@nextui-org/link';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import image from 'static/images/404.gif';
+
+import image from '~/static/images/404.gif';
 
 export default function NotFound() {
   return (

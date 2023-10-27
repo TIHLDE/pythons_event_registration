@@ -1,8 +1,9 @@
 import 'server-only';
 
 import { minutesToSeconds } from 'date-fns';
-import { prisma } from 'lib/prisma';
 import { unstable_cache } from 'next/cache';
+
+import { prisma } from '~/lib/prisma';
 
 export const NOTIFICATIONS_CACHE_TAG = 'notifications';
 

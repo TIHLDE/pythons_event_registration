@@ -1,9 +1,10 @@
 import { Divider } from '@nextui-org/divider';
 import { Link } from '@nextui-org/link';
 import { Fragment } from 'react';
-import type { TIHLDEUser } from 'tihlde';
-import { getAllnotPayedFines } from 'tihlde/fines';
-import { getAllPythonsMemberships } from 'tihlde/memberships';
+
+import type { TIHLDEUser } from '~/tihlde';
+import { getAllnotPayedFines } from '~/tihlde/fines';
+import { getAllPythonsMemberships } from '~/tihlde/memberships';
 
 const getData = async () => {
   const [{ results: memberships }, { results: notPayedFines }] = await Promise.all([getAllPythonsMemberships(), getAllnotPayedFines()]);

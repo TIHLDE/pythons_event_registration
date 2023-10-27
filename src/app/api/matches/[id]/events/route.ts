@@ -1,4 +1,4 @@
-import { prisma } from 'lib/prisma';
+import { prisma } from '~/lib/prisma';
 
 export const GET = async (_: Request, { params }: { params: { id: string } }) => {
   const parsedId = Number(params.id);

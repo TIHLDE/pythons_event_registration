@@ -1,5 +1,6 @@
-import { PaginationResponse, TIHLDEGroup, TIHLDEGroupFine, TIHLDEMembership, TIHLDEUser } from 'tihlde';
-import { MOCK_TIHLDE_USER_ID, PYTHONS_GROUP_SLUG } from 'values';
+import { PaginationResponse, TIHLDEGroup, TIHLDEGroupFine, TIHLDEMembership, TIHLDEUser } from '~/tihlde';
+
+import { MOCK_TIHLDE_USER_ID, PYTHONS_GROUP_SLUG } from '~/values';
 
 export const mockPaginationResponse = <T>(result: T): PaginationResponse<T> => ({
   count: 1,

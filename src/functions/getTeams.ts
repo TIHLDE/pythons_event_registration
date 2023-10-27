@@ -2,8 +2,9 @@ import 'server-only';
 
 import { Team } from '@prisma/client';
 import { minutesToSeconds } from 'date-fns';
-import { prisma } from 'lib/prisma';
 import { unstable_cache } from 'next/cache';
+
+import { prisma } from '~/lib/prisma';
 
 export const TEAMS_CACHE_TAG = 'teams';
 

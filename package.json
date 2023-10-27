@@ -6,7 +6,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "yarn db:generate && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",

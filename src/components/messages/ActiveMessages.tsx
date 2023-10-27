@@ -1,8 +1,9 @@
-import { getActiveNotifications } from 'functions/getActiveNotifications';
 import { Suspense } from 'react';
 
-import { ExtendedNotification } from 'components/messages/AlertMessage';
-import { AlertMessage } from 'components/messages/AlertMessage';
+import { getActiveNotifications } from '~/functions/getActiveNotifications';
+
+import { ExtendedNotification } from '~/components/messages/AlertMessage';
+import { AlertMessage } from '~/components/messages/AlertMessage';
 
 export const ActiveMessages = async () => {
   const notifications = await getActiveNotifications();

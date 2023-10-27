@@ -1,7 +1,8 @@
 import { EventType } from '@prisma/client';
-import { getSignedInUserOrThrow } from 'functions/getUser';
 import HttpStatusCode from 'http-status-typed';
-import { prisma } from 'lib/prisma';
+
+import { getSignedInUserOrThrow } from '~/functions/getUser';
+import { prisma } from '~/lib/prisma';
 
 export const POST = async (request: Request) => {
   const { data, willArrive } = await request.json();

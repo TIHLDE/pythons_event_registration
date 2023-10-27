@@ -9,12 +9,14 @@ import { EventType, Player, Registrations } from '@prisma/client';
 import axios from 'axios';
 import { format, formatDistanceToNow, isFuture, isPast, subHours } from 'date-fns';
 import { nb } from 'date-fns/locale';
-import { ExtendedEvent } from 'functions/event';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useReward } from 'react-rewards';
-import { rules } from 'rules';
+
+import { ExtendedEvent } from '~/functions/event';
+
+import { rules } from '~/rules';
 
 export type EventRegistrationProps = {
   eventDetails: ExtendedEvent;

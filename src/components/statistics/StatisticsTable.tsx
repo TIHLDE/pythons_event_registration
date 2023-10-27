@@ -5,7 +5,8 @@ import { MatchEventType } from '@prisma/client';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { MATCH_EVENT_TYPES, stripEmojis } from 'utils';
+
+import { MATCH_EVENT_TYPES, stripEmojis } from '~/utils';
 
 export type StatisticsTableProps = {
   players: {

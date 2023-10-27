@@ -5,9 +5,10 @@ import { TRANSITION_VARIANTS } from '@nextui-org/framer-transitions';
 import { useDisclosure } from '@nextui-org/use-disclosure';
 import { motion, useWillChange } from 'framer-motion';
 import { useCallback } from 'react';
-import { stats } from 'stats';
 
-import MatchModal, { MatchModalProps } from 'components/events/MatchModal';
+import MatchModal, { MatchModalProps } from '~/components/events/MatchModal';
+
+import { stats } from '~/stats';
 
 export type EventRelatedMatchesProps = {
   relatedMatches: MatchModalProps['event'][];

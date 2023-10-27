@@ -1,11 +1,13 @@
 import { Link } from '@nextui-org/link';
 import { Event, EventType, Player, Registrations } from '@prisma/client';
 import { subHours, subWeeks } from 'date-fns';
-import { prisma } from 'lib/prisma';
-import { rules } from 'rules';
-import { FineCreate } from 'tihlde/fines';
 
-import { FinesAccordion } from 'components/fines/FinesAccordion';
+import { prisma } from '~/lib/prisma';
+import { FineCreate } from '~/tihlde/fines';
+
+import { FinesAccordion } from '~/components/fines/FinesAccordion';
+
+import { rules } from '~/rules';
 
 const getData = async () => {
   const today = new Date();

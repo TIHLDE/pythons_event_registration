@@ -8,12 +8,14 @@ import { Event, EventType } from '@prisma/client';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { setMinutes } from 'date-fns';
-import { ExtendedEvent } from 'functions/event';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
-import { eventTypesList } from 'utils';
 
-import { useTeams } from 'hooks/useQuery';
+import { ExtendedEvent } from '~/functions/event';
+
+import { useTeams } from '~/hooks/useQuery';
+
+import { eventTypesList } from '~/utils';
 
 export type EventModalProps = {
   event?: ExtendedEvent;

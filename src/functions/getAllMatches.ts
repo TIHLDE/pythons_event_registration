@@ -2,8 +2,9 @@ import 'server-only';
 
 import { EventType, Prisma } from '@prisma/client';
 import { minutesToSeconds } from 'date-fns';
-import { prisma } from 'lib/prisma';
 import { unstable_cache } from 'next/cache';
+
+import { prisma } from '~/lib/prisma';
 
 export const ALL_MATCHES_CACHE_TAG = 'all-matches';
 

@@ -41,7 +41,7 @@ async function seed() {
     data: [
       {
         name: 'Ola Normann',
-        tihlde_user_id: MOCK_TIHLDE_USER_ID ?? 'tihlde_user_id',
+        tihlde_user_id: MOCK_TIHLDE_USER_ID ?? '~/tihlde_user_id',
         position: Position.KEEPER,
         teamId: 1,
         createdAt: subDays(new Date(), 14),

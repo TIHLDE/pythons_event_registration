@@ -1,5 +1,6 @@
 import { Result } from '@prisma/client';
-import { prisma } from 'lib/prisma';
+
+import { prisma } from '~/lib/prisma';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data } = await request.json();

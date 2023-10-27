@@ -1,20 +1,22 @@
 import { dehydrate } from '@tanstack/react-query';
-import { getTeams } from 'functions/getTeams';
-import { getSignedInUser } from 'functions/getUser';
-import { getQueryClient } from 'getQueryClient';
 import { Metadata, Viewport } from 'next';
 import { Cabin, Inter, Oswald } from 'next/font/google';
-import Providers from 'providers';
 
-import { QUERY_CONFIG } from 'hooks/useQuery';
+import { getTeams } from '~/functions/getTeams';
+import { getSignedInUser } from '~/functions/getUser';
 
-import { AdminHotKeys } from 'components/AdminHotKeys';
-import { Analytics } from 'components/Analytics';
-import { Footer } from 'components/Footer';
-import NavBar from 'components/NavBar';
-import SignIn from 'components/SignIn';
+import { QUERY_CONFIG } from '~/hooks/useQuery';
 
-import 'app/globals.css';
+import { AdminHotKeys } from '~/components/AdminHotKeys';
+import { Analytics } from '~/components/Analytics';
+import { Footer } from '~/components/Footer';
+import NavBar from '~/components/NavBar';
+import SignIn from '~/components/SignIn';
+
+import { getQueryClient } from '~/getQueryClient';
+import Providers from '~/providers';
+
+import '~/app/globals.css';
 
 const cabin = Cabin({
   subsets: ['latin'],

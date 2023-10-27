@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { AUTH_TOKEN_COOKIE_KEY } from 'values';
+
+// eslint-disable-next-line no-restricted-imports
+import { AUTH_TOKEN_COOKIE_KEY } from './src/values';
 
 export const middleware = (request: NextRequest) => {
   const hasAuthToken = request.cookies.get(AUTH_TOKEN_COOKIE_KEY) !== undefined;

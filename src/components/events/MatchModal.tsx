@@ -12,9 +12,10 @@ import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { eventTypeBgGradient } from 'utils';
 
-import MatchEvents from 'components/events/MatchEvents';
+import MatchEvents from '~/components/events/MatchEvents';
+
+import { eventTypeBgGradient } from '~/utils';
 
 export type MatchModalProps = {
   className?: string;

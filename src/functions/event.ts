@@ -2,11 +2,13 @@ import 'server-only';
 
 import { EventType, Prisma } from '@prisma/client';
 import { addMonths, isFuture, parseISO, startOfToday } from 'date-fns';
-import { getPlayers } from 'functions/getPlayers';
-import { prisma } from 'lib/prisma';
 import { NextApiRequest } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import { getSemesters } from 'utils';
+
+import { getPlayers } from '~/functions/getPlayers';
+import { prisma } from '~/lib/prisma';
+
+import { getSemesters } from '~/utils';
 
 export type ExtendedEvent = Prisma.EventGetPayload<{
   include: {

@@ -1,8 +1,10 @@
 import axios from 'axios';
-import { PaginationResponse, TIHLDEGroupFine } from 'tihlde';
-import { getAuthHeaders } from 'tihlde/auth';
-import { mockPaginationResponse, mockTihldeGroupFine } from 'tihlde/mocks';
-import { PYTHONS_GROUP_SLUG, SHOULD_MOCK_TIHLDE_API, TIHLDE_API_URL } from 'values';
+
+import { PaginationResponse, TIHLDEGroupFine } from '~/tihlde';
+import { getAuthHeaders } from '~/tihlde/auth';
+import { mockPaginationResponse, mockTihldeGroupFine } from '~/tihlde/mocks';
+
+import { PYTHONS_GROUP_SLUG, SHOULD_MOCK_TIHLDE_API, TIHLDE_API_URL } from '~/values';
 
 export const getAllnotPayedFines = async (): Promise<PaginationResponse<TIHLDEGroupFine>> => {
   if (SHOULD_MOCK_TIHLDE_API) {

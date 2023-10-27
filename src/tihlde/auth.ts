@@ -1,9 +1,11 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { hoursToSeconds } from 'date-fns';
-import { prisma } from 'lib/prisma';
 import { cookies } from 'next/headers';
-import { isMemberOfPythonsGroup } from 'tihlde/memberships';
-import { AUTH_TOKEN_COOKIE_KEY, MOCK_TIHLDE_USER_ID, SHOULD_MOCK_TIHLDE_API, TIHLDE_API_URL, USER_STORAGE_KEY } from 'values';
+
+import { prisma } from '~/lib/prisma';
+import { isMemberOfPythonsGroup } from '~/tihlde/memberships';
+
+import { AUTH_TOKEN_COOKIE_KEY, MOCK_TIHLDE_USER_ID, SHOULD_MOCK_TIHLDE_API, TIHLDE_API_URL, USER_STORAGE_KEY } from '~/values';
 
 export const getAuthHeaders = (): Pick<AxiosRequestConfig<unknown>, 'headers'> => {
   const token = cookies().get(AUTH_TOKEN_COOKIE_KEY);

@@ -1,9 +1,11 @@
 import { Divider } from '@nextui-org/divider';
-import { prisma } from 'lib/prisma';
-import { positionsList } from 'utils';
 
-import { NewTeam } from 'components/team/NewTeam';
-import TeamOverview from 'components/team/TeamOverview';
+import { prisma } from '~/lib/prisma';
+
+import { NewTeam } from '~/components/team/NewTeam';
+import TeamOverview from '~/components/team/TeamOverview';
+
+import { positionsList } from '~/utils';
 
 const getData = async () => {
   const teamsQuery = prisma.team.findMany({

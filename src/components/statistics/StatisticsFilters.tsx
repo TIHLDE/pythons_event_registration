@@ -4,7 +4,8 @@ import { Select, SelectItem } from '@nextui-org/select';
 import { MatchEventType } from '@prisma/client';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { getSemesters, MATCH_EVENT_TYPES, removeFalsyElementsFromObject } from 'utils';
+
+import { getSemesters, MATCH_EVENT_TYPES, removeFalsyElementsFromObject } from '~/utils';
 
 const semesters = getSemesters();
 

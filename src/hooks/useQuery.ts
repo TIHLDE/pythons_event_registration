@@ -1,7 +1,8 @@
 import { MatchEvent, Player, Prisma, Team } from '@prisma/client';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { minutesToMilliseconds } from 'date-fns';
-import { fetcher } from 'utils';
+
+import { fetcher } from '~/utils';
 
 export type Options = Pick<UseQueryOptions, 'enabled'>;
 

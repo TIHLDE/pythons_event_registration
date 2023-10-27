@@ -1,6 +1,7 @@
 import { Divider } from '@nextui-org/divider';
 import { Link } from '@nextui-org/link';
-import { getSignedInUser } from 'functions/getUser';
+
+import { getSignedInUser } from '~/functions/getUser';
 
 export const Footer = async () => {
   const user = await getSignedInUser();

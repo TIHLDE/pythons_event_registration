@@ -1,7 +1,8 @@
 import { Link as ExternalLink } from '@nextui-org/link';
-import { getSignedInUser } from 'functions/getUser';
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { getSignedInUser } from '~/functions/getUser';
 
 const NavBar = async () => {
   const user = await getSignedInUser();

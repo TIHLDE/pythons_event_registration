@@ -1,9 +1,10 @@
 import { Link } from '@nextui-org/link';
 import { Snippet } from '@nextui-org/snippet';
-import { getSignedInUser } from 'functions/getUser';
 import { MdOutlineCloudSync } from 'react-icons/md';
 
-import { StandaloneExpand, StandaloneExpandProps } from 'components/Expand';
+import { getSignedInUser } from '~/functions/getUser';
+
+import { StandaloneExpand, StandaloneExpandProps } from '~/components/Expand';
 
 export const CalendarSubscription = async (props: Partial<StandaloneExpandProps>) => {
   const user = await getSignedInUser();

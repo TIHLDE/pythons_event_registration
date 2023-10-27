@@ -4,7 +4,7 @@ import { Team } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
-import ConfirmModal from 'components/ConfirmModal';
+import ConfirmModal from '~/components/ConfirmModal';
 
 export type TeamDeleteProps = {
   team: Team;

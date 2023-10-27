@@ -1,4 +1,4 @@
-import { getPlayers } from 'functions/getPlayers';
+import { getPlayers } from '~/functions/getPlayers';
 
 export const dynamic = 'force-dynamic';
 
