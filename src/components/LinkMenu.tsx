@@ -13,12 +13,14 @@ export type LinkMenuProps = {
   }[];
 };
 
-export const MainLinkMenu = ({ routes }: LinkMenuProps) => {
+export const LinkMenu = ({ routes }: LinkMenuProps) => {
   const pathname = usePathname();
-  const [selected, setSelected] = useState<Key>(pathname);
+  const [selected, setSelected] = useState<Key>(
+    () => [...routes].sort((a, b) => b.href.length - a.href.length).find((route) => pathname.startsWith(route.href))?.href ?? pathname,
+  );
 
   useEffect(() => {
-    if (selected !== pathname) {
+    if (typeof selected === 'string' && !pathname.startsWith(selected)) {
       setSelected(pathname);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

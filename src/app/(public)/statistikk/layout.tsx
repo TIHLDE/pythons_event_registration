@@ -7,9 +7,8 @@ const Layout = async ({ children }: { children: ReactNode }) => {
     <>
       <LinkMenu
         routes={[
-          { href: '/', label: 'Kalender' },
-          { href: '/ligaer', label: 'Ligaer' },
           { href: '/statistikk', label: 'Statistikk' },
+          { href: '/statistikk/oppmote', label: 'Oppmøte' },
         ]}
       />
       {children}
