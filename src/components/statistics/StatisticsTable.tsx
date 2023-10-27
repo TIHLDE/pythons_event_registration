@@ -46,10 +46,10 @@ export const StatisticsTable = ({ players }: StatisticsTableProps) => {
         {statsPlayers.map((player, index) => (
           <TableRow key={index}>
             <TableCell className='text-md font-cabin text-white'>{index + 1}.</TableCell>
-            <TableCell className='text-md font-cabin text-white' style={{ 'view-transition-name': `name-${player.name.replaceAll(' ', '')}` }}>
+            <TableCell className='text-md font-cabin text-white' style={{ viewTransitionName: `name-${player.name.replaceAll(' ', '')}` }}>
               {player.name}
             </TableCell>
-            <TableCell className='text-md font-cabin text-white' style={{ 'view-transition-name': `count-${player.name.replaceAll(' ', '')}` }}>
+            <TableCell className='text-md font-cabin text-white' style={{ viewTransitionName: `count-${player.name.replaceAll(' ', '')}` }}>
               {player.count}
             </TableCell>
           </TableRow>

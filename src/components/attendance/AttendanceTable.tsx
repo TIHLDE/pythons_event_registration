@@ -39,7 +39,7 @@ export const AttendanceTable = ({ players, eventsAmount }: AttendanceTableProps)
         {attendancePlayers.map((player, index) => (
           <TableRow key={index}>
             <TableCell className='text-md font-cabin text-white'>{index + 1}.</TableCell>
-            <TableCell className='text-md font-cabin text-white' style={{ 'view-transition-name': `${player.name.replaceAll(' ', '')}` }}>
+            <TableCell className='text-md font-cabin text-white' style={{ viewTransitionName: `${player.name.replaceAll(' ', '')}` }}>
               {player.name}
             </TableCell>
             <TableCell className='text-md whitespace-nowrap font-cabin text-white'>

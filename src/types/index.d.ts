@@ -15,7 +15,7 @@ declare global {
 
 declare module 'react' {
   interface CSSProperties {
-    'view-transition-name'?: string;
+    viewTransitionName?: string;
   }
 }
 
