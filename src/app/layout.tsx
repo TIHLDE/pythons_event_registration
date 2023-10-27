@@ -11,7 +11,6 @@ import { AdminHotKeys } from '~/components/AdminHotKeys';
 import { Analytics } from '~/components/Analytics';
 import { Footer } from '~/components/Footer';
 import NavBar from '~/components/NavBar';
-import SignIn from '~/components/SignIn';
 
 import { getQueryClient } from '~/getQueryClient';
 import Providers from '~/providers';
@@ -62,7 +61,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div className='mx-auto w-full max-w-screen-lg p-4'>
             <NavBar />
             {Boolean(user) && <AdminHotKeys />}
-            {user ? children : <SignIn />}
+            {children}
             <Footer />
           </div>
         </Providers>

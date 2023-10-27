@@ -7,9 +7,9 @@ import image from '~/static/images/404.gif';
 export default function NotFound() {
   return (
     <>
-      <h1 className='mb-4'>404 - Ikke funnet</h1>
+      <h1 className='mb-4 font-oswald text-4xl font-bold'>404 - Ikke funnet</h1>
       <p className='mb-2'>
-        Denne siden finnes ikke{' '}
+        Denne siden finnes ikke,{' '}
         <Link as={NextLink} href='/'>
           gå til forsiden
         </Link>
