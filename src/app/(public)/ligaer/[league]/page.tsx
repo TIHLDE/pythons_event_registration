@@ -5,7 +5,6 @@ import { PageProps } from '~/types';
 
 const Leauge = async ({ params }: PageProps<{ league: string }>) => {
   const league = params.league;
-  console.log('league', league);
   if (league === 'tsff') {
     return (
       <>
