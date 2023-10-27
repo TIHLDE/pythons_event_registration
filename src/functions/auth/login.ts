@@ -1,15 +1,20 @@
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
 import { PageProps } from '~/types';
 
 import { authenticate } from '~/tihlde/auth';
 
+const loginSchema = z.object({
+  user_id: z.string(),
+  password: z.string(),
+});
+
 export const login = (searchParams: PageProps['searchParams']) => async (_: unknown, formData: FormData) => {
   'use server';
-  const user_id = formData.get('user_id') as string;
-  const password = formData.get('password') as string;
   try {
-    await authenticate({ user_id, password });
+    const data = loginSchema.parse(Object.fromEntries(formData));
+    await authenticate(data);
   } catch (e) {
     return { error: (e as Error).message };
   }

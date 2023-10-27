@@ -4,8 +4,10 @@ import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
 import { useFormState, useFormStatus } from 'react-dom';
 
+import { login } from '~/functions/auth/login';
+
 export type LoginFormProps = {
-  action: (prevState: unknown, formData: FormData) => Promise<void | { error: string }>;
+  action: ReturnType<typeof login>;
 };
 
 export const LoginForm = ({ action }: LoginFormProps) => {
