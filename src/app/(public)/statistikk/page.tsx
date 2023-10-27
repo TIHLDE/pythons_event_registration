@@ -65,8 +65,6 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
     .filter((player) => player.count > 0)
     .sort((a, b) => b.count - a.count);
 
-  console.log(sortedPlayers);
-
   return {
     players: sortedPlayers,
     teams: teams,

@@ -2,7 +2,7 @@ import { dehydrate } from '@tanstack/react-query';
 import { getTeams } from 'functions/getTeams';
 import { getSignedInUser } from 'functions/getUser';
 import { getQueryClient } from 'getQueryClient';
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 import { Cabin, Inter, Oswald } from 'next/font/google';
 import Providers from 'providers';
 
@@ -37,7 +37,12 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'TIHLDE Pythons',
   icons: [{ rel: 'shortcut icon', url: '/favicon.ico' }],
-  viewport: { width: 'device-width', initialScale: 1 },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#001328',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
