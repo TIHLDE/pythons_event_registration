@@ -1,3 +1,4 @@
+import { startOfHour } from 'date-fns';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 
@@ -12,7 +13,7 @@ const Leauge = async ({ params }: PageProps<{ league: string }>) => {
           alt='TSFF tabell'
           className='mx-auto mb-4 max-h-unit-9xl w-auto rounded-md'
           height={1200}
-          src='https://raw.githubusercontent.com/tsff1/tables/main/Scripts/Output/H23/Avd_A_table.png'
+          src={`https://raw.githubusercontent.com/tsff1/tables/main/Scripts/Output/H23/Avd_A_table.png?v=${startOfHour(new Date()).getTime()}`}
           width={850}
         />
         <iframe
