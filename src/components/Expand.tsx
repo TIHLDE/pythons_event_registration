@@ -2,7 +2,9 @@
 
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import clsx from 'clsx';
-import { ReactNode, useId, useState } from 'react';
+import { ReactNode, useEffect, useId, useState } from 'react';
+
+import { stats } from '~/stats';
 
 export type StandaloneExpandProps = {
   primary: string;
@@ -17,6 +19,12 @@ export type StandaloneExpandProps = {
 export const StandaloneExpand = ({ primary, secondary, className, icon, children, expanded, onExpand }: StandaloneExpandProps) => {
   const id = useId();
   const [isExpanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (isExpanded) {
+      stats.event(`Open Accordion: "${primary}"`);
+    }
+  }, [isExpanded, primary]);
 
   return (
     <Accordion

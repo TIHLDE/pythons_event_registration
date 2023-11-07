@@ -82,7 +82,7 @@ export const GET = async (_: Request, { params }: { params: { user_id: string } 
     return Response.json({ detail: 'Could not find a user with the given user_id' }, { status: HttpStatusCode.BAD_REQUEST });
   }
 
-  await stats.event(`Load ics-events at /api/ics/<user_id>`);
+  stats.event(`Load ics-events at /api/ics/<user_id>`);
 
   const icsEvents = await createIcsEvents(events.filter(removeNonRelevantEvents(player)).map(createIcsEvent(player)));
 
