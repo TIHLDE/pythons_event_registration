@@ -1122,10 +1122,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@olros/stats@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@olros/stats/-/stats-2.1.1.tgz#eafb617adf5a58f6062f8f8b985c721cf7f54f06"
-  integrity sha512-c+a5Vyvtc/7nDBC+NJF44ekyDA3QRm4T0+6XhHROHLvbfO2ZvnZmuwjhMDyhvAXMRLY/tjgriNwlpRsOqM1ZQA==
+"@olros/stats@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@olros/stats/-/stats-2.2.1.tgz#cd6cf186c48620cc35c8932589ee3e0a614dd0f0"
+  integrity sha512-ljLUS6DyznPVSveqE9Kvr/w7LH2LxwTtcJj1NNaM488RFoka7UfPksEeETUoVvSADzdy+6UeTrlAiA7GvL8bzA==
 
 "@pkgr/utils@^2.3.1":
   version "2.3.1"

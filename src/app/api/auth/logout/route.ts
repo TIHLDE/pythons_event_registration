@@ -7,7 +7,7 @@ import { AUTH_TOKEN_COOKIE_KEY, USER_STORAGE_KEY } from '~/values';
 export const GET = async () => {
   cookies().delete(USER_STORAGE_KEY);
   cookies().delete(AUTH_TOKEN_COOKIE_KEY);
-  stats.event('Log out');
+  await stats.event('Log out');
 
   return redirect('/');
 };

@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@nextui-org/react": "^2.1.13",
-    "@olros/stats": "^2.1.1",
+    "@olros/stats": "^2.2.1",
     "@prisma/client": "^5.5.2",
     "@tanstack/react-query": "^4.35.0",
     "axios": "^1.5.0",
