@@ -23,7 +23,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        database_url: [DATABASE_URL, DATABASE_URL]
 
     steps:
       - uses: actions/checkout@v4
@@ -31,10 +31,7 @@ jobs:
       - name: Set DATABASE_URL .env-variables
         run: |
           touch .env
-          echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
-          echo NODE_VERSION=${{ matrix.node-version }} >> .env
-          echo ${{ matrix.node-version }}
-          node --version
+          echo DATABASE_URL=${{ secrets[matrix.database_url] }} >> .env
 
-      # - name: Migrate
-      #   run: npx prisma migrate deploy
+      - name: Migrate
+        run: npx prisma migrate deploy
