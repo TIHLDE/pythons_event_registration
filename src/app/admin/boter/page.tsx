@@ -7,7 +7,7 @@ import { FineCreate } from '~/tihlde/fines';
 
 import { FinesAccordion } from '~/components/fines/FinesAccordion';
 
-import { rules } from '~/rules';
+import { ACTIVE_CLUB } from '~/values';
 
 const getData = async () => {
   const today = new Date();
@@ -37,7 +37,7 @@ const getData = async () => {
   const eventsWithFines = events
     .filter((event) => event.eventType === EventType.TRAINING || event.eventType === EventType.MATCH)
     .map<EventWithFines | undefined>((event) => {
-      const rule = rules[event.eventType];
+      const rule = ACTIVE_CLUB.rules[event.eventType];
       if (!rule) {
         return;
       }
@@ -106,7 +106,7 @@ const Fines = async () => {
     <>
       <p className='text-md my-4'>
         Viser bøter for arrangementer 2 uker tilbake i tid. Bøtene er kalkulert på bakgrunn av{' '}
-        <Link href='https://tihlde.org/grupper/pythons-gutter-a/lovverk/' isExternal underline='always'>
+        <Link href={`https://tihlde.org/grupper/${ACTIVE_CLUB.pythonsGroupSlug}/lovverk/`} isExternal underline='always'>
           lovverket
         </Link>
         .

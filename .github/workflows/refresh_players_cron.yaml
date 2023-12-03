@@ -1,10 +1,10 @@
 # Two roles:
 # 1. Runs often to avoid Supabase to enter sleep-mode (https://supabase.com/docs/going-into-prod#availability)
-# 2. Updates the player-table in the database with the memberships on TIHLDE.org
+# 2. Synchronize the player-table in the database with the memberships on TIHLDE.org
 #
 # An auth token from tihlde.org MUST be set as a secret in TIHLDE_AUTH_TOKEN
-# Since that is needed at the /api/refresh-players endpoint
-name: Update users
+# Since the is needed at the /api/refresh-players endpoint
+name: Synchronize users
 
 on:
   schedule:
@@ -12,16 +12,20 @@ on:
   workflow_dispatch:
 
 jobs:
-  render:
-    name: Render website
+  synchronize:
+    name: Synchronize users
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        url: ['https://pythons.tihlde.org']
+
     steps:
-      - name: Deploy Stage
+      - name: Synchronize users
         id: request
         uses: fjogeleit/http-request-action@v1
         with:
-          url: 'https://pythons.tihlde.org/api/refresh-players'
+          url: '${{ matrix.url }}/api/refresh-players'
           method: 'POST'
           timeout: 20000
           data: '{"authToken": "${{ secrets.TIHLDE_AUTH_TOKEN }}"}'

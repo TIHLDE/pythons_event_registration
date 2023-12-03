@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
+import { IS_PRODUCTION } from '~/serverEnv';
+
 declare global {
   // allow global `var` declarations
   // eslint-disable-next-line no-var, @typescript-eslint/ban-ts-comment
@@ -13,4 +15,4 @@ export const prisma =
     log: ['query'],
   });
 
-if (process.env.NODE_ENV !== 'production') global.prisma = prisma;
+if (!IS_PRODUCTION) global.prisma = prisma;

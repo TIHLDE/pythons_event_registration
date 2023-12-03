@@ -16,7 +16,7 @@ import { useReward } from 'react-rewards';
 
 import { ExtendedEvent } from '~/functions/event';
 
-import { rules } from '~/rules';
+import { ACTIVE_CLUB } from '~/values';
 
 export type EventRegistrationProps = {
   eventDetails: ExtendedEvent;
@@ -71,7 +71,7 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
     [eventDetails.id, router, player, userHasRegistrated, willArriveConfetti, willNotArriveConfetti],
   );
 
-  const eventRule = rules[eventDetails.eventType];
+  const eventRule = ACTIVE_CLUB.rules[eventDetails.eventType];
   const registrationDeadline = eventRule ? subHours(new Date(eventDetails.time), eventRule.deadlines.signupBefore) : undefined;
 
   const notAllowedRegisterError = useMemo(() => {

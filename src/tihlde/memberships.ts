@@ -4,7 +4,8 @@ import { PaginationResponse, TIHLDEMembership } from '~/tihlde';
 import { getAuthHeaders } from '~/tihlde/auth';
 import { mockPaginationResponse, mockTihldeMembership } from '~/tihlde/mocks';
 
-import { PYTHONS_GROUP_SLUG, SHOULD_MOCK_TIHLDE_API, TIHLDE_API_URL } from '~/values';
+import { SHOULD_MOCK_TIHLDE_API } from '~/serverEnv';
+import { ACTIVE_CLUB, TIHLDE_API_URL } from '~/values';
 
 export const getUserMemberships = async (): Promise<PaginationResponse<TIHLDEMembership>> => {
   if (SHOULD_MOCK_TIHLDE_API) {
@@ -18,7 +19,7 @@ export const isMemberOfPythonsGroup = async (): Promise<boolean> => {
     return true;
   }
   const memberships = await getUserMemberships();
-  return memberships.results.some((membership) => membership.group.slug === PYTHONS_GROUP_SLUG);
+  return memberships.results.some((membership) => membership.group.slug === ACTIVE_CLUB.pythonsGroupSlug);
 };
 
 export const getAllPythonsMemberships = async (): Promise<PaginationResponse<TIHLDEMembership>> => {
@@ -26,6 +27,6 @@ export const getAllPythonsMemberships = async (): Promise<PaginationResponse<TIH
     return mockPaginationResponse(mockTihldeMembership());
   }
   return axios
-    .get<PaginationResponse<TIHLDEMembership>>(`${TIHLDE_API_URL}/groups/${PYTHONS_GROUP_SLUG}/memberships/?None=500`, getAuthHeaders())
+    .get<PaginationResponse<TIHLDEMembership>>(`${TIHLDE_API_URL}/groups/${ACTIVE_CLUB.pythonsGroupSlug}/memberships/?None=500`, getAuthHeaders())
     .then((response) => response.data);
 };

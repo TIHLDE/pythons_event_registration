@@ -6,6 +6,8 @@ import type { TIHLDEUser } from '~/tihlde';
 import { getAllnotPayedFines } from '~/tihlde/fines';
 import { getAllPythonsMemberships } from '~/tihlde/memberships';
 
+import { ACTIVE_CLUB } from '~/values';
+
 const getData = async () => {
   const [{ results: memberships }, { results: notPayedFines }] = await Promise.all([getAllPythonsMemberships(), getAllnotPayedFines()]);
   const users = memberships.map((membership) => membership.user);
@@ -25,7 +27,7 @@ const PlayersWithNoCreatedFines = async () => {
     <>
       <p className='text-md mb-4'>
         Viser navn på spillere som skal motta bot for brudd på paragraf <i>§11 - Snitches don&apos;t get stitches</i> på bakgrunn av{' '}
-        <Link href='https://tihlde.org/grupper/pythons-gutter-a/lovverk/' isExternal underline='always'>
+        <Link href={`https://tihlde.org/grupper/${ACTIVE_CLUB.pythonsGroupSlug}/lovverk/`} isExternal underline='always'>
           lovverket
         </Link>
         .
