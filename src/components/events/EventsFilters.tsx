@@ -15,6 +15,7 @@ import { useTeams } from '~/hooks/useQuery';
 import { StandaloneExpand } from '~/components/Expand';
 
 import { eventTypesList, getSemesters, removeFalsyElementsFromObject } from '~/utils';
+import { MIN_DATE } from '~/values';
 
 const DEFAULT_FROM_DATE = startOfToday();
 const DEFAULT_TO_DATE = addMonths(DEFAULT_FROM_DATE, 4);
@@ -104,8 +105,16 @@ export const EventsFilters = ({ className }: { className?: string }) => {
       {view === 'all' ? (
         <StandaloneExpand expanded={open} icon={<MdOutlineFilterList className='h-6 w-6' />} onExpand={() => setOpen((prev) => !prev)} primary='Filtrering'>
           <form className='grid grid-cols-1 gap-2 pt-2 md:grid-cols-2' onSubmit={handleSubmit(onSubmit)}>
-            <Controller control={control} name='from' render={({ field }) => <Input label='Fra' placeholder='Fra' type='date' variant='faded' {...field} />} />
-            <Controller control={control} name='to' render={({ field }) => <Input label='Til' placeholder='Til' type='date' variant='faded' {...field} />} />
+            <Controller
+              control={control}
+              name='from'
+              render={({ field }) => <Input label='Fra' min={MIN_DATE} placeholder='Fra' type='date' variant='faded' {...field} />}
+            />
+            <Controller
+              control={control}
+              name='to'
+              render={({ field }) => <Input label='Til' min={MIN_DATE} placeholder='Til' type='date' variant='faded' {...field} />}
+            />
             <Controller
               control={control}
               name='eventType'

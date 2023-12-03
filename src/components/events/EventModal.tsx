@@ -16,6 +16,7 @@ import { ExtendedEvent } from '~/functions/event';
 import { useTeams } from '~/hooks/useQuery';
 
 import { eventTypesList } from '~/utils';
+import { MIN_DATE } from '~/values';
 
 export type EventModalProps = {
   event?: ExtendedEvent;
@@ -119,7 +120,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
           <Controller
             control={control}
             name='time'
-            render={({ field }) => <Input label='Tidspunkt' placeholder='Tidspunkt' required type='datetime-local' variant='faded' {...field} />}
+            render={({ field }) => <Input label='Tidspunkt' min={MIN_DATE} placeholder='Tidspunkt' required type='datetime-local' variant='faded' {...field} />}
           />
           <Controller control={control} name='location' render={({ field }) => <Input label='Sted' required variant='faded' {...field} />} />
         </ModalBody>

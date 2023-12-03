@@ -4,7 +4,7 @@ import { Tab, Tabs } from '@nextui-org/tabs';
 import type { Key } from '@react-types/shared';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export type LinkMenuProps = {
   routes: {
@@ -15,16 +15,17 @@ export type LinkMenuProps = {
 
 export const LinkMenu = ({ routes }: LinkMenuProps) => {
   const pathname = usePathname();
-  const [selected, setSelected] = useState<Key>(
-    () => [...routes].sort((a, b) => b.href.length - a.href.length).find((route) => pathname.startsWith(route.href))?.href ?? pathname,
+
+  const findSelectedWithPathname = useCallback(
+    (pathname: string) => [...routes].sort((a, b) => b.href.length - a.href.length).find((route) => pathname.startsWith(route.href))?.href ?? pathname,
+    [routes],
   );
 
+  const [selected, setSelected] = useState<Key>(() => findSelectedWithPathname(pathname));
+
   useEffect(() => {
-    if (typeof selected === 'string' && !pathname.startsWith(selected)) {
-      setSelected(pathname);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+    setSelected(findSelectedWithPathname(pathname));
+  }, [findSelectedWithPathname, pathname]);
 
   return (
     <Tabs
@@ -37,8 +38,6 @@ export const LinkMenu = ({ routes }: LinkMenuProps) => {
       size='lg'
       variant='bordered'>
       {routes.map((item) => (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         <Tab as={Link} href={item.href} key={item.href} title={item.label} />
       ))}
     </Tabs>

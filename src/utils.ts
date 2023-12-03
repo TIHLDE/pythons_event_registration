@@ -1,5 +1,5 @@
 import { EventType, MatchEventType, Position } from '@prisma/client';
-import { addMonths, endOfToday, getMonth, getYear, set, startOfToday } from 'date-fns';
+import { addMonths, endOfMonth, getMonth, getYear, startOfMonth } from 'date-fns';
 
 import { ExtendedEvent } from '~/functions/event';
 
@@ -52,16 +52,8 @@ export const getSemesters = (): Semester[] => {
     label: `${getMonth(date) < SEMESTERS_DIVIDER_MONTH ? 'Vår' : 'Høst'} ${String(getYear(date)).substring(2, 4)}`,
   });
 
-  const firstSemesterStartDate = set(startOfToday(), {
-    year: ACTIVE_CLUB.initialSemester.year,
-    month: ACTIVE_CLUB.initialSemester.semester === 'V' ? 0 : 6,
-    date: 1,
-  });
-  const firstSemesterEndDate = set(endOfToday(), {
-    year: ACTIVE_CLUB.initialSemester.year,
-    month: ACTIVE_CLUB.initialSemester.semester === 'V' ? 5 : 11,
-    date: 31,
-  });
+  const firstSemesterStartDate = startOfMonth(new Date(ACTIVE_CLUB.initialSemester));
+  const firstSemesterEndDate = endOfMonth(addMonths(new Date(ACTIVE_CLUB.initialSemester), 5));
 
   const semesters: Semester[] = [
     {
@@ -71,10 +63,10 @@ export const getSemesters = (): Semester[] => {
     },
   ];
 
-  while (semesters[semesters.length - 1].to < new Date()) {
+  while (semesters[semesters.length - 1].to < addMonths(new Date(), 1)) {
     const prevSemester = semesters[semesters.length - 1];
-    const newFromDate = addMonths(prevSemester.from, SEMESTERS_DIVIDER_MONTH);
-    const newToDate = addMonths(prevSemester.to, SEMESTERS_DIVIDER_MONTH);
+    const newFromDate = startOfMonth(addMonths(prevSemester.from, SEMESTERS_DIVIDER_MONTH));
+    const newToDate = endOfMonth(addMonths(prevSemester.to, SEMESTERS_DIVIDER_MONTH));
     semesters.push({
       ...getSemesterIdText(newFromDate),
       from: newFromDate,

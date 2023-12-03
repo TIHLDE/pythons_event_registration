@@ -1,21 +1,20 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
-import { LinkMenu } from '~/components/LinkMenu';
+import { LinkMenu, LinkMenuProps } from '~/components/LinkMenu';
+
+import { ACTIVE_CLUB } from '~/values';
 
 export const metadata: Metadata = {
   title: 'Ligaer - TIHLDE Pythons',
 };
 
+const ROUTES: LinkMenuProps['routes'] = Object.entries(ACTIVE_CLUB.leagues).map(([slug, league]) => ({ href: `/ligaer/${slug}`, label: league.name }));
+
 const Leauges = async ({ children }: { children: ReactNode }) => {
   return (
     <>
-      <LinkMenu
-        routes={[
-          { href: '/ligaer/tsff', label: 'TSFF' },
-          { href: '/ligaer/7dentligaen', label: '7dentligaen' },
-        ]}
-      />
+      <LinkMenu routes={ROUTES} />
       {children}
     </>
   );
