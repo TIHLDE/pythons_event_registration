@@ -1,7 +1,7 @@
 'use client';
 
 import { NextUIProvider } from '@nextui-org/react';
-import { DehydratedState, Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { DehydratedState, HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode, useState } from 'react';
 
 export default function Providers({ children, dehydratedState }: { children: ReactNode; dehydratedState: DehydratedState }) {
@@ -10,7 +10,7 @@ export default function Providers({ children, dehydratedState }: { children: Rea
   return (
     <NextUIProvider>
       <QueryClientProvider client={queryClient}>
-        <Hydrate state={dehydratedState}>{children}</Hydrate>
+        <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
       </QueryClientProvider>
     </NextUIProvider>
   );
