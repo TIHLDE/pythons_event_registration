@@ -1,10 +1,10 @@
 'use client';
 
 import { Tab, Tabs } from '@nextui-org/tabs';
+import type { Key } from '@react-types/shared';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import type { Key } from 'react';
 
 export type LinkMenuProps = {
   routes: {

@@ -5,7 +5,8 @@ import { cookies } from 'next/headers';
 import { prisma } from '~/lib/prisma';
 import { isMemberOfPythonsGroup } from '~/tihlde/memberships';
 
-import { AUTH_TOKEN_COOKIE_KEY, MOCK_TIHLDE_USER_ID, SHOULD_MOCK_TIHLDE_API, TIHLDE_API_URL, USER_STORAGE_KEY } from '~/values';
+import { MOCK_TIHLDE_USER_ID, SHOULD_MOCK_TIHLDE_API } from '~/serverEnv';
+import { ACTIVE_CLUB, AUTH_TOKEN_COOKIE_KEY, TIHLDE_API_URL, USER_STORAGE_KEY } from '~/values';
 
 export const getAuthHeaders = (): Pick<AxiosRequestConfig<unknown>, 'headers'> => {
   const token = cookies().get(AUTH_TOKEN_COOKIE_KEY);
@@ -38,11 +39,11 @@ export const authenticate = async ({ user_id, password }: AuthenticateParams) =>
     });
     const [isMemberOfPythons, player] = await Promise.all([isMemberOfPythonsGroup(), playerQuery]);
     if (!isMemberOfPythons) {
-      throw Error('Du er ikke medlem av Pythons-gruppen på TIHLDE.org');
+      throw Error(`Du er ikke medlem av Pythons-gruppen på tihlde.org/grupper/${ACTIVE_CLUB.pythonsGroupSlug}`);
     }
     if (!player) {
       throw Error(
-        'Det har ikke blitt opprettet en spiller-profil for deg enda. Spiller-profiler oppdateres/genereres automatisk hver hele time basert på hvem som er medlem i Pythons-gruppen på TIHLDE.org',
+        `Det har ikke blitt opprettet en spiller-profil for deg enda. Spiller-profiler oppdateres/genereres automatisk hver hele time basert på hvem som er medlem i Pythons-gruppen på tihlde.org/grupper/${ACTIVE_CLUB.pythonsGroupSlug}`,
       );
     }
     cookies().set(USER_STORAGE_KEY, JSON.stringify(player), { maxAge: hoursToSeconds(24) * 180 });

@@ -7,6 +7,8 @@ import { LocationForecast } from '~/types/MetApi';
 
 import { ExtendedEvent } from '~/functions/event';
 
+import { ACTIVE_CLUB } from '~/values';
+
 const getCoordinates = (eventType: ExtendedEvent['eventType']) => {
   switch (eventType) {
     case EventType.MATCH:
@@ -26,7 +28,7 @@ const getData = async (eventDetails: ExtendedEvent) => {
   const coordinates = getCoordinates(eventDetails.eventType);
   const response = await fetch(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${coordinates.lat}&lon=${coordinates.lon}`, {
     headers: {
-      'User-Agent': 'https://pythons.tihlde.org, https://github.com/TIHLDE/pythons_event_registration',
+      'User-Agent': `${ACTIVE_CLUB.url}, https://github.com/TIHLDE/pythons_event_registration`,
     },
     next: { revalidate: hoursToSeconds(1) },
   });

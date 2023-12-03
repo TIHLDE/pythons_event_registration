@@ -68,7 +68,7 @@ const Home = async ({ searchParams }: PageProps) => {
     <div className='flex flex-col gap-4'>
       <ActiveMessages />
       <EventsFilters />
-      {!Object.keys(groupedEvents).length && <p className='text-sm'>Fant ingen arrangementer med denne filtrering</p>}
+      {!Object.keys(groupedEvents).length && <p className='text-sm'>Fant ingen arrangementer med gitt filtrering</p>}
       {Object.keys(groupedEvents).map((group) => (
         <div className='flex flex-col gap-2' key={group}>
           <h3 className='font-cabin text-2xl'>{group}</h3>

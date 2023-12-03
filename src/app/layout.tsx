@@ -50,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = await getSignedInUser();
   const queryClient = getQueryClient();
   if (user) {
-    await Promise.all([queryClient.prefetchQuery(QUERY_CONFIG.UseTeams().queryKey, getTeams, {})]);
+    await Promise.all([queryClient.prefetchQuery({ queryKey: QUERY_CONFIG.UseTeams().queryKey, queryFn: getTeams })]);
   }
   const dehydratedState = dehydrate(queryClient);
   return (

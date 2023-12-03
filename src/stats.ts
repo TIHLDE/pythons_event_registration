@@ -1,6 +1,5 @@
 import { Stats } from '@olros/stats';
 
-const TEAM = 'tihlde-pythons';
-const PROJECT = 'registrering';
+import { ACTIVE_CLUB } from '~/values';
 
-export const stats = Stats({ team: TEAM, project: PROJECT });
+export const stats = Stats({ ...ACTIVE_CLUB.stats });

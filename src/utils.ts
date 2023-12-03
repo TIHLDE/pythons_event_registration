@@ -3,6 +3,8 @@ import { addMonths, endOfToday, getMonth, getYear, set, startOfToday } from 'dat
 
 import { ExtendedEvent } from '~/functions/event';
 
+import { ACTIVE_CLUB } from '~/values';
+
 export const fetcher = <Type = unknown>(url: string) => fetch(url).then((res) => res.json()) as Promise<Type>;
 
 export const eventTypesMap = {
@@ -44,13 +46,28 @@ export type Semester = {
 
 export const getSemesters = (): Semester[] => {
   const SEMESTERS_DIVIDER_MONTH = 6;
-  const initialDate = set(startOfToday(), { year: 2022, month: SEMESTERS_DIVIDER_MONTH, date: 1 });
+
+  const getSemesterIdText = (date: Date) => ({
+    id: `${getMonth(date) < SEMESTERS_DIVIDER_MONTH ? 'V' : 'H'}${String(getYear(date)).substring(2, 4)}`,
+    label: `${getMonth(date) < SEMESTERS_DIVIDER_MONTH ? 'Vår' : 'Høst'} ${String(getYear(date)).substring(2, 4)}`,
+  });
+
+  const firstSemesterStartDate = set(startOfToday(), {
+    year: ACTIVE_CLUB.initialSemester.year,
+    month: ACTIVE_CLUB.initialSemester.semester === 'V' ? 0 : 6,
+    date: 1,
+  });
+  const firstSemesterEndDate = set(endOfToday(), {
+    year: ACTIVE_CLUB.initialSemester.year,
+    month: ACTIVE_CLUB.initialSemester.semester === 'V' ? 5 : 11,
+    date: 31,
+  });
+
   const semesters: Semester[] = [
     {
-      id: 'H22',
-      from: initialDate,
-      to: set(endOfToday(), { year: 2022, month: 11, date: 31 }),
-      label: `Høst 22`,
+      ...getSemesterIdText(firstSemesterStartDate),
+      from: firstSemesterStartDate,
+      to: firstSemesterEndDate,
     },
   ];
 
@@ -59,10 +76,9 @@ export const getSemesters = (): Semester[] => {
     const newFromDate = addMonths(prevSemester.from, SEMESTERS_DIVIDER_MONTH);
     const newToDate = addMonths(prevSemester.to, SEMESTERS_DIVIDER_MONTH);
     semesters.push({
-      id: `${getMonth(newFromDate) < SEMESTERS_DIVIDER_MONTH ? 'V' : 'H'}${String(getYear(newFromDate)).substring(2, 4)}`,
+      ...getSemesterIdText(newFromDate),
       from: newFromDate,
       to: newToDate,
-      label: `${getMonth(newFromDate) < SEMESTERS_DIVIDER_MONTH ? 'Vår' : 'Høst'} ${String(getYear(newFromDate)).substring(2, 4)}`,
     });
   }
 

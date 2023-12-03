@@ -6,6 +6,8 @@ import { getSignedInUser } from '~/functions/getUser';
 
 import { StandaloneExpand, StandaloneExpandProps } from '~/components/Expand';
 
+import { ACTIVE_CLUB } from '~/values';
+
 export const CalendarSubscription = async (props: Partial<StandaloneExpandProps>) => {
   const user = await getSignedInUser();
 
@@ -32,7 +34,7 @@ export const CalendarSubscription = async (props: Partial<StandaloneExpandProps>
         eller en annen kalender for å begynne å abonnere på arrangement-kalenderen din. Hvis arrangementer ikke oppdateres i kalenderen din umiddelbart, så kan
         det være fordi kalenderen sjelden ser etter oppdateringer. Oppdaterings-frekvensen varierer fra kalender til kalender, enkelte oppdateres kun daglig.
       </p>
-      <Snippet className='w-full' symbol='' variant='bordered'>{`https://pythons.tihlde.org/api/ics/${user?.tihlde_user_id}`}</Snippet>
+      <Snippet className='w-full' symbol='' variant='bordered'>{`${ACTIVE_CLUB.url}/api/ics/${user?.tihlde_user_id}`}</Snippet>
     </StandaloneExpand>
   );
 };

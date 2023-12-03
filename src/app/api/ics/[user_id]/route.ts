@@ -10,10 +10,11 @@ import { prisma } from '~/lib/prisma';
 
 import { stats } from '~/stats';
 import { getEventTitle } from '~/utils';
+import { ACTIVE_CLUB } from '~/values';
 
 const createIcsEvents = promisify<EventAttributes[], string | undefined>(createEvents);
 
-const PRODUCT_ID = 'pythons/ics';
+const PRODUCT_ID = `${ACTIVE_CLUB.pythonsGroupSlug}/ics`;
 
 /**
  * A filter which removes events where the player won't attend and matches where the player isn't part of the playing team.
@@ -38,7 +39,7 @@ const createIcsEvent =
       `❌ ${event.willNotArrive.length} avmeldt`,
       `❔ ${event.hasNotResponded.length} har ikke svart`,
       ``,
-      `${userWillAttend ? 'Endre' : 'Registrer'} oppmøte på https://pythons.tihlde.org`,
+      `${userWillAttend ? 'Endre' : 'Registrer'} oppmøte på ${ACTIVE_CLUB.url}`,
       ``,
       `Sist oppdatert: ${format(new Date(), "EEEE dd. MMMM' 'HH:mm", {
         locale: nb,
@@ -47,14 +48,14 @@ const createIcsEvent =
 
     return {
       productId: PRODUCT_ID,
-      calName: 'TIHLDE Pythons',
+      calName: ACTIVE_CLUB.name,
       title: `${userWillAttend ? '' : '[Mangler registrering] '}${getEventTitle(event).fullTitle}`,
       start: dateToIcsDate(event.time),
       startInputType: 'utc',
       duration: event.eventType === EventType.TRAINING ? { hours: 1, minutes: 30 } : { hours: 2 },
       location: event.location,
       created: dateToIcsDate(event.createdAt),
-      organizer: { name: 'TIHLDE Pythons', email: 'pythons@tihlde.org', dir: 'https://pythons.tihlde.org' },
+      organizer: { name: ACTIVE_CLUB.name, email: 'pythons@tihlde.org', dir: ACTIVE_CLUB.url },
       status: 'CONFIRMED',
       description,
     };

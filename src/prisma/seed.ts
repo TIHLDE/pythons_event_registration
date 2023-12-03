@@ -3,7 +3,7 @@ import { EventType, Position } from '@prisma/client';
 import { addDays, set, subDays } from 'date-fns';
 
 import { prisma } from '../lib/prisma';
-import { IS_PRODUCTION, MOCK_TIHLDE_USER_ID } from '../values';
+import { IS_PRODUCTION, MOCK_TIHLDE_USER_ID } from '../serverEnv';
 
 /**
  * Seed the database with data for local development

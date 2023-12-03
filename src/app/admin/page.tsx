@@ -2,6 +2,8 @@ import { Kbd } from '@nextui-org/kbd';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
+import { ACTIVE_CLUB } from '~/values';
+
 export const metadata: Metadata = {
   title: 'Admin - TIHLDE Pythons',
 };
@@ -40,7 +42,7 @@ const Admin = () => {
         <AdminLink
           description='Se statistikk for hvordan siden brukes'
           openInNewTab
-          path='https://stats.olafros.com/public/tihlde-pythons/registrering'
+          path={`https://stats.olafros.com/public/${ACTIVE_CLUB.stats.team}/${ACTIVE_CLUB.stats.project}`}
           title='📈 Stats'
         />
       </div>

@@ -1,6 +1,7 @@
 import { PaginationResponse, TIHLDEGroup, TIHLDEGroupFine, TIHLDEMembership, TIHLDEUser } from '~/tihlde';
 
-import { MOCK_TIHLDE_USER_ID, PYTHONS_GROUP_SLUG } from '~/values';
+import { MOCK_TIHLDE_USER_ID } from '~/serverEnv';
+import { ACTIVE_CLUB } from '~/values';
 
 export const mockPaginationResponse = <T>(result: T): PaginationResponse<T> => ({
   count: 1,
@@ -31,7 +32,7 @@ export const mockTihldeUser = (userId?: string): TIHLDEUser => {
 
 export const mockTihldeGroup = (): TIHLDEGroup => ({
   name: 'TIHLDE Pythons',
-  slug: PYTHONS_GROUP_SLUG,
+  slug: ACTIVE_CLUB.pythonsGroupSlug,
   viewer_is_member: true,
 });
 

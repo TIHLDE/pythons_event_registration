@@ -34,6 +34,8 @@ Create a `.env`-file with the following .env-variables:
 # DATABASE_URL must be a connection string to a database and is required
 DATABASE_URL=postgresql://root:password@localhost:5432/event_registration_db
 
+NEXT_PUBLIC_ACTIVE_CLUB=PYTHONS_HERRER # Or PYTHONS_DAMER
+
 # MOCK_TIHLDE_USER_ID is optional
 MOCK_TIHLDE_USER_ID=user_id
 ```
@@ -72,4 +74,10 @@ During development and before you're ready to create a migration, you can also y
 
 When there's new migrations from other developer, you can run `yarn db:migrate` to apply these locally.
 
-New migrations will automatically be applied in production with the Github Action which runs on push to the `main`-branch.
+New migrations will automatically be applied in production with the Github Action which runs on push to the `main`-branch. Ensure that the GitHub-secrets referred to in `.github/workflows/prisma_migrate.yaml` actually is created in GitHub. The database connection urls must be **without** connection pooling.
+
+## Clubs
+
+The project contains config for multiple clubs to use the same project in different deployments. View the config in `src/values`. If you want to add another club, create a new enum in `NEXT_PUBLIC_ACTIVE_CLUB` in `src/clientEnv`. Then configure the club in `src/values`. Finally, when setting up hosting for the new club you simply need to set NEXT_PUBLIC_ACTIVE_CLUB and DATABASE_URL in env-variables at Vercel.
+
+In GitHub, add the url to `.github/workflows/refresh_players_cron.yaml` to ensure that the new club automatically is synchronized with TIHLDE. Also create a new secret in GitHub with the DATABASE_URL, and update `.github/workflows/prisma_migrate.yaml` with it so that the database is automatically migrated on push to main.
