@@ -4,13 +4,13 @@ import { Player } from '@prisma/client';
 import { minutesToSeconds } from 'date-fns';
 import { unstable_cache } from 'next/cache';
 
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const PLAYERS_CACHE_TAG = 'players';
 
 export const getPlayer = unstable_cache(
   async (id: number): Promise<Player | null> => {
-    return await prisma.player.findFirst({ where: { id }, include: { team: true } });
+    return await prismaClient.player.findFirst({ where: { id }, include: { team: true } });
   },
   undefined,
   {
@@ -21,7 +21,7 @@ export const getPlayer = unstable_cache(
 
 export const getPlayers = unstable_cache(
   async (): Promise<Player[]> => {
-    return prisma.player.findMany({
+    return prismaClient.player.findMany({
       where: {
         active: true,
       },

@@ -2,7 +2,7 @@
 import { EventType, Position } from '@prisma/client';
 import { addDays, set, subDays } from 'date-fns';
 
-import { prisma } from '../lib/prisma';
+import { prismaClient } from '../prismaClient';
 import { IS_PRODUCTION, MOCK_TIHLDE_USER_ID } from '../serverEnv';
 
 /**
@@ -17,18 +17,18 @@ async function seed() {
   console.time(`🌱 Database has been seeded`);
 
   console.time('🧹 Cleaned up the database...');
-  await prisma.player.deleteMany();
-  await prisma.event.deleteMany();
-  await prisma.match.deleteMany();
-  await prisma.matchEvent.deleteMany();
-  await prisma.notification.deleteMany();
-  await prisma.player.deleteMany();
-  await prisma.registrations.deleteMany();
-  await prisma.team.deleteMany();
+  await prismaClient.player.deleteMany();
+  await prismaClient.event.deleteMany();
+  await prismaClient.match.deleteMany();
+  await prismaClient.matchEvent.deleteMany();
+  await prismaClient.notification.deleteMany();
+  await prismaClient.player.deleteMany();
+  await prismaClient.registrations.deleteMany();
+  await prismaClient.team.deleteMany();
   console.timeEnd('🧹 Cleaned up the database...');
 
   console.time('👨‍👨‍👦‍👦 Created teams...');
-  await prisma.team.createMany({
+  await prismaClient.team.createMany({
     data: [
       { id: 1, name: 'TSFF' },
       { id: 2, name: '7dentligaen' },
@@ -37,7 +37,7 @@ async function seed() {
   console.timeEnd('👨‍👨‍👦‍👦 Created teams...');
 
   console.time('👤 Created players...');
-  await prisma.player.createMany({
+  await prismaClient.player.createMany({
     data: [
       {
         name: 'Ola Normann',
@@ -80,7 +80,7 @@ async function seed() {
   console.timeEnd('👤 Created players...');
 
   console.time('🎭 Created events...');
-  await prisma.event.createMany({
+  await prismaClient.event.createMany({
     data: [
       { eventType: EventType.TRAINING, location: 'Eberg', time: set(addDays(new Date(), -1), { hours: 19, minutes: 0, seconds: 0 }), finesGiven: true },
       { eventType: EventType.TRAINING, location: 'Eberg', time: set(addDays(new Date(), 2), { hours: 19, minutes: 0, seconds: 0 }) },
@@ -89,7 +89,7 @@ async function seed() {
       { eventType: EventType.SOCIAL, location: 'The Mint', time: set(addDays(new Date(), 20), { hours: 20, minutes: 0, seconds: 0 }), title: 'Voooors' },
     ],
   });
-  await prisma.event.create({
+  await prismaClient.event.create({
     data: {
       eventType: EventType.MATCH,
       location: 'Tempe',
@@ -107,7 +107,7 @@ async function seed() {
       },
     },
   });
-  await prisma.event.create({
+  await prismaClient.event.create({
     data: {
       eventType: EventType.MATCH,
       location: 'Eberg bane C',
@@ -136,5 +136,5 @@ seed()
     process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   });

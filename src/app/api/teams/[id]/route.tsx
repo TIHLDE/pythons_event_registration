@@ -1,11 +1,11 @@
 import { revalidateTag } from 'next/cache';
 
 import { TEAMS_CACHE_TAG } from '~/functions/getTeams';
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const DELETE = async (_: Request, { params }: { params: { id: string } }) => {
   const parsedId = parseInt(params.id);
-  await prisma.team.delete({
+  await prismaClient.team.delete({
     where: {
       id: parsedId,
     },

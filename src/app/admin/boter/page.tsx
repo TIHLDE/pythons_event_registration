@@ -2,7 +2,7 @@ import { Link } from '@nextui-org/link';
 import { Event, EventType, Player, Registrations } from '@prisma/client';
 import { subHours, subWeeks } from 'date-fns';
 
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 import { FineCreate } from '~/tihlde/fines';
 
 import { FinesAccordion } from '~/components/fines/FinesAccordion';
@@ -12,7 +12,7 @@ import { ACTIVE_CLUB } from '~/values';
 const getData = async () => {
   const today = new Date();
   const twoWeeksBack = subWeeks(new Date(), 2);
-  const eventsQuery = prisma.event.findMany({
+  const eventsQuery = prismaClient.event.findMany({
     where: {
       time: {
         gte: twoWeeksBack,
@@ -23,7 +23,7 @@ const getData = async () => {
     orderBy: { time: 'desc' },
   });
 
-  const playersQuery = prisma.player.findMany({
+  const playersQuery = prismaClient.player.findMany({
     where: {
       active: true,
       disableRegistrations: false,

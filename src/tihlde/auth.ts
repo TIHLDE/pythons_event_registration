@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { hoursToSeconds } from 'date-fns';
 import { cookies } from 'next/headers';
 
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 import { isMemberOfPythonsGroup } from '~/tihlde/memberships';
 
 import { MOCK_TIHLDE_USER_ID, SHOULD_MOCK_TIHLDE_API } from '~/serverEnv';
@@ -28,7 +28,7 @@ export const authenticate = async ({ user_id, password }: AuthenticateParams) =>
   try {
     const { token } = await loginToTIHLDE({ user_id, password });
     cookies().set(AUTH_TOKEN_COOKIE_KEY, token, { maxAge: hoursToSeconds(24) * 180 });
-    const playerQuery = prisma.player.findFirst({
+    const playerQuery = prismaClient.player.findFirst({
       where: {
         tihlde_user_id: {
           equals: user_id,

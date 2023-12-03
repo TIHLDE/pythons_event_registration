@@ -1,6 +1,6 @@
 import { Result } from '@prisma/client';
 
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data } = await request.json();
@@ -10,7 +10,7 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
   const awayGoals = Number(data.awayGoals);
   const result = homeGoals > awayGoals ? Result.WIN : homeGoals < awayGoals ? Result.LOSE : Result.DRAW;
 
-  const match = await prisma.match.update({
+  const match = await prismaClient.match.update({
     where: { id: parsedId },
     data: { result, homeGoals, awayGoals },
   });

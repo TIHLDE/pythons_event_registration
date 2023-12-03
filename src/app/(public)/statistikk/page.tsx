@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { PageProps } from '~/types';
 
 import { getTeams } from '~/functions/getTeams';
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 import { StatisticsFilters } from '~/components/statistics/StatisticsFilters';
 import { StatisticsTable } from '~/components/statistics/StatisticsTable';
@@ -31,7 +31,7 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
     return redirect(`/statistikk?semester=${semesters[semesters.length - 1].id}&matchEventType=${MatchEventType.GOAL}`);
   }
 
-  const playersQuery = prisma.player.findMany({
+  const playersQuery = prismaClient.player.findMany({
     include: {
       _count: {
         select: {

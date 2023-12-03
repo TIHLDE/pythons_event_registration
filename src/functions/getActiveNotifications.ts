@@ -3,13 +3,13 @@ import 'server-only';
 import { minutesToSeconds } from 'date-fns';
 import { unstable_cache } from 'next/cache';
 
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const NOTIFICATIONS_CACHE_TAG = 'notifications';
 
 export const getActiveNotifications = unstable_cache(
   async () => {
-    return prisma.notification.findMany({
+    return prismaClient.notification.findMany({
       where: { expiringDate: { gt: new Date() } },
       orderBy: { expiringDate: 'asc' },
       include: { author: true },

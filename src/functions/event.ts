@@ -6,8 +6,8 @@ import { NextApiRequest } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 
 import { getPlayers } from '~/functions/getPlayers';
-import { prisma } from '~/lib/prisma';
 
+import { prismaClient } from '~/prismaClient';
 import { getSemesters } from '~/utils';
 
 export type ExtendedEvent = Prisma.EventGetPayload<{
@@ -67,7 +67,7 @@ export const getEventsWhereFilter = ({ query }: { query: ParsedUrlQuery }): Pris
 };
 
 export const getEventsWithRegistrations = async ({ query }: Pick<NextApiRequest, 'query'>): Promise<ExtendedEvent[]> => {
-  const allFutureEventsQuery = prisma.event.findMany({
+  const allFutureEventsQuery = prismaClient.event.findMany({
     include: {
       team: true,
       match: true,

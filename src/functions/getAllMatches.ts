@@ -4,13 +4,13 @@ import { EventType, Prisma } from '@prisma/client';
 import { minutesToSeconds } from 'date-fns';
 import { unstable_cache } from 'next/cache';
 
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const ALL_MATCHES_CACHE_TAG = 'all-matches';
 
 export const getAllMatches = unstable_cache(
   async (): Promise<Prisma.EventGetPayload<{ include: { team: true; match: true } }>[]> => {
-    return prisma.event.findMany({
+    return prismaClient.event.findMany({
       include: {
         match: true,
         team: true,

@@ -1,7 +1,7 @@
 import HttpStatusCode from 'http-status-typed';
 
 import { getSignedInUserOrThrow } from '~/functions/getUser';
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data, willArrive } = await request.json();
@@ -13,7 +13,7 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
 
     const [user, existingRegistration] = await Promise.all([
       getSignedInUserOrThrow(),
-      prisma.registrations.findFirstOrThrow({
+      prismaClient.registrations.findFirstOrThrow({
         where: { playerId, eventId },
         include: { event: { select: { time: true } } },
       }),
@@ -27,7 +27,7 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
       return Response.json({ message: `Det er ikke lov å endre en registrering etter at arrangementet har startet` }, { status: HttpStatusCode.FORBIDDEN });
     }
 
-    const registration = await prisma.registrations.update({
+    const registration = await prismaClient.registrations.update({
       where: {
         playerId_eventId: { playerId, eventId },
       },

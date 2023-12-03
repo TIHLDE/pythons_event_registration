@@ -1,7 +1,7 @@
 import { revalidateTag } from 'next/cache';
 
 import { getTeams, TEAMS_CACHE_TAG } from '~/functions/getTeams';
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +13,7 @@ export const GET = async () => {
 export const POST = async (request: Request) => {
   const { data } = await request.json();
 
-  const newTeam = await prisma.team.create({
+  const newTeam = await prismaClient.team.create({
     data: {
       name: data.name,
     },

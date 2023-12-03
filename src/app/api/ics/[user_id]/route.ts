@@ -6,8 +6,8 @@ import { createEvents, DateArray, EventAttributes } from 'ics';
 import { promisify } from 'util';
 
 import { ExtendedEvent, getEventsWithRegistrations } from '~/functions/event';
-import { prisma } from '~/lib/prisma';
 
+import { prismaClient } from '~/prismaClient';
 import { stats } from '~/stats';
 import { getEventTitle } from '~/utils';
 import { ACTIVE_CLUB } from '~/values';
@@ -67,7 +67,7 @@ const createIcsEvent =
  * Format of url is: `/api/ics/[user_id]`
  */
 export const GET = async (_: Request, { params }: { params: { user_id: string } }) => {
-  const playerQuery = prisma.player.findFirst({
+  const playerQuery = prismaClient.player.findFirst({
     where: {
       tihlde_user_id: {
         equals: params.user_id,

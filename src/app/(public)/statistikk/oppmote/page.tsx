@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { PageProps } from '~/types';
 
 import { getTeams } from '~/functions/getTeams';
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 import { AttendanceFilters } from '~/components/attendance/AttendanceFilters';
 import { AttendanceTable } from '~/components/attendance/AttendanceTable';
@@ -28,8 +28,8 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
       ? searchParams.willArrive === 'yes'
         ? true
         : searchParams.willArrive === 'no'
-        ? false
-        : null
+          ? false
+          : null
       : undefined;
 
   if (!searchParams.to && !searchParams.from && !searchParams.eventType && !searchParams.team && !searchParams.willArrive) {
@@ -40,7 +40,7 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
     );
   }
 
-  const eventsAmountQuery = prisma.event.aggregate({
+  const eventsAmountQuery = prismaClient.event.aggregate({
     _count: true,
     where: {
       AND: {
@@ -54,7 +54,7 @@ const getData = async ({ searchParams }: Pick<PageProps, 'searchParams'>) => {
     },
   });
 
-  const playersQuery = prisma.player.findMany({
+  const playersQuery = prismaClient.player.findMany({
     where: {
       active: true,
       disableRegistrations: false,

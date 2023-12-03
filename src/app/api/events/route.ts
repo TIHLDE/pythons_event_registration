@@ -1,17 +1,17 @@
 import { EventType } from '@prisma/client';
 
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async () => {
-  const players = await prisma.event.findMany();
+  const players = await prismaClient.event.findMany();
   return Response.json(players);
 };
 
 export const POST = async (request: Request) => {
   const { data } = await request.json();
-  await prisma.event.create({
+  await prismaClient.event.create({
     data: {
       location: data.location,
       time: new Date(data.time),

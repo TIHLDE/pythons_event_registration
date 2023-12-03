@@ -1,6 +1,6 @@
 import { Divider } from '@nextui-org/divider';
 
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 import { NewTeam } from '~/components/team/NewTeam';
 import { RefreshPlayers } from '~/components/team/RefreshPlayers';
@@ -9,7 +9,7 @@ import TeamOverview from '~/components/team/TeamOverview';
 import { positionsList } from '~/utils';
 
 const getData = async () => {
-  const teamsQuery = prisma.team.findMany({
+  const teamsQuery = prismaClient.team.findMany({
     include: {
       players: {
         where: {
@@ -20,7 +20,7 @@ const getData = async () => {
     },
   });
 
-  const playersWithNoTeamQuery = prisma.player.findMany({
+  const playersWithNoTeamQuery = prismaClient.player.findMany({
     where: {
       teamId: null,
       active: true,

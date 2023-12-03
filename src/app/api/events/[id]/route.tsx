@@ -1,12 +1,12 @@
 import { EventType } from '@prisma/client';
 
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data } = await request.json();
   const parsedId = parseInt(params.id);
 
-  const updatedEvent = await prisma.event.update({
+  const updatedEvent = await prismaClient.event.update({
     where: {
       id: parsedId,
     },
@@ -25,7 +25,7 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
 
 export const DELETE = async (_: Request, { params }: { params: { id: string } }) => {
   const parsedId = parseInt(params.id);
-  await prisma.event.delete({
+  await prismaClient.event.delete({
     where: {
       id: parsedId,
     },

@@ -1,4 +1,4 @@
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 import { createFine, FineCreate } from '~/tihlde/fines';
 
 export const POST = async (request: Request) => {
@@ -7,7 +7,7 @@ export const POST = async (request: Request) => {
 
   await Promise.all(fines.map((fine) => createFine(fine)));
 
-  await prisma.event.update({
+  await prismaClient.event.update({
     where: { id: data.eventId },
     data: { finesGiven: true },
   });

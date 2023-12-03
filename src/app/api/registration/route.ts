@@ -2,13 +2,13 @@ import { EventType } from '@prisma/client';
 import HttpStatusCode from 'http-status-typed';
 
 import { getSignedInUserOrThrow } from '~/functions/getUser';
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const POST = async (request: Request) => {
   const { data, willArrive } = await request.json();
   const [user, event] = await Promise.all([
     getSignedInUserOrThrow(),
-    prisma.event.findFirstOrThrow({ where: { id: data.eventId }, select: { eventType: true, time: true, id: true } }),
+    prismaClient.event.findFirstOrThrow({ where: { id: data.eventId }, select: { eventType: true, time: true, id: true } }),
   ]);
 
   if (event.time < new Date()) {
@@ -19,7 +19,7 @@ export const POST = async (request: Request) => {
     return Response.json({ message: `En administrator har deaktivert påmelding for deg` }, { status: HttpStatusCode.FORBIDDEN });
   }
 
-  const result = await prisma.registrations.create({
+  const result = await prismaClient.registrations.create({
     data: {
       eventId: event.id,
       willArrive: willArrive,

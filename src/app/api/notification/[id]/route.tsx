@@ -1,13 +1,13 @@
 import { revalidateTag } from 'next/cache';
 
 import { NOTIFICATIONS_CACHE_TAG } from '~/functions/getActiveNotifications';
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
   const { data } = await request.json();
   const parsedId = parseInt(params.id);
 
-  const result = await prisma.notification.update({
+  const result = await prismaClient.notification.update({
     where: {
       id: parsedId,
     },
@@ -25,7 +25,7 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
 export const DELETE = async (request: Request, { params }: { params: { id: string } }) => {
   const parsedId = parseInt(params.id);
 
-  await prisma.notification.delete({
+  await prismaClient.notification.delete({
     where: {
       id: parsedId,
     },

@@ -7,11 +7,13 @@ import { PLAYERS_CACHE_TAG } from '~/functions/getPlayers';
 import { TIHLDEMembership } from '~/tihlde';
 import { getAllPythonsMemberships } from '~/tihlde/memberships';
 
+import { prismaClient } from '~/prismaClient';
+
 const membershipToName = (membership: TIHLDEMembership) => `${membership.user.first_name} ${membership.user.last_name}`;
 
 export const syncPlayers = async () => {
   try {
-    const playersQuery = prisma.player.findMany();
+    const playersQuery = prismaClient.player.findMany();
     const tihldeMembershipsQuery = getAllPythonsMemberships();
     const [players, memberships] = await Promise.all([playersQuery, tihldeMembershipsQuery]);
 
@@ -19,17 +21,17 @@ export const syncPlayers = async () => {
     const newPlayers: Prisma.Enumerable<Prisma.PlayerCreateManyInput> = memberships.results
       .filter((membership) => !players.some((player) => player.tihlde_user_id === membership.user.user_id))
       .map((membership) => ({ tihlde_user_id: membership.user.user_id, position: Position.KEEPER, name: membershipToName(membership) }));
-    const createPlayersQuery = prisma.player.createMany({ data: newPlayers, skipDuplicates: true });
+    const createPlayersQuery = prismaClient.player.createMany({ data: newPlayers, skipDuplicates: true });
 
     // Deactivate players when they are no longer a member of the group at TIHLDE.org
     const updateActivePlayersQueries = players
       .filter((player) => !memberships.results.some((membership) => membership.user.user_id === player.tihlde_user_id))
-      .map((player) => prisma.player.update({ where: { id: player.id }, data: { active: false } }));
+      .map((player) => prismaClient.player.update({ where: { id: player.id }, data: { active: false } }));
 
     // Reactivate players when which rejoin the group at TIHLDE.org
     const updateDeactivatedPlayersQueries = players
       .filter((player) => !player.active && memberships.results.some((membership) => membership.user.user_id === player.tihlde_user_id))
-      .map((player) => prisma.player.update({ where: { id: player.id }, data: { active: true } }));
+      .map((player) => prismaClient.player.update({ where: { id: player.id }, data: { active: true } }));
 
     // Update the player's name if it have changed at TIHLDE.org
     const updatePlayerNamesQueries = memberships.results
@@ -37,7 +39,9 @@ export const syncPlayers = async () => {
         const player = players.find((p) => membership.user.user_id === p.tihlde_user_id);
         return Boolean(player && membershipToName(membership) !== player.name);
       })
-      .map((membership) => prisma.player.updateMany({ where: { tihlde_user_id: membership.user.user_id }, data: { name: membershipToName(membership) } }));
+      .map((membership) =>
+        prismaClient.player.updateMany({ where: { tihlde_user_id: membership.user.user_id }, data: { name: membershipToName(membership) } }),
+      );
 
     await Promise.all([createPlayersQuery, ...updateActivePlayersQueries, ...updateDeactivatedPlayersQueries, ...updatePlayerNamesQueries]);
 

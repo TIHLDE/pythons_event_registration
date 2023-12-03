@@ -1,12 +1,12 @@
 import { EventType } from '@prisma/client';
 
-import { prisma } from '~/lib/prisma';
+import { prismaClient } from '~/prismaClient';
 
 export const POST = async (request: Request) => {
   const data = await request.json();
   const eventId = Number(data.eventId);
 
-  const event = await prisma.event.findUnique({
+  const event = await prismaClient.event.findUnique({
     where: {
       id: eventId,
       eventType: EventType.MATCH,
@@ -19,7 +19,7 @@ export const POST = async (request: Request) => {
     return Response.json({ error: 'No events with the given ID which does not have a connected match' }, { status: 400 });
   }
 
-  const match = await prisma.match.create({
+  const match = await prismaClient.match.create({
     data: {
       homeGoals: 0,
       awayGoals: 0,
