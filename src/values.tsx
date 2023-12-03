@@ -1,7 +1,8 @@
 import { StatsInit } from '@olros/stats';
 import { EventType } from '@prisma/client';
 
-import { envClientSchema } from '~/clientEnv';
+import { getClientEnv } from '~/clientEnv';
+import type { ClientEnvSchema } from '~/clientEnv';
 
 export type Deadlines = {
   signupBefore: number;
@@ -32,7 +33,7 @@ export type ClubConfig = {
   stats: Pick<StatsInit, 'team' | 'project'>;
 };
 
-const CLUBS_CONFIG: Record<(typeof envClientSchema)['NEXT_PUBLIC_ACTIVE_CLUB'], ClubConfig> = {
+const CLUBS_CONFIG: Record<ClientEnvSchema['NEXT_PUBLIC_ACTIVE_CLUB'], ClubConfig> = {
   PYTHONS_HERRER: {
     name: 'Pythons Herrer',
     url: 'https://pythons.tihlde.org',
@@ -99,7 +100,7 @@ const CLUBS_CONFIG: Record<(typeof envClientSchema)['NEXT_PUBLIC_ACTIVE_CLUB'], 
   },
 };
 
-export const ACTIVE_CLUB = CLUBS_CONFIG[envClientSchema.NEXT_PUBLIC_ACTIVE_CLUB];
+export const ACTIVE_CLUB = CLUBS_CONFIG[getClientEnv().NEXT_PUBLIC_ACTIVE_CLUB];
 
 export const USER_STORAGE_KEY = 'pythons-user';
 export const AUTH_TOKEN_COOKIE_KEY = '~/tihlde-pythons-auth-token';

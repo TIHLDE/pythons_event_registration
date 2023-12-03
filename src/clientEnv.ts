@@ -1,10 +1,12 @@
 import z from 'zod';
 
 const clientEnvSchema = z.object({
-  NEXT_PUBLIC_ACTIVE_CLUB: z.enum(['PYTHONS_HERRER', 'PYTHONS_DAMER']),
+  NEXT_PUBLIC_ACTIVE_CLUB: z.enum(['PYTHONS_HERRER', 'PYTHONS_DAMER']).default('PYTHONS_HERRER'),
 });
 
-const getClientEnv = () => {
+export type ClientEnvSchema = z.infer<typeof clientEnvSchema>;
+
+export const getClientEnv = () => {
   const envClient = clientEnvSchema.safeParse({
     NEXT_PUBLIC_ACTIVE_CLUB: process.env.NEXT_PUBLIC_ACTIVE_CLUB,
   });
@@ -15,5 +17,3 @@ const getClientEnv = () => {
   }
   return envClient.data;
 };
-
-export const envClientSchema = getClientEnv();
