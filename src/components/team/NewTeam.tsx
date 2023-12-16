@@ -33,9 +33,9 @@ export const NewTeam = () => {
                 autoFocus
                 errorMessage={fieldState.error?.message}
                 isInvalid={Boolean(fieldState.error?.message)}
+                isRequired
                 label='Navn'
                 onChange={onChange}
-                required
                 value={value}
                 variant='faded'
               />

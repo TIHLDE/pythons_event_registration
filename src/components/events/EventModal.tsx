@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@nextui-org/button';
-import { Input } from '@nextui-org/input';
+import { Input, Textarea } from '@nextui-org/input';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Event, EventType } from '@prisma/client';
@@ -32,11 +32,12 @@ type FormDataProps = {
   time: any;
   location: Event['location'];
   team: Event['teamId'];
+  description: Event['description'];
 };
 
 const dateTimeFormat = "yyyy-MM-dd'T'HH:mm";
 
-const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
+export const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
   const { handleSubmit, control, watch } = useForm<FormDataProps>({
     defaultValues: {
       eventType: event?.eventType ?? '',
@@ -44,6 +45,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
       time: event && event.time ? format(new Date(event.time), dateTimeFormat) : format(setMinutes(new Date(), 0), dateTimeFormat),
       location: event?.location ?? '',
       team: event?.teamId ?? null,
+      description: event?.description ?? '',
     },
   });
   const { data: teams = [] } = useTeams();
@@ -76,6 +78,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
             render={({ field: { onChange, value } }) => (
               <Select
                 isDisabled={Boolean(event)}
+                isRequired
                 items={eventTypesList}
                 label='Type'
                 onChange={(e) => onChange(e.target.value)}
@@ -93,7 +96,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
             <Controller
               control={control}
               name='title'
-              render={({ field }) => <Input label={watchEventType === EventType.MATCH ? 'Motstander' : 'Tittel'} required variant='faded' {...field} />}
+              render={({ field }) => <Input isRequired label={watchEventType === EventType.MATCH ? 'Motstander' : 'Tittel'} variant='faded' {...field} />}
             />
           )}
           {watchEventType === EventType.MATCH && teams.length > 0 && (
@@ -102,6 +105,7 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
               name='team'
               render={({ field: { onChange, value } }) => (
                 <Select
+                  isRequired
                   items={teams}
                   label='Lag'
                   onChange={(e) => onChange(e.target.value)}
@@ -120,9 +124,16 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
           <Controller
             control={control}
             name='time'
-            render={({ field }) => <Input label='Tidspunkt' min={MIN_DATE} placeholder='Tidspunkt' required type='datetime-local' variant='faded' {...field} />}
+            render={({ field }) => (
+              <Input isRequired label='Tidspunkt' min={MIN_DATE} placeholder='Tidspunkt' type='datetime-local' variant='faded' {...field} />
+            )}
           />
-          <Controller control={control} name='location' render={({ field }) => <Input label='Sted' required variant='faded' {...field} />} />
+          <Controller control={control} name='location' render={({ field }) => <Input isRequired label='Sted' variant='faded' {...field} />} />
+          <Controller
+            control={control}
+            name='description'
+            render={({ field }) => <Textarea label='Beskrivelse' maxRows={5} minRows={2} variant='faded' {...field} />}
+          />
         </ModalBody>
         <ModalFooter>
           <Button color='danger' onPress={handleClose} variant='flat'>
@@ -136,5 +147,3 @@ const EventModal = ({ event, open, handleClose, title }: EventModalProps) => {
     </Modal>
   );
 };
-
-export default EventModal;

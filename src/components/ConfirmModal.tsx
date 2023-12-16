@@ -10,7 +10,7 @@ export type EventModalProps = {
   onConfirm: () => void;
 } & ButtonProps;
 
-const ConfirmModal = ({ title, description = 'Er du helt sikker?', onConfirm, children, ...props }: EventModalProps) => {
+export const ConfirmModal = ({ title, description = 'Er du helt sikker?', onConfirm, children, ...props }: EventModalProps) => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   return (
     <>
@@ -42,5 +42,3 @@ const ConfirmModal = ({ title, description = 'Er du helt sikker?', onConfirm, ch
     </>
   );
 };
-
-export default ConfirmModal;

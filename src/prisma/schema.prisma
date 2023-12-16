@@ -66,6 +66,7 @@ model Event {
   title         String?
   time          DateTime
   location      String
+  description   String          @default("")
   finesGiven    Boolean         @default(false)
   eventType     EventType       @default(SOCIAL)
   teamId        Int?

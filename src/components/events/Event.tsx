@@ -1,8 +1,9 @@
 import { Divider } from '@nextui-org/divider';
+import { ScrollShadow } from '@nextui-org/scroll-shadow';
 import { Tooltip } from '@nextui-org/tooltip';
 import { isPast } from 'date-fns';
 import { Suspense } from 'react';
-import { MdLocationOn, MdOutlineGroups, MdWatchLater } from 'react-icons/md';
+import { MdInfoOutline, MdLocationOn, MdOutlineGroups, MdWatchLater } from 'react-icons/md';
 
 import { ExtendedEvent } from '~/functions/event';
 import { getSignedInUser } from '~/functions/getUser';
@@ -10,7 +11,7 @@ import { getSignedInUser } from '~/functions/getUser';
 import EventRegistration from '~/components/events/EventRegistration';
 import EventRelatedMatches from '~/components/events/EventRelatedMatches';
 import EventWeather from '~/components/events/EventWeather';
-import MatchModal, { MatchModalProps } from '~/components/events/MatchModal';
+import { MatchModal, type MatchModalProps } from '~/components/events/MatchModal';
 import PlayersModal from '~/components/events/PlayersModal';
 import { FormatDate } from '~/components/FormatDate';
 
@@ -52,6 +53,17 @@ const Event = async ({ eventDetails, relatedMatches }: EventProps) => {
         <Suspense fallback={null}>
           <EventWeather eventDetails={eventDetails} />
         </Suspense>
+
+        {eventDetails.description && (
+          <>
+            <Tooltip content='Lag' showArrow>
+              <MdInfoOutline className='h-6 w-6' />
+            </Tooltip>
+            <ScrollShadow as='p' className='text-md max-h-[150px] whitespace-break-spaces' hideScrollBar>
+              {eventDetails.description}
+            </ScrollShadow>
+          </>
+        )}
 
         <div className='col-span-2 flex gap-2'>
           <PlayersModal eventType={eventDetails.eventType} registrations={eventDetails?.willArrive || []} title='Påmeldt' />

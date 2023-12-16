@@ -68,12 +68,14 @@ const NewMessage = ({ alwaysShow, notification, handleClose }: NewMessageProps) 
           <Controller
             control={control}
             name='message'
-            render={({ field }) => <Input className='flex-1' label='Beskjed' required variant='faded' {...field} />}
+            render={({ field }) => <Input className='flex-1' isRequired label='Beskjed' variant='faded' {...field} />}
           />
           <Controller
             control={control}
             name='expiringDate'
-            render={({ field }) => <Input className='w-fit' label='Utløper' placeholder='Utløper' required type='datetime-local' variant='faded' {...field} />}
+            render={({ field }) => (
+              <Input className='w-fit' isRequired label='Utløper' placeholder='Utløper' type='datetime-local' variant='faded' {...field} />
+            )}
           />
           <Button color='primary' type='submit' variant='solid'>
             {notification ? 'Oppdater' : 'Opprett'}

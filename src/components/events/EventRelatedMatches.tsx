@@ -6,7 +6,7 @@ import { useDisclosure } from '@nextui-org/use-disclosure';
 import { motion, useWillChange } from 'framer-motion';
 import { useCallback } from 'react';
 
-import MatchModal, { MatchModalProps } from '~/components/events/MatchModal';
+import { MatchModal, type MatchModalProps } from '~/components/events/MatchModal';
 
 import { stats } from '~/stats';
 

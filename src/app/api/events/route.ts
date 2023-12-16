@@ -16,6 +16,7 @@ export const POST = async (request: Request) => {
       location: data.location,
       time: new Date(data.time),
       eventType: data.eventType,
+      description: data.description,
       ...(data.title &&
         data.eventType !== EventType.TRAINING && {
           title: data.title,

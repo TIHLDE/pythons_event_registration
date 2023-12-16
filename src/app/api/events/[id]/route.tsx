@@ -15,7 +15,8 @@ export const PUT = async (request: Request, { params }: { params: { id: string }
       title: data.eventType === EventType.TRAINING ? '' : data.title,
       time: data.time,
       location: data.location,
-      teamId: data.eventType === EventType.MATCH && data.team ? data.team : undefined,
+      description: data.description,
+      teamId: data.eventType === EventType.MATCH && data.team ? Number(data.team) : undefined,
       finesGiven: data.finesGiven ?? undefined,
     },
   });

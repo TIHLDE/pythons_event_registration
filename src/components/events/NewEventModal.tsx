@@ -4,7 +4,7 @@ import { Button } from '@nextui-org/button';
 import { useDisclosure } from '@nextui-org/use-disclosure';
 import { MdAdd } from 'react-icons/md';
 
-import EventModal from '~/components/events/EventModal';
+import { EventModal } from '~/components/events/EventModal';
 
 export const NewEventModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

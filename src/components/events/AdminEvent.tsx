@@ -14,9 +14,9 @@ import { useCallback, useState } from 'react';
 
 import { ExtendedEvent } from '~/functions/event';
 
-import ConfirmModal from '~/components/ConfirmModal';
-import EventModal from '~/components/events/EventModal';
-import MatchModal from '~/components/events/MatchModal';
+import { ConfirmModal } from '~/components/ConfirmModal';
+import { EventModal } from '~/components/events/EventModal';
+import { MatchModal } from '~/components/events/MatchModal';
 
 import { eventTypeBgGradient, eventTypesMap } from '~/utils';
 
@@ -69,6 +69,12 @@ const AdminEvent = ({ event }: AdminEventProps) => {
       <p className='text-md'>{format(new Date(event.time), 'HH:mm')}</p>
       <p className='text-md font-bold'>Sted</p>
       <p className='text-md'>{event.location}</p>
+      {event.description && (
+        <>
+          <p className='text-md font-bold'>Beskrivelse</p>
+          <p className='text-md line-clamp-1'>{event.description}</p>
+        </>
+      )}
       {event.eventType === EventType.MATCH && isPast(new Date(event.time)) && (
         <>
           <Divider className='col-span-2 my-2' />

@@ -10,7 +10,7 @@ import { Controller, useForm } from 'react-hook-form';
 
 import { useMatchEvents, usePlayers } from '~/hooks/useQuery';
 
-import ConfirmModal from '~/components/ConfirmModal';
+import { ConfirmModal } from '~/components/ConfirmModal';
 import LoadingLogo from '~/components/LoadingLogo';
 
 import { MATCH_EVENT_TYPES, positionsList } from '~/utils';
@@ -117,9 +117,9 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
               render={({ field: { onChange, value } }) => (
                 <Select
                   isDisabled={isPlayersLoading}
+                  isRequired
                   label={isPlayersLoading ? 'Laster spillere...' : 'Velg spiller'}
                   onChange={(e) => onChange(e.target.value)}
-                  required
                   selectedKeys={new Set(value ? [value] : [])}
                   variant='faded'>
                   {playersByPosition.map((position) => (

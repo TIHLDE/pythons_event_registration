@@ -126,7 +126,7 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
                 <Controller
                   control={control}
                   name={'reason'}
-                  render={({ field: { onChange, value } }) => <Input autoFocus label='Grunn' onChange={onChange} required value={value} variant='faded' />}
+                  render={({ field: { onChange, value } }) => <Input autoFocus isRequired label='Grunn' onChange={onChange} value={value} variant='faded' />}
                   rules={{ required: 'Du må oppgi en grunn' }}
                 />
               )}

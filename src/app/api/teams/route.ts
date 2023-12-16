@@ -1,6 +1,7 @@
 import { revalidateTag } from 'next/cache';
 
 import { getTeams, TEAMS_CACHE_TAG } from '~/functions/getTeams';
+
 import { prismaClient } from '~/prismaClient';
 
 export const dynamic = 'force-dynamic';

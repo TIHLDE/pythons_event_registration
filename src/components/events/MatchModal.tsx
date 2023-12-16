@@ -33,7 +33,7 @@ type FormDataProps = {
   awayGoals: string;
 };
 
-const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
+export const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
   const router = useRouter();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -92,13 +92,13 @@ const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
                     control={control}
                     name='homeGoals'
                     render={({ field }) => (
-                      <Input fullWidth inputMode='numeric' label={`Mål av oss (${event.team?.name})`} required variant='faded' {...field} />
+                      <Input fullWidth inputMode='numeric' isRequired label={`Mål av oss (${event.team?.name})`} variant='faded' {...field} />
                     )}
                   />
                   <Controller
                     control={control}
                     name='awayGoals'
-                    render={({ field }) => <Input fullWidth inputMode='numeric' label={`Mål av ${event.title}`} required variant='faded' {...field} />}
+                    render={({ field }) => <Input fullWidth inputMode='numeric' isRequired label={`Mål av ${event.title}`} variant='faded' {...field} />}
                   />
                 </div>
                 <Button color='primary' type='submit' variant='solid'>
@@ -119,5 +119,3 @@ const MatchModal = ({ event, isAdmin = false, className }: MatchModalProps) => {
     </>
   );
 };
-
-export default MatchModal;
