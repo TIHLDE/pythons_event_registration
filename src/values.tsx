@@ -135,13 +135,8 @@ const CLUBS_CONFIG: Record<ClientEnvSchema['NEXT_PUBLIC_ACTIVE_CLUB'], ClubConfi
     initialSemester: '2024-01',
     rules: {
       [EventType.TRAINING]: {
-        paragraph: '§1.01 - Treningsregistrering',
+        paragraph: '§2.01 - Treningsregistrering',
         deadlines: { signupBefore: 4 },
-        fines: { noRegistration: 1, tooLateRegistration: 1 },
-      },
-      [EventType.MATCH]: {
-        paragraph: '§2.01 - Kampregistrering',
-        deadlines: { signupBefore: 48 },
         fines: { noRegistration: 2, tooLateRegistration: 2 },
       },
     },
