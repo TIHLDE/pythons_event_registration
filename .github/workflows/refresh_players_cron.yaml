@@ -18,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        url: ['https://pythons.tihlde.org']
+        url: ['https://pythons.tihlde.org', 'https://pythons-damer.tihlde.org']
 
     steps:
       - name: Synchronize users
