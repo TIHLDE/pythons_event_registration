@@ -5,11 +5,11 @@ import { redirect } from 'next/navigation';
 import { PageProps } from '~/types';
 
 import { getTeams } from '~/functions/getTeams';
-import { prismaClient } from '~/prismaClient';
 
 import { StatisticsFilters } from '~/components/statistics/StatisticsFilters';
 import { StatisticsTable } from '~/components/statistics/StatisticsTable';
 
+import { prismaClient } from '~/prismaClient';
 import { getSemesters } from '~/utils';
 
 export const metadata: Metadata = {

@@ -1,12 +1,12 @@
 import { Link } from '@nextui-org/link';
-import { Event, EventType, Player, Registrations } from '@prisma/client';
+import { Event, Player, Registrations } from '@prisma/client';
 import { subHours, subWeeks } from 'date-fns';
 
-import { prismaClient } from '~/prismaClient';
 import { FineCreate } from '~/tihlde/fines';
 
 import { FinesAccordion } from '~/components/fines/FinesAccordion';
 
+import { prismaClient } from '~/prismaClient';
 import { ACTIVE_CLUB } from '~/values';
 
 const getData = async () => {

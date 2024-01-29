@@ -145,7 +145,7 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
                   {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
                 </Button>
                 {registrationDeadline !== undefined && (
-                  <Tooltip showArrow content={format(registrationDeadline, "d. MMMM yyyy' 'HH:mm", { locale: nb })}>
+                  <Tooltip content={format(registrationDeadline, "d. MMMM yyyy' 'HH:mm", { locale: nb })} showArrow>
                     <p className='text-center text-sm'>
                       {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
                         locale: nb,

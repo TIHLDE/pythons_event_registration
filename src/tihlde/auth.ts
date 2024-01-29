@@ -2,9 +2,9 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { hoursToSeconds } from 'date-fns';
 import { cookies } from 'next/headers';
 
-import { prismaClient } from '~/prismaClient';
 import { isMemberOfPythonsGroup } from '~/tihlde/memberships';
 
+import { prismaClient } from '~/prismaClient';
 import { MOCK_TIHLDE_USER_ID, SHOULD_MOCK_TIHLDE_API } from '~/serverEnv';
 import { ACTIVE_CLUB, AUTH_TOKEN_COOKIE_KEY, TIHLDE_API_URL, USER_STORAGE_KEY } from '~/values';
 

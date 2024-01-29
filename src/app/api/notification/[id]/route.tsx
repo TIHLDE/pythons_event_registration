@@ -1,6 +1,7 @@
 import { revalidateTag } from 'next/cache';
 
 import { NOTIFICATIONS_CACHE_TAG } from '~/functions/getActiveNotifications';
+
 import { prismaClient } from '~/prismaClient';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {

@@ -2,6 +2,7 @@ import { EventType } from '@prisma/client';
 import HttpStatusCode from 'http-status-typed';
 
 import { getSignedInUserOrThrow } from '~/functions/getUser';
+
 import { prismaClient } from '~/prismaClient';
 
 export const POST = async (request: Request) => {

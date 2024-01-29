@@ -1,11 +1,10 @@
 import { Divider } from '@nextui-org/divider';
 
-import { prismaClient } from '~/prismaClient';
-
 import { NewTeam } from '~/components/team/NewTeam';
 import { RefreshPlayers } from '~/components/team/RefreshPlayers';
 import TeamOverview from '~/components/team/TeamOverview';
 
+import { prismaClient } from '~/prismaClient';
 import { positionsList } from '~/utils';
 
 const getData = async () => {

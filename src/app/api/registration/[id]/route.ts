@@ -1,6 +1,7 @@
 import HttpStatusCode from 'http-status-typed';
 
 import { getSignedInUserOrThrow } from '~/functions/getUser';
+
 import { prismaClient } from '~/prismaClient';
 
 export const PUT = async (request: Request, { params }: { params: { id: string } }) => {

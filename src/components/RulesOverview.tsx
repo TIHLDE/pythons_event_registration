@@ -1,10 +1,10 @@
+import type { EventType } from '@prisma/client';
 import { MdGavel } from 'react-icons/md';
 
 import { StandaloneExpand, StandaloneExpandProps } from '~/components/Expand';
 
-import { ACTIVE_CLUB, Rule } from '~/values';
 import { eventTypesMap } from '~/utils';
-import type { EventType } from '@prisma/client';
+import { ACTIVE_CLUB, Rule } from '~/values';
 
 const amountToText = (amount: number) => `${amount} ${amount > 1 ? 'bøter' : 'bot'}`;
 
@@ -38,7 +38,7 @@ export const RulesOverview = async (props: Partial<StandaloneExpandProps>) => {
       secondary='Gjeldene frister for påmelding og tilhørende bøtesatser'
       {...props}>
       {Object.entries(ACTIVE_CLUB.rules).map(([eventType, rule]) => (
-        <div key={eventType} className='mb-2'>
+        <div className='mb-2' key={eventType}>
           <h4 className='font-bold'>{eventTypesMap[eventType as EventType].label}</h4>
           <p className='ml-2 whitespace-break-spaces text-sm'>{createRuleDescription(rule)}</p>
         </div>

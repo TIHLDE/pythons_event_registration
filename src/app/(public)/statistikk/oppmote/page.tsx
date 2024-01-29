@@ -6,10 +6,11 @@ import { redirect } from 'next/navigation';
 import { PageProps } from '~/types';
 
 import { getTeams } from '~/functions/getTeams';
-import { prismaClient } from '~/prismaClient';
 
 import { AttendanceFilters } from '~/components/attendance/AttendanceFilters';
 import { AttendanceTable } from '~/components/attendance/AttendanceTable';
+
+import { prismaClient } from '~/prismaClient';
 
 export const metadata: Metadata = {
   title: 'Oppmøte - TIHLDE Pythons',

@@ -1,6 +1,7 @@
 import { revalidateTag } from 'next/cache';
 
 import { PLAYERS_CACHE_TAG } from '~/functions/getPlayers';
+
 import { prismaClient } from '~/prismaClient';
 
 export const GET = async (_: Request, { params }: { params: { id: string } }) => {
