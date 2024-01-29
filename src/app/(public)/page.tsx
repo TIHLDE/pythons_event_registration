@@ -14,6 +14,7 @@ import Event from '~/components/events/Event';
 import { EventsFilters } from '~/components/events/EventsFilters';
 import { MatchModalProps } from '~/components/events/MatchModal';
 import { ActiveMessages } from '~/components/messages/ActiveMessages';
+import { RulesOverview } from '~/components/RulesOverview';
 
 export const metadata: Metadata = {
   title: 'Kalender - TIHLDE Pythons',
@@ -80,6 +81,7 @@ const Home = async ({ searchParams }: PageProps) => {
         </div>
       ))}
       <CalendarSubscription className='mt-4' />
+      <RulesOverview />
     </div>
   );
 };

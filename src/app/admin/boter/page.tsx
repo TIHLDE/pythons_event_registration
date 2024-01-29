@@ -33,15 +33,13 @@ const getData = async () => {
 
   const [events, players] = await Promise.all([eventsQuery, playersQuery]);
 
-  // Need to insert every player if either late registration or no registration
   const eventsWithFines = events
-    .filter((event) => event.eventType === EventType.TRAINING || event.eventType === EventType.MATCH)
     .map<EventWithFines | undefined>((event) => {
       const rule = ACTIVE_CLUB.rules[event.eventType];
       if (!rule) {
         return;
       }
-      const playersWithoutRegistration = players
+      const playersWithFine = players
         .map<ProposedFineWithDate | undefined>((player) => {
           if (event.teamId && player.teamId !== event.teamId) {
             return;
@@ -51,40 +49,49 @@ const getData = async () => {
             return;
           }
 
-          const paragraph = rule.paragraph;
-
           const registration = event.registrations.find((registration) => registration.playerId === player.id);
           if (!registration) {
-            const finesAmount = rule.fines.noRegistration;
-            return { player: player, reason: 'Ikke registrert seg', amount: finesAmount, description: paragraph };
+            const fine = rule.fines.noRegistration;
+            return { player, reason: 'Ikke registrert seg', amount: fine.amount, description: fine.paragraph };
           }
 
           const deadline = subHours(event.time, rule.deadlines.signupBefore);
-          const finesAmount = rule.fines.tooLateRegistration;
+          const registrationDate = registration.updatedAt ?? registration.time;
 
-          if (registration.updatedAt && registration.updatedAt > deadline) {
+          if (registrationDate > deadline) {
+            const reasonPrefix = registration.updatedAt ? 'Oppdaterte registrering' : 'Registrerte seg';
+            if (!registration.willArrive && rule.fines.tooLateRegistrationNotAttending) {
+              return {
+                player,
+                reason: `${reasonPrefix} for sent og kommer ikke`,
+                time: registrationDate,
+                amount: rule.fines.tooLateRegistrationNotAttending.amount,
+                description: rule.fines.tooLateRegistrationNotAttending.paragraph,
+              };
+            }
             return {
-              player: player,
-              reason: 'Oppdaterte registrering for sent',
-              time: registration.updatedAt,
-              amount: finesAmount,
-              description: paragraph,
+              player,
+              reason: `${reasonPrefix} for sent`,
+              time: registrationDate,
+              amount: rule.fines.tooLateRegistration.amount,
+              description: rule.fines.tooLateRegistration.paragraph,
             };
           }
-          if (registration.time > deadline) {
+
+          if (!registration.willArrive && rule.fines.registrationNotAttending) {
             return {
-              player: player,
-              reason: 'Registrerte seg for sent',
-              time: registration.time,
-              amount: finesAmount,
-              description: paragraph,
+              player,
+              reason: `Kommer ikke`,
+              time: registrationDate,
+              amount: rule.fines.registrationNotAttending.amount,
+              description: rule.fines.registrationNotAttending.paragraph,
             };
           }
         })
         .filter(Boolean);
       return {
         ...event,
-        fines: playersWithoutRegistration as unknown as ProposedFine[],
+        fines: playersWithFine as unknown as ProposedFine[],
       };
     })
     .filter(Boolean) as EventWithFines[];

@@ -32,7 +32,7 @@ const Admin = () => {
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         <AdminLink description='Administrer tidligere og kommende arrangementer' path='/admin/arrangementer' title='🎉 Arrangementer' />
         <AdminLink description='Opprett, rediger eller slett beskjeder' path='/admin/beskjeder' title='📨 Beskjeder' />
-        <AdminLink description='Se hvem av gutta som fortjener bøter basert på registrering' path='/admin/boter' title='🤫 Bøter' />
+        <AdminLink description='Se hvem som fortjener bøter basert på registrering' path='/admin/boter' title='🤫 Bøter' />
         <AdminLink description='Se lag med spillere og gjør endringer i spillerstallen' path='/admin/lag' title='👨‍👧 Lag og spillere' />
         <AdminLink
           description='Sjekk hvem som ikke har gitt bøter siden forrige botfest'

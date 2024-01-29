@@ -15,16 +15,24 @@ export type Deadlines = {
   signupBefore: number;
 };
 
+export type Fine = {
+  /** Name of paragraph for this fine */
+  paragraph: string;
+  amount: number;
+};
+
 export type Fines = {
-  /** How many fines a non-existing registration gives */
-  noRegistration: number;
-  /** How many fines a late registration gives */
-  tooLateRegistration: number;
+  /** When a player doesn't register for an event */
+  noRegistration: Fine;
+  /** When a player registers after the deadline and will attend the event */
+  tooLateRegistration: Fine;
+  /** When a player registers after the deadline and won't attend the event, overrides `tooLateRegistration` if given */
+  tooLateRegistrationNotAttending?: Fine;
+  /** When a player registers that they won't attend the event, too late registration rules overrides this */
+  registrationNotAttending?: Fine;
 };
 
 export type Rule = {
-  /** Name of paragraph for this rule */
-  paragraph: string;
   deadlines: Deadlines;
   fines: Fines;
 };
@@ -79,14 +87,18 @@ const CLUBS_CONFIG: Record<ClientEnvSchema['NEXT_PUBLIC_ACTIVE_CLUB'], ClubConfi
     initialSemester: '2022-07',
     rules: {
       [EventType.TRAINING]: {
-        paragraph: '§1.01 - Treningsregistrering',
         deadlines: { signupBefore: 4 },
-        fines: { noRegistration: 1, tooLateRegistration: 1 },
+        fines: {
+          noRegistration: { amount: 1, paragraph: '§1.01 - Treningsregistrering' },
+          tooLateRegistration: { amount: 1, paragraph: '§1.01 - Treningsregistrering' },
+        },
       },
       [EventType.MATCH]: {
-        paragraph: '§2.01 - Kampregistrering',
         deadlines: { signupBefore: 48 },
-        fines: { noRegistration: 2, tooLateRegistration: 2 },
+        fines: {
+          noRegistration: { amount: 2, paragraph: '§2.01 - Kampregistrering' },
+          tooLateRegistration: { amount: 2, paragraph: '§2.01 - Kampregistrering' },
+        },
       },
     },
     leagues: {
@@ -135,9 +147,28 @@ const CLUBS_CONFIG: Record<ClientEnvSchema['NEXT_PUBLIC_ACTIVE_CLUB'], ClubConfi
     initialSemester: '2024-01',
     rules: {
       [EventType.TRAINING]: {
-        paragraph: '§2.01 - Treningsregistrering',
-        deadlines: { signupBefore: 4 },
-        fines: { noRegistration: 2, tooLateRegistration: 2 },
+        deadlines: { signupBefore: 6 },
+        fines: {
+          noRegistration: { amount: 1, paragraph: '§4.02 - Svarfrist' },
+          tooLateRegistration: { amount: 1, paragraph: '§4.01 - Forsent svar' },
+          tooLateRegistrationNotAttending: { amount: 2, paragraph: '§2.02 - Oppmøte' },
+        },
+      },
+      [EventType.MATCH]: {
+        deadlines: { signupBefore: 72 },
+        fines: {
+          noRegistration: { amount: 1, paragraph: '§4.02 - Svarfrist' },
+          tooLateRegistration: { amount: 1, paragraph: '§4.01 - Forsent svar' },
+          tooLateRegistrationNotAttending: { amount: 2, paragraph: '§5.06 - Avmelding' },
+        },
+      },
+      [EventType.SOCIAL]: {
+        deadlines: { signupBefore: 5 * 24 },
+        fines: {
+          noRegistration: { amount: 1, paragraph: '§4.02 - Svarfrist' },
+          tooLateRegistration: { amount: 1, paragraph: '§4.01 - Forsent svar' },
+          registrationNotAttending: { amount: 1, paragraph: '§1.01 - Oppmøte' },
+        },
       },
     },
     leagues: {

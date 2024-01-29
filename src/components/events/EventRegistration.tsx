@@ -5,6 +5,7 @@ import { Card, CardBody } from '@nextui-org/card';
 import { Divider } from '@nextui-org/divider';
 import { Input } from '@nextui-org/input';
 import { Radio, RadioGroup } from '@nextui-org/radio';
+import { Tooltip } from '@nextui-org/tooltip';
 import { EventType, Player, Registrations } from '@prisma/client';
 import axios from 'axios';
 import { format, formatDistanceToNow, isFuture, isPast, subHours } from 'date-fns';
@@ -144,12 +145,14 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
                   {userHasRegistrated ? 'Endre' : 'Registrer'} oppmøte
                 </Button>
                 {registrationDeadline !== undefined && (
-                  <p className='text-center text-sm'>
-                    {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
-                      locale: nb,
-                      addSuffix: true,
-                    })} - kl. ${format(registrationDeadline, 'HH:mm')}`}
-                  </p>
+                  <Tooltip showArrow content={format(registrationDeadline, "d. MMMM yyyy' 'HH:mm", { locale: nb })}>
+                    <p className='text-center text-sm'>
+                      {`Påmeldingsfrist ${isPast(registrationDeadline) ? 'var ' : ''}${formatDistanceToNow(registrationDeadline, {
+                        locale: nb,
+                        addSuffix: true,
+                      })} - kl. ${format(registrationDeadline, 'HH:mm')}`}
+                    </p>
+                  </Tooltip>
                 )}
               </>
             )
