@@ -1,6 +1,6 @@
 import { Position, Team } from '@prisma/client';
 
-import PlayersList, { PlayersListProps } from '~/components/team/PlayersList';
+import { PlayersList, type PlayersListProps } from '~/components/team/PlayersList';
 import { TeamDelete } from '~/components/team/TeamDelete';
 
 export type TeamOverviewProps = {

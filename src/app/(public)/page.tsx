@@ -1,6 +1,6 @@
 import { EventType } from '@prisma/client';
 import { addWeeks, endOfWeek, format, getWeek, startOfWeek } from 'date-fns';
-import nb from 'date-fns/locale/nb';
+import { nb } from 'date-fns/locale';
 import type { Metadata } from 'next';
 import { compareTwoStrings } from 'string-similarity';
 

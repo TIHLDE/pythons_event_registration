@@ -5,7 +5,7 @@ import { Input } from '@nextui-org/input';
 import { useDisclosure } from '@nextui-org/use-disclosure';
 import { Notification } from '@prisma/client';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { addHours, format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -29,7 +29,7 @@ const NewMessage = ({ alwaysShow, notification, handleClose }: NewMessageProps) 
   const dateTimeFormat = "yyyy-MM-dd'T'HH:mm";
   const { control, reset, handleSubmit } = useForm<FormDataProps>({
     defaultValues: {
-      expiringDate: format(notification ? new Date(notification.expiringDate) : new Date(), dateTimeFormat),
+      expiringDate: format(notification ? new Date(notification.expiringDate) : addHours(new Date(), 24), dateTimeFormat),
       message: notification?.message ?? '',
     },
   });

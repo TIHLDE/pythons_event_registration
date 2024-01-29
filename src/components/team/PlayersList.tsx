@@ -10,7 +10,7 @@ export type PlayersListProps = {
   players: Player[];
 };
 
-const PlayersList = ({ title, players }: PlayersListProps) => {
+export const PlayersList = ({ title, players }: PlayersListProps) => {
   return (
     <Card className='flex flex-1 flex-col gap-2 rounded-md p-2'>
       <h3 className='font-cabin text-2xl font-bold'>
@@ -30,5 +30,3 @@ const PlayersList = ({ title, players }: PlayersListProps) => {
     </Card>
   );
 };
-
-export default PlayersList;

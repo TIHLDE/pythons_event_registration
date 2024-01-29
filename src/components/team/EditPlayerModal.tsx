@@ -7,7 +7,8 @@ import { Select, SelectItem } from '@nextui-org/select';
 import { useDisclosure } from '@nextui-org/use-disclosure';
 import { Player } from '@prisma/client';
 import axios from 'axios';
-import { format, parseJSON } from 'date-fns';
+import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -57,7 +58,7 @@ const EditPlayerModal = ({ player }: EditPlayerModalProps) => {
           <ModalBody className='flex flex-col gap-4'>
             <p className='text-md whitespace-break-spaces'>{`Navn: ${player.name}
 TIHLDE-id: ${player.tihlde_user_id}
-Opprettet: ${format(parseJSON(player.createdAt), 'dd-MM-yyyy')}
+Opprettet: ${format(player.createdAt, 'dd. MMMM yyyy', { locale: nb })}
 `}</p>
             <Controller
               control={control}
