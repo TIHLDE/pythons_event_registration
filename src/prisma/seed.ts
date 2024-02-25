@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { EventType, Position } from '@prisma/client';
+import { EventType, LeadershipRole, Position } from '@prisma/client';
 import { addDays, set, subDays } from 'date-fns';
 
 import { prismaClient } from '../prismaClient';
@@ -25,6 +25,9 @@ async function seed() {
   await prismaClient.player.deleteMany();
   await prismaClient.registrations.deleteMany();
   await prismaClient.team.deleteMany();
+  await prismaClient.leadershipPeriod.deleteMany();
+  await prismaClient.leadershipPeriodRole.deleteMany();
+
   console.timeEnd('🧹 Cleaned up the database...');
 
   console.time('👨‍👨‍👦‍👦 Created teams...');
@@ -74,6 +77,20 @@ async function seed() {
         teamId: 2,
         disableRegistrations: true,
         createdAt: subDays(new Date(), 18),
+      },
+      {
+        name: 'Nils Nilsen',
+        tihlde_user_id: 'nils_user_id',
+        position: Position.MIDTFIELDER,
+        teamId: 1,
+        createdAt: subDays(new Date(), 19),
+      },
+      {
+        name: 'Hans Hansen',
+        tihlde_user_id: 'hans_user_id',
+        position: Position.STRIKER,
+        teamId: 1,
+        createdAt: subDays(new Date(), 20),
       },
     ],
   });
@@ -126,6 +143,30 @@ async function seed() {
     },
   });
   console.timeEnd('🎭 Created events...');
+
+  console.time('🗣️ Created leaderships...');
+  await prismaClient.leadershipPeriod.createMany({
+    data: [
+      { id: 1, startDate: subDays(new Date(), 400), endDate: subDays(new Date(), 30) },
+      { id: 2, startDate: subDays(new Date(), 30), endDate: addDays(new Date(), 340) },
+    ],
+  });
+
+  await prismaClient.leadershipPeriodRole.createMany({
+    data: [
+      { role: LeadershipRole.COACH, periodId: 1, playerId: 1 },
+      { role: LeadershipRole.TEAM_LEADER, periodId: 1, playerId: 2 },
+      { role: LeadershipRole.COACH, periodId: 2, playerId: 1 },
+      { role: LeadershipRole.TEAM_LEADER, periodId: 2, playerId: 2 },
+      { role: LeadershipRole.ASSISTANT_COACH, periodId: 2, playerId: 3 },
+      { role: LeadershipRole.FINANCE_MANAGER, periodId: 2, playerId: 4 },
+      { role: LeadershipRole.FINES_MANAGER, periodId: 2, playerId: 5 },
+      { role: LeadershipRole.RESERVE_TEAM_COACH, periodId: 2, playerId: 6 },
+      { role: LeadershipRole.SOCIAL_MANAGER, periodId: 2, playerId: 7 },
+    ],
+  });
+
+  console.timeEnd('🗣️ Created leaderships...');
 
   console.timeEnd(`🌱 Database has been seeded`);
 }
