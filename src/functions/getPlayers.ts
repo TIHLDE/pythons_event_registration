@@ -20,10 +20,10 @@ export const getPlayer = unstable_cache(
 );
 
 export const getPlayers = unstable_cache(
-  async (): Promise<Player[]> => {
+  async (includeNotActive?: boolean): Promise<Player[]> => {
     return prismaClient.player.findMany({
       where: {
-        active: true,
+        active: includeNotActive ? undefined : true,
       },
       orderBy: { name: 'asc' },
     });

@@ -40,7 +40,7 @@ const MatchEvents = ({ event, isAdmin = false }: MatchEventsProps) => {
   const selectedPlayer = watch('player');
 
   const { data: matchEvents, refetch } = useMatchEvents(event.match?.id ?? -1, { enabled: Boolean(event.match?.id) });
-  const { data: players = [], isLoading: isPlayersLoading } = usePlayers({ enabled: isAdmin });
+  const { data: players = [], isLoading: isPlayersLoading } = usePlayers(false, { enabled: isAdmin });
 
   const playersByPosition = useMemo(
     () =>

@@ -13,10 +13,10 @@ export const QUERY_CONFIG = {
     queryFn: () => fetcher<Team[]>('/api/teams'),
     staleTime: minutesToMilliseconds(1),
   }),
-  UsePlayers: (options?: Options) => ({
+  UsePlayers: (includeNotActive: boolean = false, options?: Options) => ({
     ...options,
-    queryKey: ['players'],
-    queryFn: () => fetcher<Player[]>('/api/players'),
+    queryKey: ['players', includeNotActive],
+    queryFn: () => fetcher<Player[]>(`/api/players${includeNotActive ? '?includeNotActive=true' : ''}`),
     staleTime: minutesToMilliseconds(1),
   }),
   UseMatchEvents: (matchId: MatchEvent['id'], options?: Options) => ({
@@ -28,5 +28,5 @@ export const QUERY_CONFIG = {
 } satisfies Record<string, (...args: never[]) => UseQueryOptions>;
 
 export const useTeams = (options?: Options) => useQuery(QUERY_CONFIG.UseTeams(options));
-export const usePlayers = (options?: Options) => useQuery(QUERY_CONFIG.UsePlayers(options));
+export const usePlayers = (includeNotActive: boolean = false, options?: Options) => useQuery(QUERY_CONFIG.UsePlayers(includeNotActive, options));
 export const useMatchEvents = (matchId: MatchEvent['id'], options?: Options) => useQuery(QUERY_CONFIG.UseMatchEvents(matchId, options));

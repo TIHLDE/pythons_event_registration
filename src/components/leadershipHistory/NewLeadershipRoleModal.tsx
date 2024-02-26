@@ -29,7 +29,7 @@ const NewLeadershipRoleModal = ({ periodId, missingRoles }: NewLeadershipRoleMod
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
 
-  const { data: players = [], isLoading: isPlayersLoading } = usePlayers({ enabled: true });
+  const { data: players = [], isLoading: isPlayersLoading } = usePlayers(true, { enabled: true });
 
   const { control, handleSubmit, reset } = useForm<FormDataProps>();
 
