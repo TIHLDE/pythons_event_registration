@@ -1,4 +1,4 @@
-import { EventType, MatchEventType, Position } from '@prisma/client';
+import { EventType, LeadershipRole, MatchEventType, Position } from '@prisma/client';
 import { addMonths, endOfMonth, getMonth, getYear, startOfMonth } from 'date-fns';
 
 import { ExtendedEvent } from '~/functions/event';
@@ -36,6 +36,23 @@ export const positionsList = [
   { type: Position.WINGER, ...positionsMap[Position.WINGER] },
   { type: Position.STRIKER, ...positionsMap[Position.STRIKER] },
 ] satisfies { type: Position; label: string; order: number }[];
+
+export const leadershipRolesMap = {
+  [LeadershipRole.COACH]: { label: 'Trener', order: 1, icon: 'IconCoach' },
+  [LeadershipRole.ASSISTANT_COACH]: { label: 'Assistenttrener', order: 2, icon: 'IconAssistantCoach' },
+  [LeadershipRole.TEAM_LEADER]: { label: 'Lagleder', order: 3, icon: 'IconTeamLeader' },
+  [LeadershipRole.FINES_MANAGER]: { label: 'Botsjef', order: 4, icon: 'IconFinesManager' },
+  [LeadershipRole.RESERVE_TEAM_COACH]: { label: '7er-trener', order: 5, icon: 'IconReserveTeamCoach' },
+  [LeadershipRole.FINANCE_MANAGER]: { label: 'Økonomiansvarlig', order: 6, icon: 'IconFinanceManager' },
+  [LeadershipRole.SOCIAL_MANAGER]: { label: 'SoMe- og sosialansvarlig', order: 7, icon: 'IconSocialManager' },
+};
+
+export const leadershipRolesList = Object.entries(leadershipRolesMap).map(([type, { label, order, icon }]) => ({
+  type,
+  label,
+  order,
+  icon,
+})) satisfies { type: string; label: string; order: number; icon: string }[];
 
 export type Semester = {
   id: string;

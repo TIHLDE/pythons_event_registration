@@ -30,9 +30,13 @@ export const Footer = async () => {
         <Link color='secondary' href='https://github.com/olros' isExternal size='md' underline='always'>
           Olaf Rosendahl
         </Link>
-        {' og '}
+        {', '}
         <Link color='secondary' href='https://github.com/maxschau' isExternal size='md' underline='always'>
           Max Torre Schau
+        </Link>
+        {' og '}
+        <Link color='secondary' href='https://github.com/pettelau' isExternal size='md' underline='always'>
+          Petter Lauvrak
         </Link>
       </p>
     </div>

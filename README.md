@@ -25,6 +25,7 @@ Features:
 - Statistics
   - View match-statistics: goalscorer, assists, red and yellow cards, MOTM
   - View data on who has been on the most events with filtering by event-type, teams and time-periods
+  - View and manage leadership history for former and current roles in a club. 
 
 ## Development
 

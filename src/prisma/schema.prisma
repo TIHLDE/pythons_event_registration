@@ -37,6 +37,16 @@ enum EventType {
   SOCIAL
 }
 
+enum LeadershipRole {
+  COACH
+  ASSISTANT_COACH
+  RESERVE_TEAM_COACH
+  TEAM_LEADER
+  FINES_MANAGER
+  SOCIAL_MANAGER
+  FINANCE_MANAGER
+}
+
 model Team {
   id      Int      @id @default(autoincrement())
   name    String   @db.VarChar(60)
@@ -46,18 +56,19 @@ model Team {
 }
 
 model Player {
-  id                   Int             @id @default(autoincrement())
+  id                   Int                    @id @default(autoincrement())
   tihlde_user_id       String
-  createdAt            DateTime        @default(now())
-  name                 String          @db.VarChar(60)
-  active               Boolean         @default(true)
-  disableRegistrations Boolean         @default(false)
+  createdAt            DateTime               @default(now())
+  name                 String                 @db.VarChar(60)
+  active               Boolean                @default(true)
+  disableRegistrations Boolean                @default(false)
   teamId               Int?
-  position             Position        @default(KEEPER)
-  team                 Team?           @relation(fields: [teamId], references: [id])
+  position             Position               @default(KEEPER)
+  team                 Team?                  @relation(fields: [teamId], references: [id])
   notifications        Notification[]
   registrations        Registrations[]
   matchEvents          MatchEvent[]
+  LeadershipPeriodRole LeadershipPeriodRole[]
 }
 
 model Event {
@@ -116,4 +127,20 @@ model MatchEvent {
   playerId Int
   match    Match          @relation(fields: [matchId], references: [id], onDelete: Cascade)
   player   Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
+}
+
+model LeadershipPeriod {
+  id                   Int                    @id @default(autoincrement())
+  startDate            DateTime
+  endDate              DateTime
+  leadershipPeriodRole LeadershipPeriodRole[]
+}
+
+model LeadershipPeriodRole {
+  id       Int              @id @default(autoincrement())
+  role     LeadershipRole
+  periodId Int
+  playerId Int
+  period   LeadershipPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  player   Player           @relation(fields: [playerId], references: [id], onDelete: Cascade)
 }

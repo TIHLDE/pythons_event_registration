@@ -9,6 +9,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
         routes={[
           { href: '/statistikk', label: 'Statistikk' },
           { href: '/statistikk/oppmote', label: 'Oppmøte' },
+          { href: '/statistikk/verv', label: 'Vervhistorikk' },
         ]}
       />
       {children}
