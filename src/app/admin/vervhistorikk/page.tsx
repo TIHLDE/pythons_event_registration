@@ -19,12 +19,8 @@ const LeadershipHistoryAdmin = async () => {
   return (
     <>
       <NewLeadershipPeriod />
-      <div className='mt-6 flex flex-col gap-2'>
-        {leadershipPeriods.length > 0 ? (
-          <LeadershipHistoryAccordions adminMode leadershipPeriods={leadershipPeriods} />
-        ) : (
-          <div className='my-16 text-center'>Det finnes ingen statistikk for vervhistorikk for øyeblikket.</div>
-        )}
+      <div className='mt-6'>
+        <LeadershipHistoryAccordions adminMode leadershipPeriods={leadershipPeriods} />
       </div>
     </>
   );

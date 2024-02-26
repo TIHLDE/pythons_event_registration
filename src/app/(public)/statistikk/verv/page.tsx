@@ -11,11 +11,7 @@ export const metadata: Metadata = {
 const LeadershipHistory = async () => {
   const leadershipPeriods = await getLeadershipPeriodsPlayers();
 
-  return leadershipPeriods.length > 0 ? (
-    <LeadershipHistoryAccordions adminMode={false} leadershipPeriods={leadershipPeriods} />
-  ) : (
-    <div className='my-16 text-center'>Det finnes ingen statistikk for vervhistorikk for øyeblikket.</div>
-  );
+  return <LeadershipHistoryAccordions leadershipPeriods={leadershipPeriods} />;
 };
 
 export default LeadershipHistory;

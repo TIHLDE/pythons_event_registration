@@ -105,17 +105,12 @@ const NewLeadershipRoleModal = ({ periodId, missingRoles }: NewLeadershipRoleMod
             />
           </ModalBody>
           <ModalFooter>
-            <div className='flex w-full flex-row items-center justify-between'>
-              <div className='flex-1'></div>
-              <div>
-                <Button color='danger' onPress={onClose} variant='flat'>
-                  Avbryt
-                </Button>
-                <Button className='ml-2' color='primary' isDisabled={false} type='submit'>
-                  Opprett
-                </Button>
-              </div>
-            </div>
+            <Button color='danger' onPress={onClose} variant='flat'>
+              Avbryt
+            </Button>
+            <Button className='ml-2' color='primary' isDisabled={false} type='submit'>
+              Opprett
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

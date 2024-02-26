@@ -25,13 +25,15 @@ const iconComponents = {
   IconFinanceManager: <FaMoneyBillTrendUp />,
 };
 
-export const LeadershipHistoryAccordions = ({
-  leadershipPeriods,
-  adminMode = false,
-}: {
+export type LeadershipHistoryAccordionsProps = {
   leadershipPeriods: LeadershipPeriodWithDetails[];
-  adminMode: boolean;
-}) => {
+  adminMode?: boolean;
+};
+
+export const LeadershipHistoryAccordions = ({ leadershipPeriods, adminMode = false }: LeadershipHistoryAccordionsProps) => {
+  if (leadershipPeriods.length === 0) {
+    return <p className='my-16 text-center'>Det finnes ingen statistikk for vervhistorikk for øyeblikket.</p>;
+  }
   return (
     <>
       {leadershipPeriods.map((period, index) => {
@@ -52,7 +54,7 @@ export const LeadershipHistoryAccordions = ({
 
         return (
           <StandaloneExpand
-            className='mb-4'
+            className='mb-2'
             icon={<FaPeopleGroup className='h-6 w-6' />}
             key={period.id}
             primary={`Styre nr. ${leadershipPeriods.length - index} ${index + 1 === leadershipPeriods.length ? '(Founding Fathers)' : ''}`}
@@ -66,8 +68,8 @@ export const LeadershipHistoryAccordions = ({
                         {adminMode && <EditLeadershipRoleModal id={role.id} player={role.player} role={role.label} />}
                         {RoleIcon}
                         <span>
-                          <span className='font-light'>{role.label}</span>: <span className='text-violet-400'>{role.player.name}</span>
-                          {role.reElected && <span className='text-violet-200'> (Gjenvalgt)</span>}
+                          <span className='font-light'>{role.label}</span>: <span className='text-[hsl(var(--pythons-primary)/1)]'>{role.player.name}</span>
+                          {role.reElected && <span className='text-[hsl(var(--pythons-primary-200)/1)]'> (Gjenvalgt)</span>}
                         </span>
                       </div>
                     );

@@ -85,18 +85,15 @@ const EditLeadershipRoleModal = ({ player, role, id }: EditLeadershipRoleModalPr
               )}
             />
           </ModalBody>
-          <ModalFooter>
-            <div className='flex w-full flex-row items-center justify-between'>
-              <LeadershipPeriodRoleDelete id={id} />
-              <div className='flex-1'></div>
-              <div>
-                <Button color='danger' onPress={onClose} variant='flat'>
-                  Avbryt
-                </Button>
-                <Button className='ml-2' color='primary' isDisabled={false} type='submit'>
-                  Lagre
-                </Button>
-              </div>
+          <ModalFooter className='flex w-full flex-row items-center justify-between'>
+            <LeadershipPeriodRoleDelete id={id} />
+            <div>
+              <Button color='danger' onPress={onClose} variant='flat'>
+                Avbryt
+              </Button>
+              <Button className='ml-2' color='primary' isDisabled={false} type='submit'>
+                Lagre
+              </Button>
             </div>
           </ModalFooter>
         </ModalContent>

@@ -16,7 +16,7 @@ type FormDataProps = {
   endDate: any;
 };
 
-type EditLeadershipPeriodProps = {
+export type EditLeadershipPeriodProps = {
   id: LeadershipPeriod['id'];
   startDate: LeadershipPeriod['startDate'];
   endDate: LeadershipPeriod['endDate'];
