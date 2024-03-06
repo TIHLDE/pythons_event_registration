@@ -23,7 +23,7 @@ const removeNonRelevantEvents = (player: Player) => (event: ExtendedEvent) =>
   !event.willNotArrive.some((registration) => registration.player.tihlde_user_id === player.tihlde_user_id) &&
   (event.eventType !== EventType.MATCH || event.teamId === player.teamId);
 
-const willUserAttendEvent = (player: Player) => (event: ExtendedEvent) =>
+const willUserAttendEvent = (player: Player, event: ExtendedEvent) =>
   event.willArrive.some((registration) => registration.player.tihlde_user_id === player.tihlde_user_id);
 
 const dateToIcsDate = (date: Date): DateArray => [getYear(date), getMonth(date) + 1, getDate(date), getHours(date), getMinutes(date)];
@@ -31,7 +31,7 @@ const dateToIcsDate = (date: Date): DateArray => [getYear(date), getMonth(date) 
 const createIcsEvent =
   (player: Player) =>
   (event: ExtendedEvent): EventAttributes => {
-    const userWillAttend = willUserAttendEvent(player)(event);
+    const userWillAttend = willUserAttendEvent(player, event);
 
     const description = [
       ...(userWillAttend ? ['🤝 Du er påmeldt'] : []),
@@ -49,7 +49,7 @@ const createIcsEvent =
     return {
       productId: PRODUCT_ID,
       calName: ACTIVE_CLUB.name,
-      title: `${userWillAttend ? '' : '[Mangler registrering] '}${getEventTitle(event).fullTitle}`,
+      title: `${userWillAttend || player.disableRegistrations ? '' : '[Mangler registrering] '}${getEventTitle(event).fullTitle}`,
       start: dateToIcsDate(event.time),
       startInputType: 'utc',
       duration: event.eventType === EventType.TRAINING ? { hours: 1, minutes: 30 } : { hours: 2 },

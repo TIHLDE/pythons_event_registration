@@ -80,13 +80,13 @@ const EventRegistration = ({ eventDetails, player, registration }: EventRegistra
     if (eventDetails.eventType === EventType.SOCIAL) {
       return undefined;
     }
-    // You cannot sign up for events if registrations is deactivated for your player. But existing registrations can be edited
-    if (player.disableRegistrations && !registration) {
-      return `Påmeldinger er deaktivert for deg. Du vil ikke motta bøter for manglende påmeldinger 🍻`;
-    }
     // You can only sign up for events for a specific team if you're part of it
     if (eventDetails.team?.id && eventDetails.team?.id !== player.teamId) {
       return `Du er ikke en del av ${eventDetails.team?.name}-laget og kan dermed ikke registrere oppmøte. Kom og se på! 🏟️`;
+    }
+    // You cannot sign up for events if registrations is deactivated for your player. But existing registrations can be edited
+    if (player.disableRegistrations && !registration) {
+      return `Påmeldinger er deaktivert for deg. Du vil ikke motta bøter for manglende påmeldinger 🍻`;
     }
     return undefined;
   }, [eventDetails.eventType, eventDetails.team, player.disableRegistrations, player.teamId, registration]);
