@@ -25,7 +25,7 @@ Features:
 - Statistics
   - View match-statistics: goalscorer, assists, red and yellow cards, MOTM
   - View data on who has been on the most events with filtering by event-type, teams and time-periods
-  - View and manage leadership history for former and current roles in a club. 
+  - View and manage leadership history for former and current roles in a club.
 
 ## Development
 
@@ -42,7 +42,7 @@ MOCK_TIHLDE_USER_ID=user_id
 ```
 
 Since signin is connected to actual users at api.tihlde.org, you must activate mocking of TIHLDE-signin if you don't want to login with an actual user. To do this, simply add `MOCK_TIHLDE_USER_ID=<user_id>` in the `.env`-file. When present, you can log in to the application with the given user id and any password you want. **All** calls to api.tihlde.org will also be mocked.
-Also, if `MOCK_TIHLDE_USER_ID` is present when running `yarn docker:seed`, a player will be created with connection to the given TIHLDE user-id.
+Also, if `MOCK_TIHLDE_USER_ID` is present when running `yarn db:seed`, a player will be created with connection to the given TIHLDE user-id.
 
 ### First setup
 
@@ -54,7 +54,7 @@ Alternatively, you can run a PostgreSQL-instance yourself and provide a connecti
    - With Docker-Compose: Run `yarn docker:fresh` to create a Docker-container with a PostgreSQL-instance, create tables in it and generate Prisma-types
    - With other PostgreSQL-instance: Run `yarn db:generate` to generate Prisma-types
 3. _Optional_:
-   - Run `yarn docker:seed` to load fixtures to the connected database to get started with local development faster
+   - Run `yarn db:seed` to load fixtures to the connected database to get started with local development faster
 4. Finally run `yarn dev` to run the project at http://localhost:3000
 
 ### Subsequent starts
