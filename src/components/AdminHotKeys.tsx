@@ -7,7 +7,7 @@ import { stats } from '~/stats';
 
 export const AdminHotKeys = () => {
   const router = useRouter();
-  useHotkeys('ctrl+a, cmd+a', () => {
+  useHotkeys('shift+a', () => {
     router.push('/admin');
     stats.event('admin-hotkeys');
   });

@@ -48,7 +48,7 @@ const Admin = () => {
         <AdminLink description='Administrer verv i tidligere og nåværende styrer' path='/admin/vervhistorikk' title='👨‍👨‍👦‍👦 Vervhistorikk' />
       </div>
       <p className='mt-12 hidden text-center text-sm md:block'>
-        <span className='font-bold'>Tips!</span> Tast <Kbd keys={['command']}>A</Kbd> for å åpne admin-siden
+        <span className='font-bold'>Tips!</span> Tast <Kbd keys={['shift']}>A</Kbd> for å åpne admin-siden
       </p>
     </>
   );
