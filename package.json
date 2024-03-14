@@ -26,7 +26,7 @@
     "@nextui-org/react": "^2.2.9",
     "@olros/stats": "^2.2.1",
     "@prisma/client": "^5.11.0",
-    "@tanstack/react-query": "^5.27.5",
+    "@tanstack/react-query": "^5.28.0",
     "axios": "^1.6.7",
     "clsx": "^2.1.0",
     "date-fns": "^3.4.0",
