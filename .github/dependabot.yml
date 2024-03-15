@@ -13,6 +13,7 @@ updates:
         patterns:
           - "prisma"
           - "@prisma/*"
+          - "@neondatabase/*"
       eslint-prettier:
         patterns:
           - "eslint*"

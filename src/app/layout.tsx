@@ -17,6 +17,8 @@ import Providers from '~/providers';
 
 import '~/app/globals.css';
 
+export const runtime = 'edge';
+
 const cabin = Cabin({
   subsets: ['latin'],
   display: 'swap',
