@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@nextui-org/button';
-import { TRANSITION_VARIANTS } from '@nextui-org/framer-transitions';
+import { TRANSITION_VARIANTS } from '@nextui-org/framer-utils';
 import { useDisclosure } from '@nextui-org/use-disclosure';
 import { motion, useWillChange } from 'framer-motion';
 import { useCallback } from 'react';
