@@ -12,11 +12,11 @@ import { Controller, useForm } from 'react-hook-form';
 
 import { usePlayers } from '~/hooks/useQuery';
 
-type LeadershipRole = { type: string; label: string; order: number; icon: string };
+import { LeadershipRoleDetails } from '~/utils';
 
 export type NewLeadershipRoleModalProps = {
   periodId: number;
-  missingRoles: LeadershipRole[];
+  missingRoles: LeadershipRoleDetails[];
 };
 
 type FormDataProps = {

@@ -37,22 +37,24 @@ export const positionsList = [
   { type: Position.STRIKER, ...positionsMap[Position.STRIKER] },
 ] satisfies { type: Position; label: string; order: number }[];
 
-export const leadershipRolesMap = {
-  [LeadershipRole.COACH]: { label: 'Trener', order: 1, icon: 'IconCoach' },
-  [LeadershipRole.ASSISTANT_COACH]: { label: 'Assistenttrener', order: 2, icon: 'IconAssistantCoach' },
-  [LeadershipRole.TEAM_LEADER]: { label: 'Lagleder', order: 3, icon: 'IconTeamLeader' },
-  [LeadershipRole.FINES_MANAGER]: { label: 'Botsjef', order: 4, icon: 'IconFinesManager' },
-  [LeadershipRole.RESERVE_TEAM_COACH]: { label: '7er-trener', order: 5, icon: 'IconReserveTeamCoach' },
-  [LeadershipRole.FINANCE_MANAGER]: { label: 'Økonomiansvarlig', order: 6, icon: 'IconFinanceManager' },
-  [LeadershipRole.SOCIAL_MANAGER]: { label: 'SoMe- og sosialansvarlig', order: 7, icon: 'IconSocialManager' },
+export type LeadershipRoleDetails = { type: LeadershipRole; label: string; order: number };
+
+export const leadershipRolesMap: Record<LeadershipRole, Pick<LeadershipRoleDetails, 'label' | 'order'>> = {
+  [LeadershipRole.COACH]: { label: 'Trener', order: 1 },
+  [LeadershipRole.ASSISTANT_COACH]: { label: 'Assistenttrener', order: 2 },
+  [LeadershipRole.TEAM_LEADER]: { label: 'Lagleder', order: 3 },
+  [LeadershipRole.FINES_MANAGER]: { label: 'Botsjef', order: 4 },
+  [LeadershipRole.RESERVE_TEAM_COACH]: { label: '7er-trener', order: 5 },
+  [LeadershipRole.FINANCE_MANAGER]: { label: 'Økonomiansvarlig', order: 6 },
+  [LeadershipRole.SOCIAL_MANAGER]: { label: 'Sosialansvarlig', order: 7 },
+  [LeadershipRole.SOME_MANAGER]: { label: 'SoMe-ansvarlig', order: 8 },
 };
 
-export const leadershipRolesList = Object.entries(leadershipRolesMap).map(([type, { label, order, icon }]) => ({
-  type,
+export const leadershipRolesList = Object.entries(leadershipRolesMap).map(([type, { label, order }]) => ({
+  type: type as LeadershipRole,
   label,
   order,
-  icon,
-})) satisfies { type: string; label: string; order: number; icon: string }[];
+})) satisfies LeadershipRoleDetails[];
 
 export type Semester = {
   id: string;

@@ -53,13 +53,9 @@ const EditLeadershipRoleModal = ({ player, role, id }: EditLeadershipRoleModalPr
     [onClose, id, router],
   );
 
-  if (isPlayersLoading) {
-    return;
-  }
-
   return (
     <>
-      <Button className='h-6 w-6 min-w-0' isIconOnly onClick={onOpen} size='sm' variant='light'>
+      <Button className='h-6 w-6 min-w-0' isDisabled={isPlayersLoading} isIconOnly onClick={onOpen} size='sm' variant='light'>
         <MdEdit className='h-6 w-6' />
       </Button>
       <Modal hideCloseButton isOpen={isOpen} onClose={onClose} scrollBehavior='inside'>
