@@ -1,48 +1,78 @@
-import { Divider } from '@nextui-org/divider';
+import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
 import { Link } from '@nextui-org/link';
-import { Fragment } from 'react';
+import { EventType } from '@prisma/client';
+import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
+import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
-import type { TIHLDEUser } from '~/tihlde';
-import { getAllnotPayedFines } from '~/tihlde/fines';
-import { getAllPythonsMemberships } from '~/tihlde/memberships';
-
+import { prismaClient } from '~/prismaClient';
 import { ACTIVE_CLUB } from '~/values';
 
 const getData = async () => {
-  const [{ results: memberships }, { results: notPayedFines }] = await Promise.all([getAllPythonsMemberships(), getAllnotPayedFines()]);
-  const users = memberships.map((membership) => membership.user);
-
-  const usersWithNoCreatedFines = users.filter((user) => !notPayedFines.some((fine) => fine.created_by.user_id === user.user_id));
-  const players: Array<TIHLDEUser> = usersWithNoCreatedFines.map((user) => ({
-    user_id: user.user_id,
-    first_name: user.first_name,
-    last_name: user.last_name,
-  }));
-  return { players };
+  const prevFinesParty = await prismaClient.event.findFirst({
+    where: {
+      eventType: EventType.SOCIAL,
+      title: {
+        mode: 'insensitive',
+        contains: '%b%o%t%f%e%s%t%',
+      },
+      time: {
+        lt: new Date(),
+      },
+    },
+    orderBy: {
+      time: 'desc',
+    },
+  });
+  return { prevFinesParty };
 };
 
-const PlayersWithNoCreatedFines = async () => {
-  const { players } = await getData();
+const dateSchema = z.object({
+  date: z.coerce.date(),
+});
+
+const GoToDateForPreviousFinesParty = async () => {
+  const { prevFinesParty } = await getData();
+
+  async function goToDate(formData: FormData) {
+    'use server';
+
+    const data = dateSchema.safeParse(Object.fromEntries(formData));
+    if (data.success) {
+      console.log(data, `/admin/ikke-gitt-boter/${format(data.data.date, 'yyyy-MM-dd')}`);
+      redirect(`/admin/ikke-gitt-boter/${format(data.data.date, 'yyyy-MM-dd')}`);
+    }
+    return { error: data.error.message };
+  }
   return (
     <>
       <p className='text-md mb-4'>
-        Viser navn på spillere som skal motta bot for brudd på paragraf <i>§11 - Snitches don&apos;t get stitches</i> på bakgrunn av{' '}
+        For å finne ut hvilke spillere som skal motta bot for brudd på paragraf <i>§11 - Snitches don&apos;t get stitches</i> på bakgrunn av{' '}
         <Link href={`https://tihlde.org/grupper/${ACTIVE_CLUB.pythonsGroupSlug}/lovverk/`} isExternal underline='always'>
           lovverket
         </Link>
-        .
+        , må vi vite når forrige botfest var.
+        {prevFinesParty !== null &&
+          ` Ved å søke etter tidligere arrangementer med "Botfest" i tittel fant vi "${prevFinesParty.title}" som ble arrangert ${format(prevFinesParty.time, 'dd. MMMM yyyy', { locale: nb })} på ${prevFinesParty.location}. Tidspunktet har blitt forhåndsutfylt, men du kan endre tidspunktet hvis det ikke stemmer.`}
       </p>
-      {!players.length && <p className='text-md'>Alle medlemmer av TIHLDE Pythons har gitt minst 1 bot til enten seg selv eller en annen</p>}
-      <div className='flex flex-col gap-2'>
-        {players.map((player, index) => (
-          <Fragment key={player.user_id}>
-            <p className='text-md'>{`${player.first_name} ${player.last_name}`}</p>
-            {index !== players.length - 1 && <Divider />}
-          </Fragment>
-        ))}
-      </div>
+      <form action={goToDate} className='mx-auto flex max-w-lg flex-col gap-2'>
+        <Input
+          defaultValue={prevFinesParty ? format(prevFinesParty.time, 'yyyy-MM-dd') : undefined}
+          isRequired
+          label='Tidspunkt for forrige botfest'
+          name='date'
+          placeholder='Tidspunkt'
+          type='date'
+          variant='faded'
+        />
+        <Button color='primary' fullWidth type='submit' variant='solid'>
+          Finn spillere
+        </Button>
+      </form>
     </>
   );
 };
 
-export default PlayersWithNoCreatedFines;
+export default GoToDateForPreviousFinesParty;

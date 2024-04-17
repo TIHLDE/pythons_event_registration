@@ -3,12 +3,13 @@ import { PaginationResponse, TIHLDEGroup, TIHLDEGroupFine, TIHLDEMembership, TIH
 import { MOCK_TIHLDE_USER_ID } from '~/serverEnv';
 import { ACTIVE_CLUB } from '~/values';
 
-export const mockPaginationResponse = <T>(result: T): PaginationResponse<T> => ({
-  count: 1,
-  next: null,
-  previous: null,
-  results: [result],
-});
+export const mockPaginationResponse = <T>(result: T): Promise<PaginationResponse<T>> =>
+  Promise.resolve({
+    count: 1,
+    next: null,
+    previous: null,
+    results: [result],
+  });
 
 export const mockTihldeUser = (userId?: string): TIHLDEUser => {
   if (userId) {

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { isAfter } from 'date-fns';
 
 import { PaginationResponse, TIHLDEGroupFine } from '~/tihlde';
 import { getAuthHeaders } from '~/tihlde/auth';
@@ -7,13 +8,19 @@ import { mockPaginationResponse, mockTihldeGroupFine } from '~/tihlde/mocks';
 import { SHOULD_MOCK_TIHLDE_API } from '~/serverEnv';
 import { ACTIVE_CLUB, TIHLDE_API_URL } from '~/values';
 
-export const getAllnotPayedFines = async (): Promise<PaginationResponse<TIHLDEGroupFine>> => {
+export const getAllFinesSinceDate = async (from: Date): Promise<PaginationResponse<TIHLDEGroupFine>> => {
+  const filterResultsBasedOnCreatedAt = (data: PaginationResponse<TIHLDEGroupFine>) => ({
+    ...data,
+    results: data.results.filter((fine) => isAfter(new Date(fine.created_at), from)),
+  });
+
   if (SHOULD_MOCK_TIHLDE_API) {
-    return mockPaginationResponse(mockTihldeGroupFine());
+    return mockPaginationResponse(mockTihldeGroupFine()).then(filterResultsBasedOnCreatedAt);
   }
   return axios
-    .get<PaginationResponse<TIHLDEGroupFine>>(`${TIHLDE_API_URL}/groups/${ACTIVE_CLUB.pythonsGroupSlug}/fines/?&payed=false&None=1500`, getAuthHeaders())
-    .then((response) => response.data);
+    .get<PaginationResponse<TIHLDEGroupFine>>(`${TIHLDE_API_URL}/groups/${ACTIVE_CLUB.pythonsGroupSlug}/fines/?None=1500`, getAuthHeaders())
+    .then((response) => response.data)
+    .then(filterResultsBasedOnCreatedAt);
 };
 
 export type FineCreate = Pick<TIHLDEGroupFine, 'amount' | 'description' | 'reason' | 'image'> & {

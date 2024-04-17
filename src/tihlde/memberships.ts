@@ -27,6 +27,6 @@ export const getAllPythonsMemberships = async (): Promise<PaginationResponse<TIH
     return mockPaginationResponse(mockTihldeMembership());
   }
   return axios
-    .get<PaginationResponse<TIHLDEMembership>>(`${TIHLDE_API_URL}/groups/${ACTIVE_CLUB.pythonsGroupSlug}/memberships/?None=500`, getAuthHeaders())
+    .get<PaginationResponse<TIHLDEMembership>>(`${TIHLDE_API_URL}/groups/${ACTIVE_CLUB.pythonsGroupSlug}/memberships/?None=250`, getAuthHeaders())
     .then((response) => response.data);
 };
