@@ -41,6 +41,7 @@ const createIcsEvent =
       ``,
       `${userWillAttend ? 'Endre' : 'Registrer'} oppmøte på ${ACTIVE_CLUB.url}`,
       ``,
+      ...(event.description ? [event.description, ``] : []),
       `Sist oppdatert: ${format(new Date(), "EEEE dd. MMMM' 'HH:mm", {
         locale: nb,
       })}`,
