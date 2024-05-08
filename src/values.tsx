@@ -108,7 +108,7 @@ const CLUBS_CONFIG: Record<ClientEnvSchema['NEXT_PUBLIC_ACTIVE_CLUB'], ClubConfi
           <>
             <Image
               alt='TSFF tabell'
-              className='mx-auto mb-4 max-h-unit-9xl w-auto rounded-md'
+              className='max-h-unit-9xl mx-auto mb-4 w-auto rounded-md'
               height={1200}
               src={`https://raw.githubusercontent.com/tsff1/tables/main/Scripts/Output/H23/Avd_A_table.png?v=${startOfHour(new Date()).getTime()}`}
               width={850}
@@ -116,6 +116,7 @@ const CLUBS_CONFIG: Record<ClientEnvSchema['NEXT_PUBLIC_ACTIVE_CLUB'], ClubConfi
             <iframe
               className='mb-4 rounded-md border-none'
               height='750'
+              sandbox='allow-scripts'
               src='https://docs.google.com/spreadsheets/d/e/2PACX-1vQfKRznqZffHTSv1da8lbuuwrklrrQVrwBLsaZdhFeH860KhFmPWnP88z5uoNCSjUjXiZa5dIB16IRg/pubhtml/sheet?gid=0'
               width='100%'
             />
@@ -130,7 +131,7 @@ const CLUBS_CONFIG: Record<ClientEnvSchema['NEXT_PUBLIC_ACTIVE_CLUB'], ClubConfi
             <iframe
               className='mb-4 rounded-md border-none'
               height='750'
-              src='https://wp.nif.no/PageTournamentDetailWithMatches.aspx?tournamentId=422366&seasonId=201017&number=all'
+              src='https://kamper.bedriftsidretten.no/standings?seasonId=201017&tournamentId=422366'
               width='100%'
             />
             <p className='text-center text-sm italic'>Hentet fra 7dentligaen</p>
@@ -179,7 +180,7 @@ const CLUBS_CONFIG: Record<ClientEnvSchema['NEXT_PUBLIC_ACTIVE_CLUB'], ClubConfi
             <iframe
               className='mb-4 rounded-md border-none'
               height='750'
-              src='https://wp.nif.no/PageTournamentDetailWithMatches.aspx?tournamentId=422501&seasonId=201017&number=all'
+              src='https://kamper.bedriftsidretten.no/standings?seasonId=201017&tournamentId=422501'
               width='100%'
             />
             <p className='text-center text-sm italic'>Hentet fra 7dentligaen</p>
