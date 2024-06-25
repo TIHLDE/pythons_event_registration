@@ -30,7 +30,7 @@
     "axios": "^1.6.7",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
-    "framer-motion": "^11.1.2",
+    "framer-motion": "^11.2.12",
     "http-status-typed": "^1.0.1",
     "ics": "^3.7.2",
     "next": "^14.2.1",
