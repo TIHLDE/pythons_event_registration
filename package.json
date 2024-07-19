@@ -23,7 +23,7 @@
     "docker:stop": "docker-compose stop"
   },
   "dependencies": {
-    "@nextui-org/react": "^2.3.1",
+    "@nextui-org/react": "^2.4.5",
     "@olros/stats": "^2.2.1",
     "@prisma/client": "^5.13.0",
     "@tanstack/react-query": "^5.36.0",
