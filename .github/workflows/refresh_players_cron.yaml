@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Synchronize users
         id: request
-        uses: fjogeleit/http-request-action@v1
+        uses: fjogeleit/http-request-action@v2
         with:
           url: '${{ matrix.url }}/api/refresh-players'
           method: 'POST'
