@@ -196,6 +196,7 @@ export const ACTIVE_CLUB = CLUBS_CONFIG[getClientEnv().NEXT_PUBLIC_ACTIVE_CLUB];
 
 export const USER_STORAGE_KEY = 'pythons-user';
 export const AUTH_TOKEN_COOKIE_KEY = '~/tihlde-pythons-auth-token';
-export const TIHLDE_API_URL = 'https://api.tihlde.org/';
+export const PHOTON_ISSUER = process.env.PHOTON_ISSUER || 'https://photon.tihlde.org/api/auth';
+export const TIHLDE_API_URL = PHOTON_ISSUER.replace(/\/auth$/, '');
 
 export const MIN_DATE = format(new Date(ACTIVE_CLUB.initialSemester), 'yyyy-MM-dd');
