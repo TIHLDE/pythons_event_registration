@@ -1,56 +1,86 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import { hoursToSeconds } from 'date-fns';
+import { AxiosRequestConfig } from 'axios';
 import { cookies } from 'next/headers';
+import type { Player } from '@prisma/client';
 
-import { isMemberOfPythonsGroup } from '~/tihlde/memberships';
+import { getUserMemberships } from '~/tihlde/memberships';
 
 import { prismaClient } from '~/prismaClient';
 import { MOCK_TIHLDE_USER_ID, SHOULD_MOCK_TIHLDE_API } from '~/serverEnv';
-import { ACTIVE_CLUB, AUTH_TOKEN_COOKIE_KEY, TIHLDE_API_URL, USER_STORAGE_KEY } from '~/values';
+import { ACTIVE_CLUB, AUTH_TOKEN_COOKIE_KEY } from '~/values';
 
+/**
+ * Photon tar tokenet som en vanlig bearer. Lepton ville ha det i
+ * x-csrf-token, som er grunnen til at hvert kallsted måtte endres.
+ */
 export const getAuthHeaders = (): Pick<AxiosRequestConfig<unknown>, 'headers'> => {
   const token = cookies().get(AUTH_TOKEN_COOKIE_KEY);
-  return { headers: { 'x-csrf-token': token?.value } };
+  return { headers: { Authorization: `Bearer ${token?.value}` } };
 };
 
-const loginToTIHLDE = async ({ user_id, password }: AuthenticateParams): Promise<{ token: string }> => {
-  if (SHOULD_MOCK_TIHLDE_API) {
-    return { token: `-random-tihlde-auth-token-${MOCK_TIHLDE_USER_ID}-` };
-  }
-
-  const response = await axios.post<{ token: string }>(`${TIHLDE_API_URL}auth/login/`, { user_id, password });
-  return response.data;
-};
-
-export type AuthenticateParams = { user_id: string; password: string };
-
-export const authenticate = async ({ user_id, password }: AuthenticateParams) => {
-  try {
-    const { token } = await loginToTIHLDE({ user_id, password });
-    cookies().set(AUTH_TOKEN_COOKIE_KEY, token, { maxAge: hoursToSeconds(24) * 180 });
-    const playerQuery = prismaClient.player.findFirst({
-      where: {
-        tihlde_user_id: {
-          equals: user_id,
-          mode: 'insensitive',
-        },
-        active: true,
+/**
+ * Fullfører innloggingen etter at OAuth-callbacken har hentet et token:
+ * sjekker Pythons-medlemskap og finner eller oppretter spillerprofilen.
+ * Passordkontrollen skjer på tihlde.org.
+ *
+ * Tar tokenet som argument og *returnerer* spilleren i stedet for å sette
+ * cookies selv. I en route handler settes cookies på responsen, og de er ikke
+ * lesbare via `cookies()` i samme forespørsel — så både lesing og skriving må
+ * eies av kalleren.
+ *
+ * Spillerraden nøkles fortsatt på `tihlde_user_id`, altså brukernavnet, ikke
+ * Photons interne id. Eksisterende rader er skrevet med brukernavnet, og å
+ * bytte nøkkel her ville laget nye profiler for samtlige spillere.
+ */
+export const completeLogin = async (username: string, displayName: string, token: string): Promise<Player> => {
+  const membershipsQuery = getUserMemberships(token);
+  const playerQuery = prismaClient.player.findFirst({
+    where: {
+      tihlde_user_id: {
+        equals: username,
+        mode: 'insensitive',
       },
-    });
-    const [isMemberOfPythons, player] = await Promise.all([isMemberOfPythonsGroup(), playerQuery]);
-    if (!isMemberOfPythons) {
-      throw Error(`Du er ikke medlem av Pythons-gruppen på tihlde.org/grupper/${ACTIVE_CLUB.pythonsGroupSlug}`);
-    }
-    if (!player) {
-      throw Error(
-        `Det har ikke blitt opprettet en spiller-profil for deg enda. Spiller-profiler oppdateres/genereres automatisk hver hele time basert på hvem som er medlem i Pythons-gruppen på tihlde.org/grupper/${ACTIVE_CLUB.pythonsGroupSlug}`,
-      );
-    }
-    cookies().set(USER_STORAGE_KEY, JSON.stringify(player), { maxAge: hoursToSeconds(24) * 180 });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (e: any) {
-    cookies().delete(AUTH_TOKEN_COOKIE_KEY);
-    cookies().delete(USER_STORAGE_KEY);
-    throw Error(e.response?.data?.detail || e.message || 'Brukernavn eller passord er feil');
+      active: true,
+    },
+  });
+
+  const [memberships, activePlayer] = await Promise.all([membershipsQuery, playerQuery]);
+  const isMemberOfPythons = memberships.results.some((membership) => membership.group.slug === ACTIVE_CLUB.pythonsGroupSlug);
+
+  if (!isMemberOfPythons) {
+    throw Error(
+      `Du må være medlem av Pythons-gruppen på tihlde.org/grupper/${ACTIVE_CLUB.pythonsGroupSlug} eller være gruppeleder for gruppeindeks på TIHLDE for å logge inn`,
+    );
   }
+
+  if (activePlayer) {
+    return activePlayer;
+  }
+
+  const existingPlayer = await prismaClient.player.findFirst({
+    where: {
+      tihlde_user_id: {
+        equals: username,
+        mode: 'insensitive',
+      },
+    },
+  });
+
+  if (existingPlayer) {
+    return prismaClient.player.update({
+      where: { id: existingPlayer.id },
+      data: { active: true },
+    });
+  }
+
+  return prismaClient.player.create({
+    data: {
+      tihlde_user_id: username,
+      name: displayName || username,
+      position: 'KEEPER',
+      active: true,
+    },
+  });
 };
+
+/** Brukernavnet mock-modus later som er innlogget. */
+export const getMockUsername = () => (SHOULD_MOCK_TIHLDE_API ? MOCK_TIHLDE_USER_ID : null);
