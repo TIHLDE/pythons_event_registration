@@ -19,7 +19,7 @@ export const GET = async (request: NextRequest) => {
   const code = request.nextUrl.searchParams.get('code');
   const state = request.nextUrl.searchParams.get('state');
   const stored = request.cookies.get(OAUTH_STATE)?.value;
-  const [expectedState, redirectUrl = '/'] = (stored ?? '').split('|');
+  const [expectedState, verifier, redirectUrl = '/'] = (stored ?? '').split('|');
 
   if (!code) return deny(request, 'Innloggingen ble avbrutt. Prøv igjen.');
   if (!state || !expectedState || state !== expectedState) {
@@ -37,6 +37,7 @@ export const GET = async (request: NextRequest) => {
       redirect_uri: redirectUri,
       client_id: process.env.PHOTON_CLIENT_ID ?? '',
       client_secret: process.env.PHOTON_CLIENT_SECRET ?? '',
+      code_verifier: verifier ?? '',
     }).toString(),
   });
 
