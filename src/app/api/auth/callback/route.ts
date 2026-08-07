@@ -47,6 +47,10 @@ export const GET = async (request: NextRequest) => {
   });
 
   if (!tokenResponse.ok) {
+    // Photon forklarer avvisningen i kroppen (invalid_grant, invalid_scope,
+    // «pkce is required»...). Uten dette i loggen står man igjen med en generisk
+    // melding og må gjette — det kostet mange runder under overgangen fra Lepton.
+    console.error('Photon avviste kodevekslingen:', tokenResponse.status, await tokenResponse.text());
     return deny(request, 'Kunne ikke fullføre innloggingen. Prøv igjen senere.');
   }
 
@@ -61,6 +65,7 @@ export const GET = async (request: NextRequest) => {
   });
 
   if (!userinfoResponse.ok) {
+    console.error('userinfo avviste tokenet:', userinfoResponse.status, await userinfoResponse.text());
     return deny(request, 'Kunne ikke hente brukerdata fra TIHLDE.');
   }
 
