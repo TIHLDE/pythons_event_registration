@@ -52,26 +52,33 @@ export const GET = async (request: NextRequest) => {
 
   const tokens = (await tokenResponse.json()) as { access_token: string; expires_in?: number };
 
-  const sessionResponse = await fetch(`${PHOTON_ISSUER}/get-session`, {
+  // userinfo, ikke get-session: sistnevnte leser sesjonscookien og ignorerer
+  // Authorization-headeren — den svarer 200 med tom sesjon selv uten
+  // innlogging, så et gyldig bearer-token ville gitt «ingen bruker».
+  const userinfoResponse = await fetch(`${PHOTON_ISSUER}/oauth2/userinfo`, {
     headers: { Authorization: `Bearer ${tokens.access_token}` },
     cache: 'no-store',
   });
 
-  if (!sessionResponse.ok) {
+  if (!userinfoResponse.ok) {
     return deny(request, 'Kunne ikke hente brukerdata fra TIHLDE.');
   }
 
-  const session = (await sessionResponse.json()) as {
-    user?: { id: string; name?: string | null; username?: string | null };
+  const userinfo = (await userinfoResponse.json()) as {
+    sub: string;
+    name?: string | null;
+    preferred_username?: string | null;
   };
-  const username = session.user?.username ?? session.user?.id;
+
+  // Spillerraden nøkles på TIHLDE-brukernavnet, ikke Photons interne id.
+  const username = userinfo.preferred_username ?? userinfo.sub;
   if (!username) return deny(request, 'Kunne ikke hente brukerdata fra TIHLDE.');
 
   let player;
   try {
     // Tokenet sendes inn, ikke leses fra cookien: den settes på responsen
     // under og er ikke lesbar i denne forespørselen.
-    player = await completeLogin(username, session.user?.name ?? '', tokens.access_token);
+    player = await completeLogin(username, userinfo.name ?? '', tokens.access_token);
   } catch (e) {
     return deny(request, (e as Error).message);
   }
