@@ -38,6 +38,11 @@ export const GET = async (request: NextRequest) => {
       client_id: process.env.PHOTON_CLIENT_ID ?? '',
       client_secret: process.env.PHOTON_CLIENT_SECRET ?? '',
       code_verifier: verifier ?? '',
+      // Uten `resource` utsteder Photon et ugjennomsiktig token, og API-ets
+      // requireAuth godtar bare trepart-JWT — hvert datakall ville gitt 401.
+      // Verdien må være API-ets egen baseURL, den eneste gyldige audience når
+      // Photon ikke har satt validAudiences.
+      resource: PHOTON_ISSUER,
     }).toString(),
   });
 
