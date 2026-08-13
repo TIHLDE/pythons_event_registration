@@ -47,9 +47,10 @@ export const completeLogin = async (username: string, displayName: string, token
   const isMemberOfPythons = memberships.results.some((membership) => membership.group.slug === ACTIVE_CLUB.pythonsGroupSlug);
 
   if (!isMemberOfPythons) {
-    throw Error(
-      `Du må være medlem av Pythons-gruppen på tihlde.org/grupper/${ACTIVE_CLUB.pythonsGroupSlug} eller være gruppeleder for gruppeindeks på TIHLDE for å logge inn`,
-    );
+    // Teksten nevnte tidligere at gruppeledere for Index også slapp inn.
+    // Sjekken over har aldri åpnet for det — bare medlemskap i Pythons-gruppa —
+    // så meldingen sendte folk på leting etter en vei som ikke fantes.
+    throw Error(`Du må være medlem av Pythons-gruppen på tihlde.org/grupper/${ACTIVE_CLUB.pythonsGroupSlug} for å logge inn`);
   }
 
   if (activePlayer) {
