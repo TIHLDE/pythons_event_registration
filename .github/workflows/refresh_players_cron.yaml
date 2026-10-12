@@ -14,7 +14,7 @@ on:
 jobs:
   synchronize:
     name: Synchronize users
-    runs-on: blacksmith-2vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
